@@ -1,0 +1,101 @@
+%
+\renewcommand*{\labelnamepunct}{\addcolon\addspace}
+\DefineBibliographyStrings{german}{% 
+	urlseen = {Zugriff am:}, 
+}
+%
+% Hrsg. Patch https://www.mrunix.de/forums/showthread.php?71869-DRINGEND-Biblatex-(Hrsg-)
+%
+\renewbibmacro*{bbx:editor}[1]{%
+	\ifboolexpr{
+		test \ifuseeditor
+		and
+		not test {\ifnameundef{editor}}
+	}
+	{\usebibmacro{bbx:dashcheck}
+		{\bibnamedash}
+		{\printnames{editor}%
+			\setunit{\addspace}% statt: \setunit{\addcomma\space}
+			\usebibmacro{bbx:savehash}}%
+		\printtext[parens]{\usebibmacro{#1}}% "Hrsg." in Klammern –*Originalzeile: \usebibmacro{#1}
+		\clearname{editor}%
+		%		\setunit{\addspace}
+	}%
+	{\global\undef\bbx@lasthash
+		\usebibmacro{labeltitle}%
+		%		\setunit*{\addspace}
+	}%
+	\usebibmacro{date+extrayear}}
+%
+% http://tex.stackexchange.com/questions/54644/name-delimiters-in-biblatex
+%
+\AtBeginBibliography{%
+	\renewcommand*{\multinamedelim}{\addsemicolon\space}%
+	% uncomment if you don't like the "and" between the last entry
+	%\renewcommand*{\finalnamedelim}{\multinamedelim}
+	%
+}
+%
+\DeclareNameAlias{sortname}{last-first}
+\DeclareNameAlias{editorin}{last-first}
+%
+\newbibmacro*{byeditor:in}{%
+	\ifnameundef{editor}
+	{}
+	{\printnames[editorin]{editor}%
+		\addspace\bibsentence%
+		\mkbibparens{\usebibmacro{editorstrg}}%
+		\clearname{editor}%
+		\printunit{\addcolon\space}%
+	}%
+}
+%
+\xpatchbibdriver{inbook}
+{\usebibmacro{in:}%
+	\usebibmacro{bybookauthor}%
+	\newunit\newblock
+	\usebibmacro{maintitle+booktitle}%
+	\newunit\newblock
+	\usebibmacro{byeditor+others}%
+}
+{\usebibmacro{in:}%
+	\usebibmacro{bybookauthor}%
+	\newunit\newblock
+	\usebibmacro{byeditor:in}%
+	\newunit\newblock
+	\usebibmacro{maintitle+booktitle}%
+	\newunit\newblock
+	\usebibmacro{byeditor+others}%
+}{}{}
+%
+\xpatchbibdriver{incollection}
+{\usebibmacro{in:}%
+	\usebibmacro{maintitle+booktitle}%
+	\newunit\newblock
+	\usebibmacro{byeditor+others}%
+}
+{\usebibmacro{in:}%
+	\usebibmacro{byeditor:in}%
+	\setunit{\labelnamepunct}\newblock
+	\usebibmacro{maintitle+booktitle}%
+	\newunit\newblock
+	\usebibmacro{byeditor}%
+}{}{}
+%
+\xpatchbibdriver{inproceedings}
+{\usebibmacro{in:}%
+	\usebibmacro{maintitle+booktitle}%
+	\newunit\newblock
+	\usebibmacro{event+venue+date}%
+	\newunit\newblock
+	\usebibmacro{byeditor+others}%
+}
+{\usebibmacro{in:}%
+	\usebibmacro{byeditor:in}%
+	\setunit{\labelnamepunct}\newblock
+	\usebibmacro{maintitle+booktitle}%
+	\newunit\newblock
+	\usebibmacro{event+venue+date}%
+	\newunit\newblock
+	\usebibmacro{byeditor+others}%
+}{}{}

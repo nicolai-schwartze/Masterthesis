@@ -1,0 +1,197 @@
+%
+% only \def and \newcommand{cmd}{def} allowed here!
+% because no packages are loaded here
+%
+\def\pathName{Programm}
+\def\ValueBindingOffset{0mm} 
+\def\debug{false}
+\def\documentation{1}
+\def\thesis{2}
+\def\summary{3}
+\def\presentations{5}
+\def\paper{9}
+\def\PresentationOnly{1}
+\def\PresentationNotes{2}
+\def\PresentationAll{3}
+\def\ngerman{ngerman}
+% define if you want to show
+\def\notesFHV{draft}   % disable: notes not showed
+                                    % draft:     notes showed
+%
+% Uncomment this, if you want another styled title page
+%
+%\def\FHVtitlePage{fhv}
+%
+% english or ngerman
+%
+\ifx\newLanguage\undefined
+%	\def\newLanguage{ngerman} % build twice!!!
+	\def\newLanguage{english} % build twice!!!
+\fi
+%
+% Defines to make live easier...
+% ATTENTION: do not forget to put a \xspace after the command!
+%
+\def\pfeil{\ensuremath{\rightarrow}\xspace}
+\def\authorName{Nicolai\xspace}
+\def\authorSurname{Schwartze\xspace}
+% uncomment \authorTitleBefore & \authorTitleAfter if not used
+%\def\authorTitleBefore{\xspace}
+\def\authorTitleAfter{BSc.\xspace}
+\def\supervisorName{Steffen\xspace}
+\def\supervisorSurname{Finck\xspace}
+% uncomment \supervisorTitleBefore & \supervisorTitleAfter if not used
+\def\supervisorTitleBefore{Dr.-Ing.\xspace}
+%\def\supervisorTitleAfter{\xspace}
+%
+% uncomment this if you like a title, e.g. for the mechatronik plattform
+%
+%\def\paperName{KONFERENZ DER MECHATRONIK-PLATTFORM: Smart Factory\\
+%							FH Technikum Wien,  24. November 2016\xspace}
+%
+% Define if the author is male (m) or female (w)
+%
+\def\wOrM{m}
+%
+% pdf settings
+%
+\makeatletter
+	\immediate\write18{git log -1 --pretty=format:"\@backslashchar gdef\@backslashchar GITHash{\@percentchar h}\@percentchar n\@backslashchar gdef\@backslashchar GITDate{\@percentchar ad}" --date=short > build/git-info.txt}
+\makeatother
+\input{build/git-info.txt}
+%
+\def\pdfSettings{%
+	%
+	\def\tmpPdfSubject{\ifdefined\GITHash%
+		git-short:~\GITHash%
+	\fi\ifdefined\GITDate%
+		\xmpcomma~git-date:~\GITDate%
+	\fi}
+	\hypersetup{pdftitle={\getTitle},%
+		pdfauthor={\authorSurname\xmpcomma~\authorName},%
+		pdfsubject={\tmpPdfSubject},%
+		pdfkeywords={Fachhochschule Vorarlberg : \getThesistype~: \studyType~: \supervisorSurname, \supervisorName},%
+		pdflang={de},%
+		unicode=true,}%
+}
+%
+% standard definiton for biblatex
+%
+\def\biblatexOptions{
+	backend=biber,%
+	style = authoryear,%
+	citestyle = authoryear,
+	dashed=false,
+	backref=true,
+}
+%
+% standard definiton for the document class
+%
+\def\komaScriptClass{scrreprt}%
+\def\documentclassOptions{%
+	a4paper,%
+	oneside,%
+	fontsize=11pt,%
+	DIV=calc,%
+	headsepline,%
+	%%BCOR=10mm,
+%	parskip=half,%
+	headings=big,%
+	draft=\debug,%
+	numbers=noenddot,%
+%	toc=sectionentrywithdots,%
+%	chapterentrydots=true,%
+	listof=totoc,%
+	%bibliography=totoc,%
+	%headinclude=false, %koma script seite 79 tabelle 3.7
+}
+%
+\if\paper\FHVmode
+	\def\komaScriptClass{scrartcl}%
+	\def\documentclassOptions{%
+		a4paper,%
+		oneside,%
+		fontsize=9pt,%
+		DIV=calc,%
+%		draft=\debug,%
+		numbers=enddot,%
+		twocolumn,
+		bibliography=totocnumbered,%
+	}%
+	\def\biblatexOptions{
+		backend=biber,%
+		style = authoryear,%
+		citestyle = authoryear,%
+		dashed=false,%
+	}
+\fi
+%
+\if\summary\FHVmode
+%\def\komaScriptClass{scrartcl}%
+\def\komaScriptClass{scrreprt}%
+\def\documentclassOptions{%
+	a4paper,%
+	oneside,%
+	fontsize=11pt,%
+	DIV=calc,%
+%	parskip=half,%
+	headings=big,%
+	draft=\debug,%
+	numbers=noenddot,%
+	%	toc=sectionentrywithdots,%
+	%	chapterentrydots=true,%
+	listof=totoc,%
+	numbers=noenddot,%
+}
+\fi%
+%
+\if\presentations\FHVmode
+\def\komaScriptClass{beamer}%
+\def\documentclassOptions{%
+	18pt,%
+	xcolor=dvipsnames,%
+	hyperref={breaklinks=true},%
+	xcolor=table,%
+}%
+\fi
+%
+% Color for tables
+% 
+\def\farbeTabA{C0C0C0}
+\def\farbeTabB{EFEFEF}
+%
+% Commands to make live easier...
+%
+\newcommand{\mtnote}[1]{\textsuperscript{\TPTtagStyle{#1}}}
+%
+\def\SymbReg{\textsuperscript{\textregistered}}
+\newcommand{\MATLAB}{\textsc{Matlab\small\SymbReg}\xspace}
+%
+% do the caption with a source
+%
+\newcommand{\unterschrift}[3]%
+{%
+	\ifthenelse{\equal{\getLanguage}{english}}% english or german
+	{\def\quelle{Source}}%
+	{\def\quelle{Quelle}}%
+	\def\source{\ifthenelse{\equal{#2}{}}{}{\\\quelle: #2}}%
+	% if no source is given, don't use this
+%	\citetrackerfalse\pagetrackerfalse\backtrackerfalse%
+	\ifthenelse{\equal{#3}{no}}% add to the table of contents? Standard is on
+	{\caption[]{#1\source}}%
+	{\caption[#1]{#1\source}}%
+%	\citetrackertrue\pagetrackertrue\backtrackertrue%
+}%
+%
+\newcommand{\FHVcheckbox}[1]%
+{%
+	\def\checked{1}
+	\def\unchecked{0}
+	\if#1\checked
+		\makebox[0pt][l]{$\square$}\raisebox{.15ex}{\hspace{0.1em}\(\checkmark\)}
+	\fi
+	\if#1\unchecked
+		\makebox[0pt][l]{$\square$}\raisebox{.15ex}{\hspace{0.1em}}\hspace{1em}
+	\fi
+}
+%

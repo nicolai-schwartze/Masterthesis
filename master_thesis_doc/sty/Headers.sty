@@ -1,0 +1,32 @@
+%
+% change the headings with fancyhdr
+%
+\usepackage[
+automark
+]{scrlayer-scrpage}  % Header and footer
+\clearscrheadfoot
+%
+\ifthenelse{\equal{\FHVmode}{\paper}}{%
+	%
+	\ifx\paperName\undefined
+		\cfoot[\pagemark]{\pagemark}
+	\else
+		\definecolor{greyFoot}{HTML}{CCCCCC}
+		\lofoot{\textcolor{greyFoot}{\normalfont\small \paperName}}
+		\lefoot{\textcolor{greyFoot}{\normalfont\small \paperName}}
+		\setlength{\footheight}{22pt}
+		\setlength{\headheight}{3.5mm}
+	\fi
+	%
+}{%
+	\ifthenelse{\equal{\FHVmode}{\documentation} \or \equal{\FHVmode}{\thesis}}{
+		\chead{\headmark}
+		\cfoot[\pagemark]{\pagemark}
+	}{
+		\ifthenelse{\equal{\FHVmode}{\summary}}{
+			\cfoot[\pagemark]{\pagemark}
+			\ofoot[\version]{\version}
+			\ifoot[\getAuthor]{\getAuthor}
+		}{}
+	}
+}

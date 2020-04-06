@@ -1,0 +1,166 @@
+\documentclass[.\jobname.tex]{subfiles}
+\begin{document}
+
+\chapter{Differential Evolution Pseudocodes}
+
+\section{JADE Pseudocode}
+\label{chap:pscode_jade}
+
+\begin{algorithm}[H]
+	\SetAlgoNoLine
+	\DontPrintSemicolon
+	\SetKwFunction{FJADE}{JADE}
+	\SetKwProg{Fn}{Function}{:}{}
+	\Fn{\FJADE{$\mathbf{x}_{g=0}$, $p$, $c$, $function$, $minError$, $maxGen$}}{
+		$fValue_{g=0} \gets function(\mathbf{x}_{g=0})$\;
+		$\mu_{CR} \gets 0.5$\;
+		$\mu_{F}  \gets 0.5$\;
+		$A        \gets \emptyset$\;
+		\For {$g = 1$ to $G$}{
+			$S_F \gets \emptyset$\;
+			$S_{CR} \gets \emptyset$\; 
+			\For {$i = 1$ to $NP$} {
+				$F_i  \gets randc_i(\mu_{F},0.1)$\;
+				$v_i \gets mutationCurrentToPBest1(\mathbf{x}_{i,g}, A, fValue_g, F_i, p)$\;
+				
+				$CR_i \gets randn_i(\mu_{CR},0.1)$\;
+				$u_i  \gets crossoverBIN(\mathbf{x}_{i,g}, v_i, CR_i)$\;
+				
+				\If {$function(\mathbf{x}_{i,g}) \geq function(\mathbf{u}_{i,g})$} {
+					$\mathbf{x}_{i,g+1} \gets \mathbf{x}_{i,g}$\;
+				}
+				\Else
+				{
+					$\mathbf{x}_{i,g+1} \gets \mathbf{u}_{i,g}$\;
+					$fValue_{i,g+1} \gets function(\mathbf{u}_{i,g})$\;
+					$\mathbf{x}_{i,g} \rightarrow \mathbf{A}$\;
+					$CR_i \rightarrow S_{CR}$\;
+					$F_i \rightarrow S_F$\;
+				}
+			}
+			\tcp{resize $A$ to size of $\mathbf{x}_g$}
+			\If{$|A| > NP$} {
+				$A \gets A \setminus A_{rand_i}$
+			}
+			$\mu_{CR} \gets (1-c) \cdot \mu_{CR} + c \cdot arithmeticMean(S_{CR})$\;
+			$\mu_{F} \gets (1-c) \cdot \mu_{F} + c \cdot lehmerMean(S_{F})$\;
+		}	
+	}
+	\unterschrift{JADE Pseudocode}{}{}
+	\label{algo: jade}
+\end{algorithm}
+
+\section{SHADE Pseudocode}
+\label{chap:pscode_shade}
+
+\begin{algorithm}[H]
+	\SetAlgoNoLine
+	\DontPrintSemicolon
+	\SetKwFunction{FSHADE}{SHADE}
+	\SetKwProg{Fn}{Function}{:}{}
+	\Fn{\FSHADE{$\mathbf{x}_{G=0}$, $p$, $H$, $function$, $minError$, $maxGen$}}{
+		$M_{CR} \gets 0.5 \text{; } M_{F} \gets 0.5 \text{; } A \gets \emptyset \text{; } G \gets 0 \text{; }k \gets 1$\;
+		$fValue_{G=0} \gets function(\mathbf{x}_{G=0})$\;
+		\While{termination condition not met}
+		{
+			$S_{CR} \gets \emptyset \text{; } S_F \gets \emptyset$\;   
+			\For{$i = 1$ to $N$}{
+				$r_i \gets rand_{int}(1,H)$\;
+				$CR_{i,G} \gets randn_i(M_{CR,r_i},0.1) \text{; }F_{i,G}  \gets randc_i(M_{F,r_i},0.1)$\;
+				$v_i \gets mutationCurrentToPBest1(\mathbf{x}_{i,G}, A, fValue_G, F_i, p)$\;
+				$u_i  \gets crossoverBIN(pop, v_i, CR)$\;
+			}
+			\For{$i = 1$ to $N$}{
+				\If{$function(u_{i,G}) \leq function(x_{i,G})$} {
+					$x_{i,G+1} \gets u_{i,G} \text{; } fValue_{i,G+1} \gets function(\mathbf{u}_{i,G})$\;
+				}
+				\Else{
+					$x_{i,G+1} \gets x_{i,G}$\;
+				}
+				\If{$function(u_{i,G}) < function(x_{i,G})$} {
+					$x_{i,G} \rightarrow A \text{; } CR_{i,G} \rightarrow S_{CR} \text{; } F_{i,G} \rightarrow S_{F}$\;
+				}
+			}
+			\If{$|A| > N$} {
+				$A \gets A \setminus A_{rand_i}$
+			}
+			\If{$S_{CR} \neq \emptyset \land S_F \neq \emptyset$} {
+				
+				$M_{CR,k,G+1} = \begin{cases}
+				arithmeticMean(S_{CR}) & \text{if $S_{CR} \neq \emptyset$}\\
+				M_{CR,k,G}             & otherwise
+				\end{cases}$\;
+				
+				$M_{F,k,G+1} = \text{ } \begin{cases}
+				lehmerMean(S_{F}) & \text{if $S_{F} \neq \emptyset$}\\
+				M_{F,k,G}             & otherwise
+				\end{cases}$\;
+				
+				$k \gets k + 1$\;
+				\If{$k > H$} {$k \gets 1$\;}
+			}
+			$G \gets G + 1$\;
+		}
+	}
+	\unterschrift{SHADE Pseudocode}{}{}
+	\label{algo: shade}
+\end{algorithm}
+
+\section{L-SHADE Pseudocode}
+\label{chap:pscode_lshade}
+
+\begin{algorithm}[H]
+	\SetAlgoNoLine
+	\DontPrintSemicolon
+	\SetKwFunction{FLSHADE}{LSHADE}
+	\SetKwProg{Fn}{Function}{:}{}
+	\Fn{\FLSHADE{$\mathbf{x}_{G=0}$, $p$, $H$, $function$, $minError$, $maxGen$}}{
+		$M_{CR} \gets 0.5 \text{; } M_{F} \gets 0.5 \text{; } A \gets \emptyset \text{; } G \gets 0 \text{; }k \gets 1$\;
+		$fValue_{G=0} \gets function(\mathbf{x}_{G=0}) \text{; } NG_{init} \gets size(\mathbf{x}_{G=0}) \text{; }NG_{min} = \lceil 1/p \rceil$\;
+		\While{termination condition not met}
+		{
+			$S_{CR} \gets \emptyset \text{; } S_F \gets \emptyset$\;   
+			\For{$i = 1$ to $N$}{
+				$r_i \gets rand_{int}(1,H)$\;
+				$CR_{i,G} \gets randn_i(M_{CR,r_i},0.1) \text{; }F_{i,G}  \gets randc_i(M_{F,r_i},0.1)$\;
+				$v_i \gets mutationCurrentToPBest1(\mathbf{x}_{i,G}, A, fValue_G, F_i, p)$\;
+				$u_i  \gets crossoverBIN(pop, v_i, CR)$\;
+			}
+			\For{$i = 1$ to $N$}{
+				\If{$function(u_{i,G}) \leq function(x_{i,G})$} {
+					$x_{i,G+1} \gets u_{i,G} \text{; } fValue_{i,G+1} \gets function(\mathbf{u}_{i,G})$\;
+				}
+				\Else{
+					$x_{i,G+1} \gets x_{i,G}$\;
+				}
+				\If{$function(u_{i,G}) < function(x_{i,G})$} {
+					$x_{i,G} \rightarrow A \text{; } CR_{i,G} \rightarrow S_{CR} \text{; } F_{i,G} \rightarrow S_{F}$\;
+				}
+			}
+			\If{$|A| > N$} {
+				$A \gets A \setminus A_{rand_i}$
+			}
+			\If{$S_{CR} \neq \emptyset \land S_F \neq \emptyset$} {
+				
+				$M_{CR,k,G+1} = \begin{cases}
+				arithmeticMean(S_{CR}) & \text{if $S_{CR} \neq \emptyset$}\\
+				M_{CR,k,G}             & otherwise
+				\end{cases}$\;
+				
+				$M_{F,k,G+1} = \text{ } \begin{cases}
+				lehmerMean(S_{F}) & \text{if $S_{F} \neq \emptyset$}\\
+				M_{F,k,G}             & otherwise
+				\end{cases}$\;
+				
+				$k \gets k + 1$\;
+				\If{$k > H$} {$k \gets 1$\;}
+			}
+			$\mathbf{x}_{G+1} \gets popSizeRed(\mathbf{x}_{G+1}, fValue, G, maxGen, NG_{init}, NGmin)$\;
+			$G \gets G + 1$\;
+		}
+	}
+	\unterschrift{L-SHADE Pseudocode}{}{}
+	\label{algo: lshade}
+\end{algorithm}
+
+\end{document}

@@ -1,0 +1,614 @@
+%
+% here are all newcommands defined
+%
+\ifthenelse{\equal{\FHVmode}{\presentations}}%
+{}%
+{\newglossary[slg]{symbolslist}{syi}{syg}{Symbolverzeichnis}}
+%
+% print a zero -> Date
+%
+\newcommand{\leadingzero}[1]{\ifnum #1<10 0\the#1\else\the#1\fi}
+%
+% new Date
+%
+\newcommand{\todayX}{\leadingzero{\day}.\leadingzero{\month}.\the\year}% TODO DATE!!!
+\newcounter{endDatum}
+\newcommand{\SperrvermerkDate}[1]{%
+	\ifthenelse{#1 > 5}%
+	{%
+		\setcounter{endDatum}{5+ \year}%
+	}%
+	{%
+		\setcounter{endDatum}{#1 + \year}%
+	}%
+	10.\leadingzero{\month}.\theendDatum%
+}%
+
+\newcommand{\getLanguage}{deutsch}
+%
+% get the language and rename tables and figures
+%
+\newcommand{\setLanguage}[1]{
+	\renewcommand{\getLanguage}{#1}
+}
+%
+% a few commands used to control author, etc., ...
+%
+\newcommand{\getThesistype}{Bachelorarbeit\xspace}
+\newcommand{\setThesistype}[1]{\renewcommand{\getThesistype}{#1\xspace}}
+\newcommand{\getDegree}{Bachelor of Science}
+\newcommand{\getSubject}{Leadership \& Communication\xspace}
+\newcommand{\setSubject}[1]{\renewcommand{\getSubject}{#1\xspace}}
+\newcommand{\setDegree}[1]{%
+	\renewcommand{\getDegree}{#1}%
+	\IfSubStr{\getDegree}{Master}{\def\studyType{MEM}}{\def\studyType{MEB}}%
+}
+\newcommand{\getStudyprogram}{Mechatronics Master\xspace}
+\newcommand{\setStudyprogram}[1]{\renewcommand{\getStudyprogram}{#1\xspace}}
+\newcommand{\getAuthor}{AUTHOR\xspace}
+\newcommand{\setAuthor}[1]{\renewcommand{\getAuthor}{%
+	\ifx\authorTitleBefore\undefined\else\authorTitleBefore\fi%
+	#1%
+	\ifx\authorTitleAfter\undefined%
+	\else%
+	,~\authorTitleAfter%
+	\fi\xspace}%
+}
+\newcommand{\getAuthorId}{\begin{flushleft}\noindent12345\xspace\end{flushleft}}
+\newcommand{\setAuthorId}[1]{\renewcommand{\getAuthorId}{\begin{flushleft}\noindent#1\xspace\end{flushleft}}}
+\newcommand{\getSupervisor}{1234\xspace}
+\newcommand{\setSupervisor}[1]{\renewcommand{\getSupervisor}{%
+	\ifx\supervisorTitleBefore\undefined\else\supervisorTitleBefore\fi%
+	#1%
+	\ifx\supervisorTitleAfter\undefined\else%
+	,~\supervisorTitleAfter%
+	\fi\xspace}%
+}
+\newcommand{\getSupervisorCompany}{1234\xspace}
+\newcommand{\setSupervisorCompany}[1]{\renewcommand{\getSupervisorCompany}{#1\xspace}}
+\newcommand{\getCompany}{Company Name GmbH\xspace}
+\newcommand{\setCompany}[1]{\renewcommand{\getCompany}{#1\xspace}}
+\newcommand{\getTitle}{TITLE\xspace}
+\newcommand{\setTitle}[1]{\renewcommand{\getTitle}{#1\xspace}}
+\newcommand{\getSubtitle}{Seminararbeit\xspace}
+\newcommand{\setSubtitle}[1]{\renewcommand{\getSubtitle}{#1\xspace}}
+\newcommand{\getInstituteLocation}
+{
+	\ifthenelse{\equal{\getLanguage}{english}}
+	{%
+		Dornbirn, Austria%
+	}{%
+		Dornbirn, Österreich%
+	}
+}
+\newcommand{\setInstituteLocation}[1]{\renewcommand{\getInstituteLocation}{#1}}
+\newcommand{\getInstituteGraphic}{\includegraphics[width = 0.6\textwidth]{./img/TitlePage/fhvLogo_neu.eps}}
+\newcommand{\setInstituteGraphic}[1]{\renewcommand{\getInstituteGraphic}{#1}}
+%
+\newcommand{\statuoryDeclaration}
+{%
+\begin{envMode}[\thesis]
+	\begin{envLanguage}[english]
+		\chapter*{Statement of Affirmation}
+		I hereby declare that this thesis was in all parts exclusively prepared on my own, without using other resources than those stated. The thoughts taken directly or indirectly from external sources are properly marked as such. This thesis or parts of it were not previously submitted to another academic institution and have also not yet been published.
+	\end{envLanguage}
+	%
+	\begin{envLanguage}[ngerman]
+		\chapter*{Eidesstattliche Erklärung}
+		Ich erkläre hiermit ehrenwörtlich, dass ich die vorliegende Masterthesis selbstständig angefertigt habe. Die aus fremden Quellen direkt oder indirekt übernommenen Gedanken sind als solche kenntlich gemacht. Die Arbeit wurde bisher keiner anderen Prüfungsbehörde vorgelegt und auch noch nicht veröffentlicht.
+	\end{envLanguage}%
+	%
+	\par\vspace{3cm}%
+	%
+	\begin{minipage}[t]{0.5\columnwidth}%
+		\begin{envLanguage}[english]%
+			Dornbirn, \todayX%
+		\end{envLanguage}%
+		\begin{envLanguage}[ngerman]%
+			Dornbirn, am \todayX%
+		\end{envLanguage}%
+	\end{minipage}\hspace{-\parfillskip}%
+	\begin{minipage}[t][][t]{0.5\columnwidth}%
+		\begin{flushright}%
+			\getAuthor%
+		\end{flushright}%
+	\end{minipage}\hspace{-\parfillskip}%
+\end{envMode}%
+}
+%
+\ifthenelse{\equal{\wOrM}{m}}
+	{
+		\def\VerfasserA{dem Verfasser\xspace}
+		\def\VerfasserB{des Verfassers\xspace}
+	}
+	{
+		\def\VerfasserA{der Verfasserin\xspace}
+		\def\VerfasserB{der Verfasserin\xspace}
+	}
+
+\newcommand{\newGlossaryEntryNEW}[4]
+{
+	\newacronym[description={\glslink{#2}{#3}}]
+	{#1}{#2}{#3}
+	\newglossaryentry{#2}{name=\glslink{#1}{#3},
+	text={#3},
+	description={#4},
+	sort={#3}}
+}
+
+\newcommand{\addAppendix}[1]
+{
+	\captionsetup{listof=false}
+	\ifthenelse{\equal{\getLanguage}{english}}
+	{%
+	}{%
+		\renewcommand\appendixtocname{Anhang}
+		\renewcommand\appendixpagename{Anhang}
+	}%
+	\phantomsection
+	\clearpage
+	\addappheadtotoc
+	\appendix
+	\appendixpage
+	#1
+}
+%
+\newcommand{\fhvlists}{
+	% add table of contents
+	\citetrackerfalse\pagetrackerfalse\backtrackerfalse
+	\tableofcontents
+	%
+	\iftotalfigures
+		\newpage
+		\listoffigures
+	\fi
+	%
+	\iftotaltables
+		\newpage
+		\listoftables
+	\fi
+	%
+	\iftotallstlistings
+		\cleardoublepage
+		\phantomsection
+		\newpage
+		%\addcontentsline{toc}{chapter}{\lstlistlistingname}
+		\lstlistoflistings
+	\fi
+	\iftotalalgocfs
+		\cleardoublepage
+		\phantomsection
+		\newpage
+		\addcontentsline{toc}{chapter}{\listalgorithmcfname}
+		\listofalgorithms
+	\fi
+	\newpage
+	%\setlength\parskip{\bigskipamount}
+	\citetrackertrue\pagetrackertrue\backtrackertrue
+	% start arabic page numbering from here
+	\pagenumbering{arabic}
+}
+
+\newcommand{\glossaryAndBibliography}{
+	\ifthenelse{\equal{\FHVmode}{\documentation} \or \equal{\FHVmode}{\thesis} \or \equal{\FHVmode}{\summary}}{
+	% Anything following the further research must not have a chapternumber
+%	\renewcommand{\chaptername}{}
+%	\renewcommand{\thechapter}{}
+	%
+	% Glossary
+	\makeatletter
+		\renewenvironment{theglossary}%
+			{\begin{longtable}{@{}l p{\glsdescwidth}@{}}}%
+			{\end{longtable}}
+	\makeatother
+	\setlength{\glsdescwidth}{0.75\textwidth}
+	\ifthenelse{\equal{\getLanguage}{english}} % prints just the list of acronyms
+		{\printglossary[type=\acronymtype]}
+		{\printglossary[type=\acronymtype, title=Abkürzungsverzeichnis]}
+	%
+	\ifthenelse{\equal{\getLanguage}{english}} % prints just the list of acronyms
+		{\printglossary}
+		{\printglossary[title=Glossar]} % if no option is supplied the default glossary is printed.
+	}{}
+	%
+	\ifthenelse{\equal{\getLanguage}{english}}%
+	{%
+		\printbibliography[notkeyword=normen,heading=bibintoc]
+	}{%
+		\printbibliography[notkeyword=normen,title={Literaturverzeichnis},heading=bibintoc]
+	}
+	%
+	\ifthenelse{\equal{\getLanguage}{english}}%
+	{%
+		\printbibliography[keyword=normen,title={IEEE}, heading=bibintoc]
+	}{%
+		\printbibliography[keyword=normen,title={IEEE Standardverzeichnis}, heading=bibintoc]
+	}%
+}
+%
+\usepackage{xparse}
+\DeclareDocumentCommand{\newdualentry}{ O{} O{} m m m m } {
+	\newglossaryentry{gls-#3}{name={#5},text={#5\glsadd{#3}},
+	description={#6},#1
+	}
+	\makeglossaries
+	\newacronym[see={gls-#3},#2]{#3}{#4}{#5\glsadd{gls-#3}}
+}
+%
+\newcommand{\maketitleMinimal}{
+	\newgeometry{
+		left= 3.5cm,
+		top=2.5cm,
+		bottom=4.cm,
+		textwidth = 398pt,
+		headsep=1.0cm,
+		footskip = 1.cm,
+		bindingoffset = \ValueBindingOffset
+	}
+	\begin{titlepage}
+		\begin{flushleft}%
+			\vspace{1.25cm}%
+			%
+			%Title
+			\vspace{0.4cm}%
+			{\setstretch{2}\textsc{\Huge \bfseries \getTitle}\par}%
+			\ifthenelse{\equal{\getSubtitle}{\xspace}}{
+				%
+			}{%
+				\par%
+				{\setstretch{2}\textsc{\Large \getSubtitle}\par}%
+			}\par%
+			%
+			\vspace{15.5cm}%
+			\noindent\textsc{\Large\getSupervisorCompany}\par
+			%
+			\textsc{\Large\getAuthor}% 
+			\vspace{.5cm}%
+			%
+			% Bottom of the page
+			\textsc
+			{
+				\begin{flushleft}\noindent Feldkirch, \todayX\end{flushleft}
+				\begin{flushleft}\version\end{flushleft}
+			}
+			%
+		\end{flushleft}
+	\end{titlepage}
+	%
+	\newpage
+	%
+	\pagenumbering{arabic}
+	\setcounter{page}{2}
+}
+%
+\newcommand{\maketitleThesis}{
+	\newgeometry{
+		left= 3.5cm,
+		top=2.cm,
+		bottom=3.5cm,
+		textwidth = 398pt,
+		headsep=1.0cm,
+		footskip = 1.cm,
+		bindingoffset = \ValueBindingOffset
+	}
+	\begin{titlepage}
+		\begin{flushright}
+			% Upper part of the page. The '~' is needed because \\
+			% only works if a paragraph has started.
+			\textsc~\getInstituteGraphic
+		\end{flushright}%
+		\begin{flushleft}%
+			\vspace{1cm}%
+			%
+			%Title
+			\hrule%
+			\vspace{0.4cm}%
+			{\setstretch{2}\textsc{\Huge \bfseries \getTitle}\par}%
+			\ifthenelse{\equal{\getSubtitle}{\xspace}}{
+				%
+			}{%
+				\par%
+				{\setstretch{2}\textsc{\Large \getSubtitle}\par}%
+			}%
+			\vspace{0.625cm}%
+			\hrule%
+			%
+			\vspace{0.8cm}
+			%
+			\textsc{\getThesistype}\par
+			%
+			\textsc{\ifthenelse{\equal{\getLanguage}{english}}
+				{Submitted in Fulfillment of the Degree}
+				{zur Erlangung des akademischen Grades}
+			}\par
+			%
+			\vspace{0.5cm}
+			\textsc{\Large \getDegree}
+			
+			\vspace{1.2cm}
+			\textsc{\ifthenelse{\equal{\getLanguage}{english}}
+				{Vorarlberg University of Applied Sciences}
+				{Fachhochschule Vorarlberg}
+			}\par
+			%
+			\textsc{\getStudyprogram}\par
+			%
+			\vspace{0.3cm}
+			%
+			% Author and supervisor
+			\textsc{%
+				\ifthenelse{\equal{\getLanguage}{english}}%
+				{\begin{flushleft}\noindent Support Vorarlberg University of Applied Sciences\end{flushleft}}%
+				{\begin{flushleft}\noindent Betreuung Fachhochschule Vorarlberg\end{flushleft}}%
+			}\par
+			%
+			\noindent\textsc{\Large\getSupervisor}\par
+			%
+			\vspace{0.5cm}
+			
+			\vspace{0.5cm}%
+			%
+			\textsc{\ifthenelse{\equal{\getLanguage}{english}}%
+				{\begin{flushleft}\noindent Handed in by\end{flushleft}}%
+				{\begin{flushleft}\noindent Vorgelegt von\end{flushleft}}%
+			}\par
+			%
+			\textsc{\Large\getAuthor}% 
+			\getAuthorId%
+			\vspace{0.5cm}%
+			%
+			% Bottom of the page
+			\textsc
+			{
+				\begin{flushleft}\noindent Dornbirn, \todayX\end{flushleft}
+			}
+			%
+		\end{flushleft}
+	\end{titlepage}
+	%
+	\newpage
+	%
+	\pagenumbering{arabic}
+	\setcounter{page}{2}
+}
+%
+\newcommand{\maketitleThesisFHV}{
+	\newgeometry{
+		left= 3.5cm,
+		top=2.8cm,
+		bottom=3.5cm,
+		textwidth = 398pt,
+		headsep=1.0cm,
+		footskip = 1.cm,
+		bindingoffset = \ValueBindingOffset
+	}
+	\begin{titlepage}
+		\def\edgeSpace{2.5cm}
+		\begin{tikzpicture}[remember picture, overlay]
+		\draw[line width = 1pt] ($(current page.north west) + (\edgeSpace,-\edgeSpace)$) rectangle ($(current page.south east) + (-\edgeSpace,\edgeSpace)$);
+		\end{tikzpicture}
+		\begin{center}
+			\Large{
+			FH Vorarlberg\\
+			Vorarlberg University of Applied Sciences\par
+			%
+			\vspace{1.75cm}
+			%
+			\getTitle\par
+			\ifthenelse{\equal{\getSubtitle}{\xspace}}{}{%
+				\getSubtitle\par
+			}
+			%
+			\vspace{1.75cm}
+			%
+			\getStudyprogram\par
+			%
+			\vspace{2cm}
+			%
+			\begin{envLanguage}[english]
+				\getThesistype for obtaining the academic degree
+			\end{envLanguage}
+			\begin{envLanguage}[ngerman]
+				\getThesistype zur Erlangung des akademischen Grades
+			\end{envLanguage}
+			\par
+			%
+			\vspace{0.5cm}
+			%
+			\getDegree\par
+			%
+			\vspace{1cm}
+			%
+			\begin{envLanguage}[english]
+				Dornbirn,
+			\end{envLanguage}
+			\begin{envLanguage}[ngerman]
+				Dornbirn, den
+			\end{envLanguage}
+			\todayX\par
+			%
+			\vspace{1cm}
+			%
+			\begin{envLanguage}[english]
+				Created by
+			\end{envLanguage}
+			\begin{envLanguage}[ngerman]
+				Erarbeitet von
+			\end{envLanguage}
+			\par
+			\getAuthor\par
+			%
+			\vspace{1cm}
+			%
+			\begin{envLanguage}[english]
+				Maintained by
+			\end{envLanguage}
+			\begin{envLanguage}[ngerman]
+				Betreut von
+			\end{envLanguage}
+			\par
+			\getSupervisor\par
+			%
+			\vspace{1cm}
+			%
+			\begin{envLanguage}[english]
+				Conducted by
+			\end{envLanguage}%
+			\begin{envLanguage}[ngerman]
+				Durchgeführt bei
+			\end{envLanguage}%
+			\par
+			\getCompany\\
+			\getSupervisorCompany
+			}
+		\end{center}%
+	\end{titlepage}
+	%
+	\newpage
+	%
+	\pagenumbering{arabic}
+	\setcounter{page}{2}
+}
+%
+\newcommand{\maketitleReport}{
+	\newgeometry{
+		left= 3.5cm,
+		top=2.5cm,
+		bottom=4.cm,
+		textwidth = 398pt,
+		headsep=1.0cm,%
+		footskip = 1.cm,
+		bindingoffset = \ValueBindingOffset
+	}
+	%\linespread{0.5}
+	\begin{titlepage}
+		\begin{flushright}
+			% Upper part of the page. The '~' is needed because \\
+			% only works if a paragraph has started.
+			\textsc~\getInstituteGraphic
+		\end{flushright}%
+		\begin{flushleft}%
+			\vspace{1.25cm}%
+			%
+			%Title
+			\hrule%
+			\vspace{0.4cm}%
+			{\setstretch{2}\textsc{\Huge \bfseries \getTitle}\par}%
+			\ifthenelse{\equal{\getSubtitle}{\xspace}}{
+			%
+			}{%
+				\par%
+				{\setstretch{2}\textsc{\Large \getSubtitle}\par}%
+			}%
+			\vspace{0.625cm}%
+			\hrule%
+			%
+			\vspace{2cm}
+			%
+			\ifthenelse{\equal{\getSubject}{\xspace}}{}{
+				\textsc{\ifthenelse{\equal{\getLanguage}{english}}
+				{\textbf{\getSubject}}
+				{\textbf{\getSubject}}
+			}\par}
+			%
+			\vspace{0.25cm}
+			%
+			\textsc{\ifthenelse{\equal{\getLanguage}{english}}
+				{Vorarlberg University of Applied Sciences}
+				{Fachhochschule Vorarlberg}
+			}\par
+			%
+			\textsc{\getStudyprogram}\par
+			%
+			\vspace{0.5cm}
+			%
+			% Author and supervisor
+			\textsc{%
+				\ifthenelse{\equal{\getLanguage}{english}}%
+				{\begin{flushleft}\noindent Submitted to\end{flushleft}}%
+				{\begin{flushleft}\noindent Eingereicht bei\end{flushleft}}%
+			}%
+			%
+			\noindent\textsc{\Large\getSupervisor}\par
+			%
+			\vspace{0.5cm}%
+			%
+			\textsc{\ifthenelse{\equal{\getLanguage}{english}}%
+				{\begin{flushleft}\noindent Handed in by\end{flushleft}}%
+				{\begin{flushleft}\noindent Vorgelegt von\end{flushleft}}%
+			}%
+			%
+			\noindent\textsc{\Large\getAuthor}% 
+			\vspace{1cm}%
+			%
+			% Bottom of the page
+			\textsc
+			{
+				\begin{flushleft}\noindent Dornbirn, \todayX\end{flushleft}
+			}
+			%
+		\end{flushleft}
+	\end{titlepage}
+	%
+	\newpage
+	%
+	\pagenumbering{arabic}
+	\setcounter{page}{2}
+}
+\newcommand{\maketitlePaper}{
+	\pagenumbering{Roman} 
+	\begin{titlepage}
+		\thispagestyle{scrheadings}
+		\ifx\paperName\undefined%
+		\else%
+		\large \noindent \paperName%
+		\vskip 10pt%
+		\fi%
+		\begin{center}
+			\textbf{%
+				\Large{%
+					\ifx\paperName\undefined%
+					\else%
+					FACHHOCHSCHULE VORARLBERG: \\%
+					\fi%
+					\MakeUppercase{\getTitle}}}%\\
+			\vskip 10pt
+			\textbf{%
+				\large{\authorName \authorSurname}%
+			}%
+		\end{center}%
+		\ifx\paperName\undefined%
+		\vskip 10pt%
+		\else%
+		\vskip 20pt%
+		\fi
+	\end{titlepage}
+	\normalfont\normalsize%
+}
+\renewcommand{\maketitle}{
+	\hypersetup{pageanchor=false}
+	\ifx\FHVmode\paper
+		\twocolumn[{%
+			\begin{@twocolumnfalse}
+				\maketitlePaper
+			\end{@twocolumnfalse}
+		}]
+		\pagenumbering{arabic}
+	\else
+		\ifx\FHVtitlePage\undefined
+			\ifthenelse{\equal{\FHVmode}{\thesis}}{
+				\maketitleThesis%
+			}{%
+				\maketitleReport
+			}%
+		\else
+			\ifthenelse{\equal{\FHVtitlePage}{fhv}}{%
+				\maketitleThesisFHV
+			}{}
+			\ifthenelse{\equal{\FHVtitlePage}{minimal}}{%
+				\maketitleMinimal
+			}{}%
+		\fi
+		\restoregeometry
+	\fi
+}

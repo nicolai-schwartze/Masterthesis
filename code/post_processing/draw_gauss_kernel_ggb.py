@@ -45,7 +45,7 @@ def draw_gauss_kernel(parameter, ggb_file):
         
         # write o, g, cx, cy
         print("modifying geogebra.xml")
-        for element in root[8].iter('expression'):
+        for element in root.findall('construction')[0].iter('expression'):
             if element.attrib['label'] == 'o_{approx}':
                 element.attrib['exp'] = nparrayToggblist(o)
             if element.attrib['label'] == 'g_{approx}':
@@ -55,7 +55,7 @@ def draw_gauss_kernel(parameter, ggb_file):
             if element.attrib['label'] == 'cy_{approx}':
                 element.attrib['exp'] = nparrayToggblist(cy)
         # adapt length of sum
-        for element in root[8].iter('command'):
+        for element in root.findall('construction')[0].iter('command'):
             for subelement in element:
                 for cmd in subelement.iter('input'):
                     if 'approx' in cmd.attrib['a0']:

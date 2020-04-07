@@ -12,21 +12,46 @@ from scipy.stats import cauchy
 
 def SHADE(population, p, H, function, minError, maxGeneration):
     '''
-    input: 
-    population    - 2D numpy array where lines are candidates and colums is the dimension
-    p             - percentage of best individuals for current-to-p-best mutation
-    H             - size of the memory
-    minError      - stopping condition on function value
-    maxGeneration - stopping condition on max number of generation
-    
-    output: 
-    tupel[1] - popDynamic
-    tupel[2] - FEDynamic
-    tupel[3] - FDynamic
-    tupel[4] - CRDynamic
-    
-    based on: Success-History Based Parameter Adaptation for Differential Evolution 
+    implementation of SHADE based on: \n
+    Success-History Based Parameter Adaptation for Differential Evolution \n
     by Tanabe and Fukunaga
+    
+    Parameters
+    ----------
+    population : numpy array 
+        2D numpy array where lines are candidates and colums is the dimension
+    p : float 
+        percentage of best individuals for current-to-p-best mutation
+    H : int 
+        size of the memory
+    minError : float 
+        stopping condition on function value
+    function : function
+        fitness function that is optimised
+    maxGeneration : int 
+        stopping condition on max number of generation
+    
+    Returns
+    -------
+    history : tuple
+        tupel[1] - popDynamic
+        tupel[2] - FEDynamic
+        tupel[3] - FDynamic
+        tupel[4] - CRDynamic
+    
+    Examples
+    --------
+    >>> import numpy as np
+    >>> def sphere(x):
+            return np.dot(x,x)
+    >>> maxError = -1*np.inf
+    >>> maxGen = 10**3
+    >>> H = 50
+    >>> population = 100*np.random.rand(50,2)
+    >>> p = 0.1
+    >>> (popDynamic, FEDynamic, FDynamic, CRDynamic) = 
+        SHADE(population, p, H, sphere, maxError, maxGen)
+    
     '''
     # initialisation of variables 
     populationSize, dimension = population.shape

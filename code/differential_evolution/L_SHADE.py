@@ -11,25 +11,53 @@ import time
 from scipy.stats import cauchy
 
 def L_SHADE(population, p, H, function, minError, maxGeneration):
-    '''
-    input: 
-    population    - 2D numpy array where lines are candidates and colums is the dimension
-    p             - percentage of best individuals for current-to-p-best mutation
-    H             - size of the memory
-    minError      - stopping condition on function value
-    maxGeneration - stopping condition on max number of generation
-    
-    output: 
-    tupel[1] - popDynamic
-    tupel[2] - FEDynamic
-    tupel[3] - FDynamic
-    tupel[4] - CRDynamic 
-    
-    based on: Improving the Search Performance of SHADE Using Linear Population Size Reduction 
-    by Tanabe and Fukunaga
+    ''' 
+    implementation of L-SHADE based on: \n
+    Improving the Search Performance of SHADE Using Linear Population Size Reduction\n 
+    by Tanabe and Fukunaga\n
     adaptions: 
         * no constraint handling implemented 
-        * population size reduction based on generation insteas of function evaluation
+        * population size reduction based on generation insteas of function evaluation 
+    
+    
+    Parameters
+    ----------
+    population : numpy array
+        2D numpy array where lines are candidates and colums is the dimension
+        
+    p : float ]0,1]
+        percentage of best individuals for current-to-p-best mutation
+    H : int 
+        size of the memory
+    function : function
+        fitness function that is optimised
+    minError : float 
+        stopping condition on function value
+    maxGeneration : int 
+        stopping condition on max number of generation
+    
+    Returns
+    -------
+    history : tuple
+        tupel[1] - popDynamic\n
+        tupel[2] - FEDynamic\n
+        tupel[3] - FDynamic\n
+        tupel[4] - CRDynamic\n
+    
+    Examples
+    --------
+    >>> import numpy as np
+    >>> def sphere(x):
+            return np.dot(x,x)
+    >>> maxError = -1*np.inf
+    >>> maxGen = 10**3
+    >>> H = 50
+    >>> population = 100*np.random.rand(50,2)
+    >>> p = 0.1
+    >>> (popDynamic, FEDynamic, FDynamic, CRDynamic) = 
+        L_SHADE(population, p, H, sphere, maxError, maxGen)
+    
+    
     
     '''
     # initialisation of variables 

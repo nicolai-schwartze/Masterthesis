@@ -12,20 +12,46 @@ from scipy.stats import cauchy
 
 def JADE(population, p, c, function, minError, maxGeneration):
     '''
-    input: 
-    population    - 2D numpy array where lines are candidates and colums is the dimension
-    p             - percentage of best individuals for current-to-p-best mutation
-    c             - value for calculating the new muF and muCE, [0, 1]
-    minError      - stopping condition on function value
-    maxGeneration - stopping condition on max number of generation
-    
-    output: 
-    tupel[1] - popDynamic
-    tupel[2] - FEDynamic
-    tupel[3] - FDynamic
-    tupel[4] - CRDynamic
-    based on: JADE: Adaptive Differential Evolution with Optional External Archiv
+    implementation of JADE based on: \n
+    JADE: Adaptive Differential Evolution with Optional External Archiv \n
     by Zhang and Sanderson
+    
+    Parameters
+    ----------
+    population : numpy array
+        2D numpy array where lines are candidates and colums is the dimension
+    p : float 
+        ]0,1] percentage of best individuals for current-to-p-best mutation
+    c : float 
+        [0, 1]value for calculating the new muF and muCE
+    function : function
+        fitness function that is optimised
+    minError : float 
+        stopping condition on function value
+    maxGeneration : float
+        stopping condition on max number of generation
+    
+    Returns
+    -------
+    history : tuple
+        tupel[1] - popDynamic
+        tupel[2] - FEDynamic
+        tupel[3] - FDynamic
+        tupel[4] - CRDynamic
+        
+    Examples
+    --------
+    >>> import numpy as np
+    >>> def sphere(x):
+            return np.dot(x,x)
+    >>> maxError = -1*np.inf
+    >>> maxGen = 10**3
+    >>> c = 0.5
+    >>> population = 100*np.random.rand(50,2)
+    >>> p = 0.1
+    >>> (popDynamic, FEDynamic, FDynamic, CRDynamic) = 
+        JADE(population, p, c, sphere, maxError, maxGen)
+    
     '''
     # initialisation of variables 
     populationSize, dimension = population.shape

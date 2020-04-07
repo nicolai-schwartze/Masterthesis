@@ -1,6 +1,49 @@
 \documentclass[./\jobname.tex]{subfiles}
 \begin{document}
-\chapter{Experiment Results}
+\chapter{Experiments}
+
+\section{Experimental Setup}
+
+\subsection{Testbed}
+The testbed is a collection of multiple different 2-dimensional scalar \gls{pde}s that are analytically solved such that $u(\mathbf{x}): \mathbf{R}^2 \rightarrow \mathbf{R}$ is a solution to the underlaying PDE. These can be used to demonstrate the correct implementation of a solver. The testbed can also be used to compare the performance of the classical \gls{fem} solver (NGSolve) with the \gls{ci} solver. The following table \ref{tab:testbed} show the 16 problems used in all further experiments. The equations PDE 1 through PDE 15 are taken from the National Institute of Standards and Technology (NIST) website (\cite{mitchell_nist_2018}) that provides benchmarking problems for FEM slovers with adaptive mesh refinement methods.
+
+\begin{table}[h]
+	\centering
+	\noindent\adjustbox{max width=\linewidth}{
+		\begin{tabular}{|c|c|c|c|c|c|}
+			
+			\hline
+			\rowcolor[HTML]{\farbeTabA}
+			
+			Name & PDE & Domain & Parameter & Solution & Note\\ \hline
+			PDE 0 & & $x_0, x_1 \in [-1, 1]$ & N/A &  & \multilinecell{sum of gaussian kernels: \\ the analytical solution can be approximated \\ arbitrarily close with 5 kernels} \\ \hline
+			\multilinecell{PDE 1: \\ Sine Bump 2D} & & & & & \\ \hline
+			\multilinecell{PDE 2: \\ Polynomial 2D} & & & & & \\ \hline
+			\multilinecell{PDE 3: \\ Peak 2D } & & & & & \\ \hline
+			\multilinecell{PDE 4: \\ Oscillatory 2D} & & & & & \\ \hline
+			\multilinecell{PDE 5: \\ Moving Circular Wave Front} & & & & & \\ \hline
+			\multilinecell{PDE 6: \\ Arctan Circular Wave Front} & & & & & \\ \hline
+			\multilinecell{PDE 7: \\ Arctan Wave Front Homogeneous \\ Boundary Conditions 2D} & & & & & \\ \hline
+			\multilinecell{PDE 8: \\ Boundary Layer 2D} & & & & & \\ \hline
+			\multilinecell{PDE 9: \\ Boundary Line Singularity} & & & & & \\ \hline
+			\multilinecell{PDE 10: \\ Interior Line Singularity} & & & & & \\ \hline
+			\multilinecell{PDE 11: \\ Intersecting Interfaces} & & & & & \\ \hline
+			\multilinecell{PDE 12: \\ L-shaped Domain} & & & & & \\ \hline
+			\multilinecell{PDE 13: \\ L-shaped Domain Homogeneous \\ Boundary Conditions} & & & & & \\ \hline
+			\multilinecell{PDE 14: \\ L-shaped Domain \\ Mixed Boundary Conditions} & & & & & \\ \hline
+			\multilinecell{PDE 15: \\ Reentrant Corner} & & & & & \\ \hline
+			
+			
+			
+			
+		\end{tabular}
+	}
+	\unterschrift{Definition of a testbed to show the convergence towards an analytical solution and comparing different solvers numerically.}{}{}
+	\label{tab:testbed}
+\end{table}
+
+
+\subsection{Quality Measure}
 
 \section {Experiment 1}
 

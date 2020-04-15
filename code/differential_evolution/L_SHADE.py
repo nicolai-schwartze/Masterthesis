@@ -22,23 +22,23 @@ def L_SHADE(population, p, H, function, minError, maxGeneration):
     
     Parameters
     ----------
-    population : numpy array
+    population: numpy array
         2D numpy array where lines are candidates and colums is the dimension
         
-    p : float ]0,1]
+    p: float ]0,1]
         percentage of best individuals for current-to-p-best mutation
-    H : int 
+    H: int 
         size of the memory
-    function : function
+    function: function
         fitness function that is optimised
-    minError : float 
+    minError: float 
         stopping condition on function value
-    maxGeneration : int 
+    maxGeneration: int 
         stopping condition on max number of generation
     
     Returns
     -------
-    history : tuple
+    history: tuple
         tupel[1] - popDynamic\n
         tupel[2] - FEDynamic\n
         tupel[3] - FDynamic\n

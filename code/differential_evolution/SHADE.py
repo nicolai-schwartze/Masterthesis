@@ -18,22 +18,22 @@ def SHADE(population, p, H, function, minError, maxGeneration):
     
     Parameters
     ----------
-    population : numpy array 
+    population: numpy array 
         2D numpy array where lines are candidates and colums is the dimension
-    p : float 
+    p: float 
         percentage of best individuals for current-to-p-best mutation
-    H : int 
+    H: int 
         size of the memory
-    minError : float 
+    minError: float 
         stopping condition on function value
-    function : function
+    function: function
         fitness function that is optimised
-    maxGeneration : int 
+    maxGeneration: int 
         stopping condition on max number of generation
     
     Returns
     -------
-    history : tuple
+    history: tuple
         tupel[1] - popDynamic
         tupel[2] - FEDynamic
         tupel[3] - FDynamic

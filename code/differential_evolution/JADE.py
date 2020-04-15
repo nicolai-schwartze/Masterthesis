@@ -18,22 +18,22 @@ def JADE(population, p, c, function, minError, maxGeneration):
     
     Parameters
     ----------
-    population : numpy array
+    population: numpy array
         2D numpy array where lines are candidates and colums is the dimension
-    p : float 
+    p: float 
         ]0,1] percentage of best individuals for current-to-p-best mutation
-    c : float 
+    c: float 
         [0, 1]value for calculating the new muF and muCE
-    function : function
+    function: function
         fitness function that is optimised
-    minError : float 
+    minError: float 
         stopping condition on function value
-    maxGeneration : float
+    maxGeneration: float
         stopping condition on max number of generation
     
     Returns
     -------
-    history : tuple
+    history: tuple
         tupel[1] - popDynamic
         tupel[2] - FEDynamic
         tupel[3] - FDynamic

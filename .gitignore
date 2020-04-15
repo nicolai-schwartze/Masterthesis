@@ -1,0 +1,3 @@
+# ignore prebuilt python cach files
+*.pyc
+__pycache__/

@@ -6,7 +6,7 @@
 This chapter provides an overview of the current state of the art in solving \gls{pde}. Included are the widely used \gls{fem} as well as heuristic optimisation methods. Further, an introduction to the \gls{de} framework is given, which provides the basis for the algorithm described in this thesis. 
 
 \section{Finite Element Method}
-Currently the finite element method is the go-to approach to solve partial differential equations. The domain $\Omega$ on which the \gls{pde} is posed, is discretised into multiple smaller elements - as the name suggests. Thus, \gls{fem} counts to the category of meshed methods. The underlying solution function $u(\mathbf{x})$ to the PDE is then approximated by so called ``basis-functions'' $\Phi(\mathbf{x})$ limited to these test functions. This thesis uses the open-source Netgen/NGSolve FEM package (\cite{schoberl_ngsolvengsolve_2020}). 
+Currently the finite element method is the go-to approach to solve partial differential equations. The domain $\Omega$ on which the \gls{pde} is posed, is discretised into multiple smaller elements - as the name suggests. Thus, \gls{fem} counts to the category of meshed methods. The underlying solution function $u(\mathbf{x})$ to the PDE is then approximated by so called ``basis-functions'' $\Phi(\mathbf{x})$ limited to these finite elements. This thesis uses the open-source Netgen/NGSolve FEM package (\cite{schoberl_ngsolvengsolve_2020}). 
 
 The general steps taken to solve a PDE with an FEM solver are: 
 \begin{itemize}
@@ -27,11 +27,11 @@ The general steps taken to solve a PDE with an FEM solver are:
 			      + \int_{\Omega} c u(\mathbf{x}) v(\mathbf{x}) dV = \int_{\Omega} f(\mathbf{x}) v(\mathbf{x}) dV
 			  \end{split}
 		  \end{equation}
-		  In this equation, the $A$, $b$ and $c$ correspond to the constant factors of the derivatives in strong form. 
+		  In this equation, the $A$, $b$ and $c$ correspond to the constant factors of the derivatives in strong form, where they are hidden in the differential operator $\mathbf{L}$.
 	\item \underline{Discretisation} of $\Omega$ \\
-		  Create a mesh of finite elements that span the whole domain. Usually these are triangles. 
+		  Create a mesh of finite elements that span the whole domain. Usually these are triangles. Thus, this step is sometimes called ``triangulation''.
 	\item \underline{Basis functions} \\
-		  Choose a basis function $\Phi(\mathbf{x})$ that can be used to approximate the solution $u(\mathbf{x}) \approx u_{h}(\mathbf{x}) = \sum_{i = 1}^{N} u_i \Phi(\mathbf{x})$. A common choice are linear basis functions. 
+		  Choose a basis function $\Phi(\mathbf{x})$ that can be used to approximate the solution $u(\mathbf{x}) \approx u_{h}(\mathbf{x}) = \sum_{i = 1}^{N} u_i \Phi(\mathbf{x})$. A common choice are Lagrange polynomials. 
 	\item \underline{Solution} \\
 		  Solve the resulting linear system of equations to determine the factors $u_i$. In the simple case where only second order derivatives are used in the strong from, the resulting linear system looks like this: 
 		  \begin{equation}
@@ -54,7 +54,7 @@ Modern solvers include more complex and advanced techniques to further improve t
 		  	\item Estimate Error (for every element)
 		  	\item Mark Elements (that have the greatest error)
 		  	\item Refine Elements (that were previously marked)
-		  	\item $\circlearrowleft$  until degrees of freedom exceed a specified $N$
+		  	\item $\mathbf{\circlearrowleft}$  until degrees of freedom exceed a specified $N$
 		  \end{itemize}
 	\item \underline{Preconditioner}: \\
 		  Instead of solving the $\mathbf{A}^{-1}$ exactly, this can also be approximated by a matrix that is similar to $\mathbf{A}^{-1}$. The actual invers can be iteratively approximated. NGSolve implements multiple different preconditioners and it even allows to create your own method. 
@@ -189,7 +189,7 @@ The main \gls{de} framework consists of three necessary steps, that continuously
 		  \end{equation}
 	\item \underline{selection}: \\
 		  population size N;\\
-		  replace the old candidate $x_i$ if the trail candidate $u_i$ is better (according to the fitness function);
+		  replace the old candidate $x_i$ if the trail candidate $u_i$ is better (according to the fitness function); this is performed for every individual in the population;
 \end{itemize}  
 
 In modern \gls{de} variants, these parameters are self-adapted during the evolutionary process. This means that the algorithms can balance out between exploration of the search-space and exploitation of promising locations. 

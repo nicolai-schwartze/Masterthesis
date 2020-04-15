@@ -5,42 +5,105 @@
 \section{Experimental Setup}
 
 \subsection{Testbed}
-The testbed is a collection of multiple different 2-dimensional scalar \gls{pde}s that are analytically solved such that $u(\mathbf{x}): \mathbf{R}^2 \rightarrow \mathbf{R}$ is a solution to the underlaying PDE. These can be used to demonstrate the correct implementation of a solver. The testbed can also be used to compare the performance of the classical \gls{fem} solver (NGSolve) with the \gls{ci} solver. The following table \ref{tab:testbed} show the 16 problems used in all further experiments. The equations PDE 1 through PDE 15 are taken from the National Institute of Standards and Technology (NIST) website (\cite{mitchell_nist_2018}) that provides benchmarking problems for FEM slovers with adaptive mesh refinement methods.
+The testbed is a collection of multiple different 2-dimensional scalar \gls{pde}s that are analytically solved such that $u(\mathbf{x}): \mathbf{R}^2 \rightarrow \mathbf{R}$ is a solution to the underlaying PDE. These can be used to demonstrate the correct implementation of a solver. The testbed can also be used to compare the performance of the classical \gls{fem} solver (NGSolve) with the \gls{ci} solver. The following table \ref{tab:testbed} show the 16 problems that are used in all further experiments. The equations PDE 1 through PDE 15 are taken from the National Institute of Standards and Technology (NIST) website (\cite{mitchell_nist_2018}) that provides benchmarking problems for FEM slovers with adaptive mesh refinement methods.
 
 \begin{table}[h]
 	\centering
 	\noindent\adjustbox{max width=\linewidth}{
-		\begin{tabular}{|c|c|c|c|c|c|}
+		\begin{tabular}{|c|c|c|}
 			
 			\hline
 			\rowcolor[HTML]{\farbeTabA}
 			
-			Name & PDE & Domain & Parameter & Solution & Note\\ \hline
-			PDE 0 & & $x_0, x_1 \in [-1, 1]$ & N/A &  & \multilinecell{sum of gaussian kernels: \\ the analytical solution can be approximated \\ arbitrarily close with 5 kernels} \\ \hline
-			\multilinecell{PDE 1: \\ Sine Bump 2D} & & & & & \\ \hline
-			\multilinecell{PDE 2: \\ Polynomial 2D} & & & & & \\ \hline
-			\multilinecell{PDE 3: \\ Peak 2D } & & & & & \\ \hline
-			\multilinecell{PDE 4: \\ Oscillatory 2D} & & & & & \\ \hline
-			\multilinecell{PDE 5: \\ Moving Circular Wave Front} & & & & & \\ \hline
-			\multilinecell{PDE 6: \\ Arctan Circular Wave Front} & & & & & \\ \hline
-			\multilinecell{PDE 7: \\ Arctan Wave Front Homogeneous \\ Boundary Conditions 2D} & & & & & \\ \hline
-			\multilinecell{PDE 8: \\ Boundary Layer 2D} & & & & & \\ \hline
-			\multilinecell{PDE 9: \\ Boundary Line Singularity} & & & & & \\ \hline
-			\multilinecell{PDE 10: \\ Interior Line Singularity} & & & & & \\ \hline
-			\multilinecell{PDE 11: \\ Intersecting Interfaces} & & & & & \\ \hline
-			\multilinecell{PDE 12: \\ L-shaped Domain} & & & & & \\ \hline
-			\multilinecell{PDE 13: \\ L-shaped Domain Homogeneous \\ Boundary Conditions} & & & & & \\ \hline
-			\multilinecell{PDE 14: \\ L-shaped Domain \\ Mixed Boundary Conditions} & & & & & \\ \hline
-			\multilinecell{PDE 15: \\ Reentrant Corner} & & & & & \\ \hline
-			
-			
-			
+			Name & PDE & Parameter \\ \hline
+			PDE 0 & \multilinecell{$\frac{\partial^2 u}{\partial x_0^2} + \frac{\partial^2 u}{\partial x_1^2} = \Delta u$ \\ $\text{on the domain } \Omega = x_0, x_1 \in [-1,1]$ \\ $u|_{\partial\Omega} = u(\mathbf{x})$} & N/A \\ \hline
+			\multilinecell{PDE 1: \\ Sine Bump 2D} & $-\frac{\partial^2 u}{\partial x_0^2} -\frac{\partial^2 u}{\partial x_1^2} = \Delta u$ & N/A  \\ \hline
+			\multilinecell{PDE 2: \\ Polynomial 2D} & &\\ \hline
+			\multilinecell{PDE 3: \\ Peak 2D } & & \\ \hline
+			\multilinecell{PDE 4: \\ Oscillatory 2D} & & \\ \hline
+			\multilinecell{PDE 5: \\ Moving Circular Wave Front} & & \\ \hline
+			\multilinecell{PDE 6: \\ Arctan Circular Wave Front} & & \\ \hline
+			\multilinecell{PDE 7: \\ Arctan Wave Front Homogeneous \\ Boundary Conditions 2D} & & \\ \hline
+			\multilinecell{PDE 8: \\ Boundary Layer 2D} & & \\ \hline
+			\multilinecell{PDE 9: \\ Boundary Line Singularity} & & \\ \hline
+			\multilinecell{PDE 10: \\ Interior Line Singularity} & & \\ \hline
+			\multilinecell{PDE 11: \\ Intersecting Interfaces} & & \\ \hline
+			\multilinecell{PDE 12: \\ L-shaped Domain} & & \\ \hline
+			\multilinecell{PDE 13: \\ L-shaped Domain Homogeneous \\ Boundary Conditions} & & \\ \hline
+			\multilinecell{PDE 14: \\ L-shaped Domain \\ Mixed Boundary Conditions} & & \\ \hline
+			\multilinecell{PDE 15: \\ Reentrant Corner} & & \\ \hline
 			
 		\end{tabular}
 	}
-	\unterschrift{Definition of a testbed to show the convergence towards an analytical solution and comparing different solvers numerically.}{}{}
+	\unterschrift{Definition of a testbed to show the convergence towards an analytical solution (table \ref{tab:testbed_sol}) and comparing different solvers numerically.}{}{}
 	\label{tab:testbed}
 \end{table}
+
+\textbf{PDE 0: } The analytic solution of this problem can be approximated arbitrarely close, since the solution is a sum of 5 different Gauss kernels. The purpose of this PDE is to show that algorithm can find the analytical solution. \\
+
+\textbf{PDE 1: } \\
+
+\textbf{PDE 2: } \\
+
+\textbf{PDE 3: } \\
+
+\textbf{PDE 4: } \\
+
+\textbf{PDE 5: } \\
+
+\textbf{PDE 6: } \\
+
+\textbf{PDE 7: } \\
+
+\textbf{PDE 8: } \\
+
+\textbf{PDE 9: } \\
+
+\textbf{PDE 10: } \\
+
+\textbf{PDE 11: } \\
+
+\textbf{PDE 12: } \\
+
+\textbf{PDE 13: } \\
+
+\textbf{PDE 14: } \\
+
+\textbf{PDE 15: } \\
+
+
+\begin{table}[h]
+	\centering
+	\noindent\adjustbox{max width=\linewidth}{
+		\begin{tabular}{|c|c|}
+			
+			\hline
+			\rowcolor[HTML]{\farbeTabA}
+			
+			Name & Solution \\ \hline
+			PDE 0 &\multilinecell{\(\displaystyle u(x,y) = 2e^{-1.5(x_{0}^{2} + x_{1}^{2})}+\) \\ \(\displaystyle \sum_{i=1}^{4} e^{-3\left(\left(x_0 - (-1)^{\left\lfloor \frac{i}{2} \right\rfloor}\right)^2 + \left(x_1 - (-1)^{\left\lceil 1 + \frac{i}{2} \right\rceil}\right)^2\right)} \)}  \\ \hline
+			\multilinecell{PDE 1: \\ Sine Bump 2D} & $u(\mathbf{x}) = \sin(\pi x) sin(\pi y)$ \\ \hline
+			\multilinecell{PDE 2: \\ Polynomial 2D} & $ u(\mathbf{x}) = 2^{4p}x^p(1-x)^py^p(1-y)^p$ \\ \hline
+			\multilinecell{PDE 3: \\ Peak 2D } & $ u(\mathbf{x}) = e^{-\alpha((x-0.5)^2+(y-0.5)^2)}$ \\ \hline
+			\multilinecell{PDE 4: \\ Oscillatory 2D} & $ u(\mathbf{x}) = \sin\left(\frac{1}{\alpha+r}\right)$ \\ \hline
+			\multilinecell{PDE 5: \\ Moving Circular Wave Front} & $(x-x_0)(x-x_1)(y-y_0)(y-y_1)\tan^{-1}(t) \left( \pi/2 - \tan^{-1}(\alpha(r-t)) \right ) /C$ \\ \hline
+			\multilinecell{PDE 6: \\ Arctan Circular Wave Front} & \\ \hline
+			\multilinecell{PDE 7: \\ Arctan Wave Front Homogeneous \\ Boundary Conditions 2D} & \\ \hline
+			\multilinecell{PDE 8: \\ Boundary Layer 2D} & \\ \hline
+			\multilinecell{PDE 9: \\ Boundary Line Singularity} & \\ \hline
+			\multilinecell{PDE 10: \\ Interior Line Singularity} & \\ \hline
+			\multilinecell{PDE 11: \\ Intersecting Interfaces} & \\ \hline
+			\multilinecell{PDE 12: \\ L-shaped Domain} & \\ \hline
+			\multilinecell{PDE 13: \\ L-shaped Domain Homogeneous \\ Boundary Conditions} & \\ \hline
+			\multilinecell{PDE 14: \\ L-shaped Domain \\ Mixed Boundary Conditions} & \\ \hline
+			\multilinecell{PDE 15: \\ Reentrant Corner} & \\ \hline
+			
+		\end{tabular}
+	}
+	\unterschrift{Analytical solutions to the testbed defined in table \ref{tab:testbed}}{}{}
+	\label{tab:testbed_sol}
+\end{table}
+
 
 
 \subsection{Quality Measure}

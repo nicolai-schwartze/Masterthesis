@@ -16,21 +16,28 @@ from netgen.geom2d import unit_square
 import time
 import psutil
 
-class FemPde1(FemPdeBase):
+class FemPde2(FemPdeBase):
     """
-    **Implementation of PDE1 of the testbed:** 
+    **Implementation of PDE2 of the testbed:** 
         
     .. math:: 
-        - \Delta u(\mathbf{x}) = 2\pi^2 sin(\pi x_0) sin(\pi x_1) 
+        - \Delta u(\mathbf{x}) = 2^{40}y^{10}(1-y)^{10}[90x^8(1-x)^{10} 
+        
+        - 200x^9(1-x)^9 + 90x^{10}(1-x)^8] 
+        
+        -2x^{10}(1-x)^{10}[90y^8(1-y)^{10} 
+        
+        - 200y^9(1-y)^9 + 90y^{10}(1-y)^8]
         
         \Omega: \mathbf{x} \in [0,1]
         
         u(\mathbf{x})|_{\partial \Omega} = 0
-        
+    
     **with the solution:** 
         
     .. math:: 
-        u(\mathbf{x}) = sin(\pi x_{0})sin(\pi x_{1})
+        u(\mathbf{x}) = 2^{40}x^{10}(1-x)^{10}y^{10}(1-y)^{10}
+        
         
     Attributes
     ----------
@@ -50,24 +57,24 @@ class FemPde1(FemPdeBase):
     Examples
     --------
     >>> import numpy as np
-    >>> fempde1 = FemPde1(True)
+    >>> fempde2 = FemPde2(True)
     >>> pos = np.array([0.5, 0.5])
-    >>> fempde1.exact(pos)
+    >>> fempde2.exact(pos)
     >>> x -> numpy.ndarray with shape (2,) 
         _mesh -> ngs.comp.Mesh 
         _ngs_ex -> ngs.fem.CoefficientFunction 
         -> try to call solve() first
-    >>> fempde1.solve()
-    >>> fempde1.exact(pos)
+    >>> fempde2.solve()
+    >>> fempde2.exact(pos)
         1.0
-    >>> fempde1.approx(pos)
-        0.9999999839860894
-    >>> fempde1.normL2()
-        3.4717202708948315e-07
-    >>> fempde1.exec_time
-        7.630256175994873
-    >>> fempde1.mem_consumption
-        166629376
+    >>> fempde2.approx(pos)
+        0.999998924259486
+    >>> fempde2.normL2()
+        5.853102150391562e-07
+    >>> fempde2.exec_time
+        3.830256175994873
+    >>> fempde2.mem_consumption
+        76705792
     
     
     """
@@ -76,8 +83,8 @@ class FemPde1(FemPdeBase):
         super().__init__(show_gui)
         
         # init protected
-        self._pde_string = "-laplacian(u(x)) = 2*(pi**2)*sin(pi*x)*sin(pi*y)"
-        self._ngs_ex = ngs.sin(np.pi*ngs.x)*ngs.sin(np.pi*ngs.y)
+        self._pde_string = "-laplacian(u(x)) = -(2^40*y^10*(1-y)^10*(90*x^8*(1-x)^10 - 200*x^9*(1-x)^9 + 90*x^10*(1-x)^8)) -(2*x^10*(1-x)^10*(90*y^8*(1-y)^10 - 200*y^9*(1-y)^9 + 90*y^10*(1-y)^8))"
+        self._ngs_ex = (2**(4*10))*(ngs.x**10)*((1-ngs.x)**10)*(ngs.y**10)*((1-ngs.y)**10)
         
         # init public
         self.max_ndof = max_ndof
@@ -110,7 +117,9 @@ class FemPde1(FemPdeBase):
     
         # creat linear functional and apply RHS
         self._f = ngs.LinearForm(self._fes)
-        self._f += 2*(np.pi**2)*ngs.sin(np.pi*ngs.x)*ngs.sin(np.pi*ngs.y)*v*ngs.dx
+        self._f += ( \
+        -(2**40*ngs.y**10*(1-ngs.y)**10*(90*ngs.x**8*(1-ngs.x)**10 - 200*ngs.x**9*(1-ngs.x)**9 + 90*ngs.x**10*(1-ngs.x)**8)) \
+        -(2**40*ngs.x**10*(1-ngs.x)**10*(90*ngs.y**8*(1-ngs.y)**10 - 200*ngs.y**9*(1-ngs.y)**9 + 90*ngs.y**10*(1-ngs.y)**8)) )*v*ngs.dx
         
         # preconditioner: multigrid - what prerequisits must the problem have? 
         self._c = ngs.Preconditioner(self._a,"multigrid")
@@ -154,28 +163,28 @@ class FemPde1(FemPdeBase):
 
 if __name__ == "__main__":
     
-    fempde1 = FemPde1(True)
-    print(fempde1.pde_string)
+    fempde2 = FemPde2(True)
+    print(fempde2.pde_string)
     
     try:
-        fempde1.exact(np.array([0.5,0.5]))
+        fempde2.exact(np.array([0.5,0.5]))
     except:
         print("Î error message above")
     
     try:
-        fempde1.approx(np.array([0.5,0.5]))
+        fempde2.approx(np.array([0.5,0.5]))
     except:
         print("Î error message above")
     
-    fempde1.solve()
+    fempde2.solve()
     
     print("-------------------------------------")
     
-    print("exact(0.5, 0.5) = {}".format(fempde1.exact(np.array([0.5,0.5]))))
-    print("approx(0.5, 0.5) = {}".format(fempde1.approx(np.array([0.5,0.5]))))
-    print("L2 norm to the real solution {}".format(fempde1.normL2()))
-    print("solving took {} sec".format(fempde1.exec_time))
-    print("solving uses {} Mb".format(fempde1.mem_consumption/1000000))
+    print("exact(0.5, 0.5) = {}".format(fempde2.exact(np.array([0.5,0.5]))))
+    print("approx(0.5, 0.5) = {}".format(fempde2.approx(np.array([0.5,0.5]))))
+    print("L2 norm to the real solution {}".format(fempde2.normL2()))
+    print("solving took {} sec".format(fempde2.exec_time))
+    print("solving uses {} Mb".format(fempde2.mem_consumption/1000000))
     
     from mpl_toolkits.mplot3d import Axes3D
     import matplotlib.pyplot as plt
@@ -186,7 +195,7 @@ if __name__ == "__main__":
     x = y = np.arange(0, 1.01, 0.01)
     X, Y = np.meshgrid(x, y)
     
-    zs0 = np.array([fempde1.exact(\
+    zs0 = np.array([fempde2.exact(\
     np.array([x,y])) for x,y in zip(np.ravel(X), np.ravel(Y))])
     
     Z = zs0.reshape(X.shape)
@@ -203,7 +212,7 @@ if __name__ == "__main__":
     x = y = np.arange(0, 1.01, 0.01)
     X, Y = np.meshgrid(x, y)
     
-    zs0 = np.array([fempde1.approx(\
+    zs0 = np.array([fempde2.approx(\
     np.array([x,y])) for x,y in zip(np.ravel(X), np.ravel(Y))])
     
     Z = zs0.reshape(X.shape)
@@ -213,3 +222,4 @@ if __name__ == "__main__":
     ax.set_ylabel("X1")
     ax.set_zlabel("f(X0,X1)")
     plt.show()
+    

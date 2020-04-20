@@ -53,6 +53,7 @@ class FemPdeBase(ITestbenchBase):
         self._gfu = None
         self._a = None
         self._f = None
+        self._g = None
         self._space_flux = None
         self._gf_flux = None
         self._mesh = None
@@ -80,7 +81,8 @@ class FemPdeBase(ITestbenchBase):
            x -> numpy.ndarray with shape (2,) 
            _mesh -> ngs.comp.Mesh 
            _ngs_ex -> ngs.fem.CoefficientFunction 
-           -> try to call solve() first""")
+           -> try to call solve() first
+           -> maybe the point is not in Omega""")
             return None
     
     def approx(self, x): 
@@ -94,7 +96,8 @@ class FemPdeBase(ITestbenchBase):
            x -> numpy.ndarray with shape (2,) 
            _mesh -> ngs.comp.Mesh 
            _gfu -> ngs.fem.CoefficientFunction 
-           -> try to call solve() first""")
+           -> try to call solve() first
+           -> maybe the point is not in Omega""")
             return None
     
     def normL2(self): 
@@ -105,10 +108,9 @@ class FemPdeBase(ITestbenchBase):
     
     # protected method that calculates one step of the grid refinement
     def _solveStep(self):
-        # update the finite element space
-        self._fes.Update()
-        # update the grid function (= solution)
-        self._gfu.Update()
+        # reset the boundary condition after every refinement
+        self._gfu.Set(self._g, definedon=self._mesh.Boundaries(".*"))
+        # draw the solution if the gui is open
         if self.show_gui:
             ngs.Draw(self._gfu)
         # assamble the bilinear form
@@ -123,10 +125,6 @@ class FemPdeBase(ITestbenchBase):
             
     
     def _estimateError(self):
-        # update the flux space (Hcurl)
-        self._space_flux.Update()
-        # update the gradient in the Hcurls space
-        self._gf_flux.Update()
         # compute the flux
         flux = ngs.grad(self._gfu)
         # interpolate the gradient in the Hcurls space

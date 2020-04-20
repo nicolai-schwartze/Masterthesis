@@ -11,12 +11,12 @@ from abc import ABC, abstractmethod
 class IKernelBase(ABC):
     
     def __init__(self):
-        self.__kernel_type = ""
+        self._kernel_type = ""
         
     @property
     @abstractmethod
     def kernel_type(self):
-        return self.__kernel_type
+        return self._kernel_type
     
     @abstractmethod
     def solution(self, x): pass

@@ -12,25 +12,53 @@ import numpy as np
 
 # import from ngsolve
 import ngsolve as ngs
-from netgen.geom2d import unit_square
+import netgen.geom2d as geom2d
 import time
 import psutil
 
-class FemPde1(FemPdeBase):
+class FemPde0(FemPdeBase):
     """
-    **Implementation of PDE1 of the testbed:** 
+    **Implementation of PDE0 of the testbed:** 
         
     .. math:: 
-        - \Delta u(\mathbf{x}) = 2\pi^2 sin(\pi x_0) sin(\pi x_1) 
+        - \Delta u(\mathbf{x}) = -(18x^2-6)e^{-1.5(x^2 + y^2)}
+                                 
+                                 -(18y^2-6)e^{-1.5(x^2 + y^2)}
+                                 
+                                 -6(6x^2+12x+5)e^{-3((x+1)^2+(y+1)^2)}
+                                 
+                                 -6(6y^2+12y+5)e^{-3((x+1)^2+(y+1)^2)}
+                                 
+                                 -6(6x^2-12x+5)e^{-3((x-1)^2+(y+1)^2)}
+                                 
+                                 -6(6y^2+12y+5)e^{-3((x-1)^2+(y+1)^2)}
+                                 
+                                 -6(6x^2+12x+5)e^{-3((x+1)^2+(y-1)^2)}
+                                 
+                                 -6(6y^2-12y+5)e^{-3((x+1)^2+(y-1)^2)}
+                                 
+                                 -6(6x^2-12x+5)e^{-3((x-1)^2+(y-1)^2)}
+                                 
+                                 -6(6y^2-12y+5)e^{-3((x-1)^2+(y-1)^2)}
+                                 
+                                 
         
-        \Omega: \mathbf{x} \in [0,1]
+        \Omega: \mathbf{x} \in [-2,2]
         
-        u(\mathbf{x})|_{\partial \Omega} = 0
+        u(\mathbf{x})|_{\partial \Omega} = u(\mathbf{x})
         
     **with the solution:** 
         
     .. math:: 
-        u(\mathbf{x}) = sin(\pi x_{0})sin(\pi x_{1})
+        u(\mathbf{x}) = 2e^{-1.5(x^2 + y^2)} + 
+        
+        e^{-3((x+1)^2 + (y+1)^2)} + 
+        
+        e^{-3((x+1)^2 + (y-1)^2)} + 
+        
+        e^{-3((x-1)^2 + (y+1)^2)} + 
+        
+        e^{-3((x-1)^2 + (y-1)^2)}
         
     Attributes
     ----------
@@ -50,24 +78,24 @@ class FemPde1(FemPdeBase):
     Examples
     --------
     >>> import numpy as np
-    >>> fempde1 = FemPde1(True)
-    >>> pos = np.array([0.5, 0.5])
-    >>> fempde1.exact(pos)
+    >>> fempde0 = FemPde0(True)
+    >>> pos = np.array([0.0, 0.0])
+    >>> fempde0.exact(pos)
     >>> x -> numpy.ndarray with shape (2,) 
         _mesh -> ngs.comp.Mesh 
         _ngs_ex -> ngs.fem.CoefficientFunction 
         -> try to call solve() first
-    >>> fempde1.solve()
-    >>> fempde1.exact(pos)
-        1.0
-    >>> fempde1.approx(pos)
-        0.9999999839860894
-    >>> fempde1.normL2()
-        3.4717202708948315e-07
-    >>> fempde1.exec_time
-        7.630256175994873
-    >>> fempde1.mem_consumption
-        166629376
+    >>> fempde0.solve()
+    >>> fempde0.exact(pos)
+        2.009915008706665
+    >>> fempde0.approx(pos)
+        2.009914779748446
+    >>> fempde0.normL2()
+        2.9670770746774782e-05
+    >>> fempde0.exec_time
+        6.375466346740723
+    >>> fempde0.mem_consumption
+        159.055872 Mb
     
     
     """
@@ -76,8 +104,16 @@ class FemPde1(FemPdeBase):
         super().__init__(show_gui)
         
         # init protected
-        self._pde_string = "-laplacian(u(x)) = 2*(pi**2)*sin(pi*x)*sin(pi*y)"
-        self._ngs_ex = ngs.sin(np.pi*ngs.x)*ngs.sin(np.pi*ngs.y)
+        self._pde_string = """-laplacian(u(x)) = -(18x^2-6)e^{-1.5(x^2 + y^2)} -(18y^2-6)e^{-1.5(x^2 + y^2)} 
+                   -6(6x^2+12x+5)e^{-3((x+1)^2+(y+1)^2)} -6(6y^2+12y+5)e^{-3((x+1)^2+(y+1)^2)} 
+                   -6(6x^2-12x+5)e^{-3((x-1)^2+(y+1)^2)} -6(6y^2+12y+5)e^{-3((x-1)^2+(y+1)^2)} 
+                   -6(6x^2+12x+5)e^{-3((x+1)^2+(y-1)^2)} -6(6y^2-12y+5)e^{-3((x+1)^2+(y-1)^2)} 
+                   -6(6x^2-12x+5)e^{-3((x-1)^2+(y-1)^2)} -6(6y^2-12y+5)e^{-3((x-1)^2+(y-1)^2)}"""
+        self._ngs_ex = 2*ngs.exp(-1.5*(ngs.x*ngs.x + ngs.y*ngs.y)) + \
+                       ngs.exp(-3*((ngs.x + 1)**2 + (ngs.y + 1)**2)) + \
+                       ngs.exp(-3*((ngs.x - 1)**2 + (ngs.y + 1)**2)) + \
+                       ngs.exp(-3*((ngs.x + 1)**2 + (ngs.y - 1)**2)) + \
+                       ngs.exp(-3*((ngs.x - 1)**2 + (ngs.y - 1)**2))
         
         # init public
         self.max_ndof = max_ndof
@@ -95,7 +131,16 @@ class FemPde1(FemPdeBase):
             import netgen.gui
         
         # create mesh with initial size 0.1
-        self._mesh = ngs.Mesh(unit_square.GenerateMesh(maxh=0.1))
+        geo = geom2d.SplineGeometry()
+        p1 = geo.AppendPoint (-2,-2)
+        p2 = geo.AppendPoint (2,-2)
+        p3 = geo.AppendPoint (2,2)
+        p4 = geo.AppendPoint (-2,2)
+        geo.Append (["line", p1, p2])
+        geo.Append (["line", p2, p3])
+        geo.Append (["line", p3, p4])
+        geo.Append (["line", p4, p1])
+        self._mesh = ngs.Mesh(geo.GenerateMesh(maxh=0.1))
         
         #create finite element space
         self._fes = ngs.H1(self._mesh, order=2, dirichlet=".*", autoupdate=True)
@@ -110,14 +155,23 @@ class FemPde1(FemPdeBase):
     
         # creat linear functional and apply RHS
         self._f = ngs.LinearForm(self._fes)
-        self._f += 2*(np.pi**2)*ngs.sin(np.pi*ngs.x)*ngs.sin(np.pi*ngs.y)*v*ngs.dx
+        self._f += (-(18*ngs.x*ngs.x-6)*ngs.exp(-1.5*(ngs.x*ngs.x + ngs.y*ngs.y))-
+                (18*ngs.y*ngs.y-6)*ngs.exp(-1.5*(ngs.x*ngs.x + ngs.y*ngs.y))
+                -6*(6*ngs.x**2+12*ngs.x+5)*ngs.exp(-3*((ngs.x+1)**2+(ngs.y+1)**2))
+                -6*(6*ngs.y**2+12*ngs.y+5)*ngs.exp(-3*((ngs.x+1)**2+(ngs.y+1)**2))
+                -6*(6*ngs.x**2-12*ngs.x+5)*ngs.exp(-3*((ngs.x-1)**2+(ngs.y+1)**2))
+                -6*(6*ngs.y**2+12*ngs.y+5)*ngs.exp(-3*((ngs.x-1)**2+(ngs.y+1)**2))
+                -6*(6*ngs.x**2+12*ngs.x+5)*ngs.exp(-3*((ngs.x+1)**2+(ngs.y-1)**2))
+                -6*(6*ngs.y**2-12*ngs.y+5)*ngs.exp(-3*((ngs.x+1)**2+(ngs.y-1)**2))
+                -6*(6*ngs.x**2-12*ngs.x+5)*ngs.exp(-3*((ngs.x-1)**2+(ngs.y-1)**2))
+                -6*(6*ngs.y**2-12*ngs.y+5)*ngs.exp(-3*((ngs.x-1)**2+(ngs.y-1)**2)))*v*ngs.dx
         
         # preconditioner: multigrid - what prerequisits must the problem have? 
         self._c = ngs.Preconditioner(self._a,"multigrid")
         
         # create grid function that holds the solution and set the boundary to 0
         self._gfu = ngs.GridFunction(self._fes, autoupdate=True)  # solution 
-        self._g = 0.0
+        self._g = self._ngs_ex
         self._gfu.Set(self._g, definedon=self._mesh.Boundaries(".*"))
         
         # draw grid function in gui
@@ -129,12 +183,12 @@ class FemPde1(FemPdeBase):
         self._gf_flux = ngs.GridFunction(self._space_flux, "flux", autoupdate=True)
         
         # TaskManager starts threads that (standard thread nr is numer of cores)
-        with ngs.TaskManager():
+        #with ngs.TaskManager():
             # this is the adaptive loop
-            while self._fes.ndof < self.max_ndof:
-                self._solveStep()
-                self._estimateError()
-                self._mesh.Refine()
+        while self._fes.ndof < self.max_ndof:
+            self._solveStep()
+            self._estimateError()
+            self._mesh.Refine()
         
         # since the adaptive loop stopped with a mesh refinement, the gfu must be 
         # calculated one last time
@@ -154,16 +208,16 @@ class FemPde1(FemPdeBase):
 
 if __name__ == "__main__":
     
-    fempde1 = FemPde1(True)
+    fempde1 = FemPde0(True)
     print(fempde1.pde_string)
     
     try:
-        fempde1.exact(np.array([0.5,0.5]))
+        fempde1.exact(np.array([0.0,0.0]))
     except:
         print("Î error message above")
     
     try:
-        fempde1.approx(np.array([0.5,0.5]))
+        fempde1.approx(np.array([0.0,0.0]))
     except:
         print("Î error message above")
     
@@ -171,8 +225,8 @@ if __name__ == "__main__":
     
     print("-------------------------------------")
     
-    print("exact(0.5, 0.5) = {}".format(fempde1.exact(np.array([0.5,0.5]))))
-    print("approx(0.5, 0.5) = {}".format(fempde1.approx(np.array([0.5,0.5]))))
+    print("exact(0.0, 0.0) = {}".format(fempde1.exact(np.array([0.0,0.0]))))
+    print("approx(0.0, 0.0) = {}".format(fempde1.approx(np.array([0.0,0.0]))))
     print("L2 norm to the real solution {}".format(fempde1.normL2()))
     print("solving took {} sec".format(fempde1.exec_time))
     print("solving uses {} Mb".format(fempde1.mem_consumption/1000000))
@@ -183,7 +237,7 @@ if __name__ == "__main__":
     
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
-    x = y = np.arange(0, 1.01, 0.01)
+    x = y = np.arange(-2.0, 2.01, 0.01)
     X, Y = np.meshgrid(x, y)
     
     zs0 = np.array([fempde1.exact(\
@@ -200,7 +254,7 @@ if __name__ == "__main__":
     
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
-    x = y = np.arange(0, 1.01, 0.01)
+    x = y = np.arange(-2.0, 2.01, 0.01)
     X, Y = np.meshgrid(x, y)
     
     zs0 = np.array([fempde1.approx(\

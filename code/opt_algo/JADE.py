@@ -28,16 +28,19 @@ def JADE(population, p, c, function, minError, maxGeneration):
         fitness function that is optimised
     minError: float 
         stopping condition on function value
-    maxGeneration: float
+    maxGeneration: int
         stopping condition on max number of generation
     
     Returns
     -------
     history: tuple
-        tupel[1] - popDynamic
-        tupel[2] - FEDynamic
-        tupel[3] - FDynamic
-        tupel[4] - CRDynamic
+        tupel[0] - popDynamic
+        
+        tupel[1] - FEDynamic
+        
+        tupel[2] - FDynamic
+        
+        tupel[3] - CRDynamic
         
     Examples
     --------
@@ -117,7 +120,7 @@ def JADE(population, p, c, function, minError, maxGeneration):
         muF = (1-c) * muF + c * lehmerMean(sF, muF)
             
         genCount = genCount + 1
-        print(genCount)
+        print("generation: {}".format(genCount))
         popDynamic.append(np.copy(population))
         CRDynamic.append(CR)
         FDynamic.append(F)
@@ -251,7 +254,6 @@ if __name__ == "__main__":
     
     maxError = 10**-80
     maxGen = 10**3
-    H = 100
     c = 0.5
     t1 = time.time()
     (popDynamic, FEDynamic, FDynamic, CRDynamic) = JADE(population, p, c, sphere, maxError, maxGen)

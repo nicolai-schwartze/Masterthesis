@@ -14,7 +14,7 @@ from netgen.geom2d import unit_square
 
 class FemPdeBase(ITestbenchBase):
     """
-    Abstract class that provides implements the the ITestbenchBase interface. 
+    Abstract class that implements the ITestbenchBase interface. 
     It further provides functionality that is used by the FEM solver. 
     
     Attributes
@@ -25,19 +25,23 @@ class FemPdeBase(ITestbenchBase):
     
     Methods
     -------
-    pde_string()
+    pde_string(): string
         getter for returning the _pde_string that holds a short description of the problem
-    exec_time()
+    exec_time(): float
         getter for returning the execution time taken for solving the probem
-    mem_consumption()
+    mem_consumption(): int
         getter for returning the memory consumption of the solver
-    _solveStep()
+    _solveStep(): None
         gradually refines the FEM mesh and calculates a new solution
-    _estimateError
+    _estimateError(): None
         estimates the error of an element and marks the worst 25% elements for refinement
-    normL2()
+    exact(x): float
+        takes a numpy array, returns the function value of the exact solution 
+    approx(x): float
+        takes a numpy array, wrapper for the approximate soltuion, returns the function value of the approximate solution
+    normL2(): float
         returns the distance between the exact and the approximate solution
-    solve()
+    solve(): None
         not implemented, must be overridden by the child class that is specific to a pde
     
     """

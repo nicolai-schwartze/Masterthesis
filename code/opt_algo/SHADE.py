@@ -10,39 +10,37 @@ import numpy as np
 import time
 from scipy.stats import cauchy
 
-def L_SHADE(population, p, H, function, minError, maxGeneration):
-    ''' 
-    implementation of L-SHADE based on: \n
-    Improving the Search Performance of SHADE Using Linear Population Size Reduction\n 
-    by Tanabe and Fukunaga\n
-    adaptions: 
-        * no constraint handling implemented 
-        * population size reduction based on generation insteas of function evaluation 
-    
+def SHADE(population, p, H, function, minError, maxGeneration):
+    '''
+    implementation of SHADE based on: \n
+    Success-History Based Parameter Adaptation for Differential Evolution \n
+    by Tanabe and Fukunaga
     
     Parameters
     ----------
-    population: numpy array
+    population: numpy array 
         2D numpy array where lines are candidates and colums is the dimension
-        
-    p: float ]0,1]
+    p: float 
         percentage of best individuals for current-to-p-best mutation
     H: int 
         size of the memory
-    function: function
-        fitness function that is optimised
     minError: float 
         stopping condition on function value
+    function: function
+        fitness function that is optimised
     maxGeneration: int 
         stopping condition on max number of generation
     
     Returns
     -------
     history: tuple
-        tupel[1] - popDynamic\n
-        tupel[2] - FEDynamic\n
-        tupel[3] - FDynamic\n
-        tupel[4] - CRDynamic\n
+        tupel[0] - popDynamic
+        
+        tupel[1] - FEDynamic
+        
+        tupel[2] - FDynamic
+        
+        tupel[3] - CRDynamic
     
     Examples
     --------
@@ -55,9 +53,7 @@ def L_SHADE(population, p, H, function, minError, maxGeneration):
     >>> population = 100*np.random.rand(50,2)
     >>> p = 0.1
     >>> (popDynamic, FEDynamic, FDynamic, CRDynamic) = 
-        L_SHADE(population, p, H, sphere, maxError, maxGen)
-    
-    
+        SHADE(population, p, H, sphere, maxError, maxGen)
     
     '''
     # initialisation of variables 
@@ -76,9 +72,6 @@ def L_SHADE(population, p, H, function, minError, maxGeneration):
     mF  = 0.5*np.ones(H)
     # k is the running memory index
     k = 0
-    # population size reduction parameter
-    NGmin = int(np.ceil(1/p))
-    NGinit = populationSize
     
     popDynamic = []
     FEDynamic = []
@@ -107,9 +100,9 @@ def L_SHADE(population, p, H, function, minError, maxGeneration):
             ui = crossoverBIN(np.array([population[i]]), vi, CR)
             
             trailPopulation[i] = ui
-            #######################################################
-            # for actual L-SHADE missing constraint handling here #
-            #######################################################
+            #####################################################
+            # for actual SHADE missing constraint handling here #
+            #####################################################
             trailFunctionValue[i] = function(ui)
         
         functionValueDifference = []
@@ -151,25 +144,8 @@ def L_SHADE(population, p, H, function, minError, maxGeneration):
             k += 1
             if k >= H: k = 0
             
-        # perform population size reduction
-        # calculate new population size based on the current generation count
-        NG_1 = populationSizeReduction(genCount, maxGeneration, NGinit, NGmin)
-        # if the new population should be smaller
-        if NG_1 < populationSize:
-            # delete worst individuals from the population
-            functionValueSorted = np.argsort(functionValue)
-            indizesToRemove = functionValueSorted[-int(populationSize-NG_1):]
-            population = np.delete(population, indizesToRemove, 0)
-            functionValue = np.delete(functionValue, indizesToRemove)
-            populationSize = population.shape[0]
-            # resize archive to the population size by deleting random indizes
-            while archive.shape[0] > populationSize:
-                randi = np.random.randint(0, high=archive.shape[0])
-                archive = np.delete(archive, randi, 0)
-
-
         genCount = genCount + 1
-        print(genCount)
+        print("generation: {}".format(genCount))
         popDynamic.append(np.copy(population))
         CRDynamic.append(np.copy(mCR))
         FDynamic.append(np.copy(mF))
@@ -278,13 +254,6 @@ def weightedLehmermean(history, weights):
         return 0.0
     else: 
         return sumNumerator/sumDenominator
-    
-    
-    
-def populationSizeReduction(genCounter, maxGen, NGinit, NGmin): 
-    NG_1 = np.round(((NGmin - NGinit)/maxGen)*genCounter + NGinit)
-    return NG_1
-
 
 
 if __name__ == "__main__": 
@@ -305,18 +274,22 @@ if __name__ == "__main__":
     archive = 500*np.random.rand(50,2)
     functionValue = np.asarray([sphere(candidate) for candidate in population])
     F = 0.5
-    p = 0.1
+    p = 0.3
     t1 = time.time()
     mutationCurrentToPBest1(population, archive, 0, functionValue, F, p)
     print("time to execute mutation: " + str(time.time() - t1))
     
-    maxError = -1*np.inf
+    maxError = 10**-80
     maxGen = 10**3
-    H = 50
+    H = 3
+    A = 20
     t1 = time.time()
-    (popDynamic, FEDynamic, FDynamic, CRDynamic) = L_SHADE(population, p, H, sphere, maxError, maxGen)
-    print("time to run L-SHADE: " + str(time.time() - t1))
+    (popDynamic, FEDynamic, FDynamic, CRDynamic) = SHADE(population, p, H, sphere, maxError, maxGen)
+    print("time to run SHADE: " + str(time.time() - t1))
     print("optimum: " + str(np.min(FEDynamic[-1])))
+    
+    
+    
     
     
     

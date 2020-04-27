@@ -21,11 +21,11 @@ class FemPde2(FemPdeBase):
     **Implementation of PDE2 of the testbed:** 
         
     .. math:: 
-        - \Delta u(\mathbf{x}) = 2^{40}y^{10}(1-y)^{10}[90x^8(1-x)^{10} 
+        - \Delta u(\mathbf{x}) = -2^{40}y^{10}(1-y)^{10}[90x^8(1-x)^{10} 
         
         - 200x^9(1-x)^9 + 90x^{10}(1-x)^8] 
         
-        -2x^{10}(1-x)^{10}[90y^8(1-y)^{10} 
+        -2^{40}x^{10}(1-x)^{10}[90y^8(1-y)^{10} 
         
         - 200y^9(1-y)^9 + 90y^{10}(1-y)^8]
         
@@ -75,15 +75,13 @@ class FemPde2(FemPdeBase):
         3.830256175994873
     >>> fempde2.mem_consumption
         76705792
-    
-    
     """
     
     def __init__(self, show_gui, max_ndof=50000):
         super().__init__(show_gui)
         
         # init protected
-        self._pde_string = "-laplacian(u(x)) = -(2^40*y^10*(1-y)^10*(90*x^8*(1-x)^10 - 200*x^9*(1-x)^9 + 90*x^10*(1-x)^8)) -(2*x^10*(1-x)^10*(90*y^8*(1-y)^10 - 200*y^9*(1-y)^9 + 90*y^10*(1-y)^8))"
+        self._pde_string = "-laplacian(u(x)) = -(2^40*y^10*(1-y)^10*(90*x^8*(1-x)^10 - 200*x^9*(1-x)^9 + 90*x^10*(1-x)^8)) -(2^40*x^10*(1-x)^10*(90*y^8*(1-y)^10 - 200*y^9*(1-y)^9 + 90*y^10*(1-y)^8))"
         self._ngs_ex = (2**(4*10))*(ngs.x**10)*((1-ngs.x)**10)*(ngs.y**10)*((1-ngs.y)**10)
         
         # init public

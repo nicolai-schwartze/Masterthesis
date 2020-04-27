@@ -208,28 +208,28 @@ class FemPde0(FemPdeBase):
 
 if __name__ == "__main__":
     
-    fempde1 = FemPde0(True)
-    print(fempde1.pde_string)
+    fempde0 = FemPde0(False)
+    print(fempde0.pde_string)
     
     try:
-        fempde1.exact(np.array([0.0,0.0]))
+        fempde0.exact(np.array([0.0,0.0]))
     except:
         print("Î error message above")
     
     try:
-        fempde1.approx(np.array([0.0,0.0]))
+        fempde0.approx(np.array([0.0,0.0]))
     except:
         print("Î error message above")
     
-    fempde1.solve()
+    fempde0.solve()
     
     print("-------------------------------------")
     
-    print("exact(0.0, 0.0) = {}".format(fempde1.exact(np.array([0.0,0.0]))))
-    print("approx(0.0, 0.0) = {}".format(fempde1.approx(np.array([0.0,0.0]))))
-    print("L2 norm to the real solution {}".format(fempde1.normL2()))
-    print("solving took {} sec".format(fempde1.exec_time))
-    print("solving uses {} Mb".format(fempde1.mem_consumption/1000000))
+    print("exact(0.0, 0.0) = {}".format(fempde0.exact(np.array([0.0,0.0]))))
+    print("approx(0.0, 0.0) = {}".format(fempde0.approx(np.array([0.0,0.0]))))
+    print("L2 norm to the real solution {}".format(fempde0.normL2()))
+    print("solving took {} sec".format(fempde0.exec_time))
+    print("solving uses {} Mb".format(fempde0.mem_consumption/1000000))
     
     from mpl_toolkits.mplot3d import Axes3D
     import matplotlib.pyplot as plt
@@ -240,7 +240,7 @@ if __name__ == "__main__":
     x = y = np.arange(-2.0, 2.01, 0.01)
     X, Y = np.meshgrid(x, y)
     
-    zs0 = np.array([fempde1.exact(\
+    zs0 = np.array([fempde0.exact(\
     np.array([x,y])) for x,y in zip(np.ravel(X), np.ravel(Y))])
     
     Z = zs0.reshape(X.shape)
@@ -257,7 +257,7 @@ if __name__ == "__main__":
     x = y = np.arange(-2.0, 2.01, 0.01)
     X, Y = np.meshgrid(x, y)
     
-    zs0 = np.array([fempde1.approx(\
+    zs0 = np.array([fempde0.approx(\
     np.array([x,y])) for x,y in zip(np.ravel(X), np.ravel(Y))])
     
     Z = zs0.reshape(X.shape)

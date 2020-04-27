@@ -154,7 +154,7 @@ class FemPde1(FemPdeBase):
 
 if __name__ == "__main__":
     
-    fempde1 = FemPde1(True)
+    fempde1 = FemPde1(False)
     print(fempde1.pde_string)
     
     try:

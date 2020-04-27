@@ -7,7 +7,6 @@ Created on Sun Apr 12 15:26:53 2020
 
 from abc import ABC, abstractmethod
 
-
 class ITestbenchBase(ABC):
     """
     Abstract class that provides the basic attributs and methods 

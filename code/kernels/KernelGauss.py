@@ -9,14 +9,47 @@ from IKernelBase import IKernelBase
 import numpy as np
 
 class KernelGauss(IKernelBase):
+    """
+    Implementation of abstract class IKernelBase where Gaussian Kernels are used. 
     
+    Atributes
+    ---------
+    _kernel_type: string
+        descriptive string of the kernel formula
+    _kernel_size: int
+        number of parameters to be optimised in one kernel
+    
+    Methods
+    -------
+    kernel_type(): string
+        getter for the attribute kernel_type
+    kernel_size(): int
+        getter of the attribute kerel_size
+    solution(kernels, x): float
+        linear combination of kernels specified in arguemnt, evaluated at x
+    solution_x0(kernels, x): float
+        derivative with respect to x0 of linear combination of kernels specified in arguemnt, evaluated at x
+    solution_x1(kernels, x): float
+        derivative with respect to x1 of linear combination of kernels specified in arguemnt, evaluated at x
+    solution_x0_x0(kernels, x): float
+        second derivative with respect to x0 of linear combination of kernels specified in arguemnt, evaluated at x
+    solution_x1_x1(kernels, x): float
+        second derivative with respect to x1 of linear combination of kernels specified in arguemnt, evaluated at x
+    solution_x0_x1(kernels, x): float
+        second derivative with respect to x0,x1 of linear combination of kernels specified in arguemnt, evaluated at x
+    """
     
     def __init__(self):
         self._kernel_type = "Gauss Kernel: sum_{i}^{N}(w_i*e^(-y_i*((x_0 - c_1)^2 + (x_1 - c_1)^2))"
+        self._kernel_size = 4
         
     @property
     def kernel_type(self):
         return self._kernel_type
+    
+    @property
+    def kernel_size(self):
+        return self._kernel_size
     
     def solution(self, kernels, x):
         kernelNR, dim = kernels.shape

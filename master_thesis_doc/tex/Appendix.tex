@@ -163,4 +163,531 @@
 	\label{algo: lshade}
 \end{algorithm}
 
+
+
+\chapter{Testbed}
+\label{chap:testbed}
+
+The following pages describe the testbed that is used for all experiments. The problems are structured in these major points: 
+\begin{itemize}
+	\item differential equation
+	\begin{itemize}
+		\item differential equation
+		\item domain $\Omega$
+		\item Dirichlet bounday condition obtained by evaluating the solution on the boundary
+	\end{itemize}
+	\item solution
+	\item plot of the solution over the domain
+\end{itemize}
+
+\newpage
+
+\underline{\textbf{PDE 0A: Gauss Kernel}}
+
+\underline{Problem PDE: }
+\begin{equation}
+\label{eq:pde0a}
+\begin{split}
+\frac{\partial^2 u}{\partial x^2} + \frac{\partial^2 u}{\partial y^2} = (18x^2-6)e^{-1.5(x^2 + y^2)} + (18y^2-6)e^{-1.5(x^2 + y^2)} \\
++6(6x^2+12x+5)e^{-3((x+1)^2+(y+1)^2)} + 6(6y^2+12y+5)e^{-3((x+1)^2+(y+1)^2)} \\
++6(6x^2-12x+5)e^{-3((x-1)^2+(y+1)^2)} + 6(6y^2+12y+5)e^{-3((x-1)^2+(y+1)^2)} \\
++6(6x^2+12x+5)e^{-3((x+1)^2+(y-1)^2)} + 6(6y^2-12y+5)e^{-3((x+1)^2+(y-1)^2)} \\
++6(6x^2-12x+5)e^{-3((x-1)^2+(y-1)^2)} + 6(6y^2-12y+5)e^{-3((x-1)^2+(y-1)^2)} \\
+\text{on the domain } \Omega : x, y \in [-2,2] \\
+\text{subjected to: } \\
+u(x,2) = 2e^{-1.5(x^2 + 4)} + e^{-3((x+1)^2 + 9)} + e^{-3((x+1)^2 + 1)} + e^{-3((x-1)^2 + 9)} + e^{-3((x-1)^2 + 1)} \\
+u(x,-2)= 2e^{-1.5(x^2 + 4)} + e^{-3((x+1)^2 + 1)} + e^{-3((x+1)^2 + 9)} + e^{-3((x-1)^2 + 1)} + e^{-3((x-1)^2 + 9)} \\
+u(2,y) = 2e^{-1.5(4 + y^2)} + e^{-3(9 + (y+1)^2)} + e^{-3(9 + (y-1)^2)} + e^{-3(1 + (y+1)^2)} + e^{-3(1 + (y-1)^2)} \\
+u(-2,y)= 2e^{-1.5(4 + y^2)} + e^{-3(1 + (y+1)^2)} + e^{-3(1 + (y-1)^2)} + e^{-3(9 + (y+1)^2)} + e^{-3(9 + (y-1)^2)} \\
+\end{split}
+\end{equation}
+
+\underline{Solution: }
+\begin{equation}
+\label{eq:sol0A}
+\begin{split}
+u_{ext}(x,y) = 2e^{-1.5(x^2 + y^2)} & + e^{-3((x+1)^2 + (y+1)^2)} + e^{-3((x+1)^2 + (y-1)^2)} \\
+                              & + e^{-3((x-1)^2 + (y+1)^2)} + e^{-3((x-1)^2 + (y-1)^2)} \\
+\end{split}
+\end{equation}
+
+
+\begin{figure}[H]
+	\centering
+	\noindent\adjustbox{max width=\linewidth}{
+		\includegraphics[width=0.69\textwidth]{../../code/testbed/pde0A/sol_pde_0a.pdf}
+	}
+	\unterschrift{PDE 0A Gauss Kernel solution plot}{}{}
+	\label{fig:sol_plot_0A}
+\end{figure}
+
+
+
+
+
+\underline{\textbf{PDE 0B: GSin Kernel}}
+
+\underline{Problem PDE:} 
+\begin{equation}
+\label{eq:pde0b}
+\begin{split}
+\frac{\partial^2 u}{\partial x^2} + \frac{\partial^2 u}{\partial y^2} = \\
+2 e^{-2   (x^2 + y^2)} (2   sin(-2   (x^2 + y^2)) + 2   (1-8   x^2) cos(-2   (x^2 + y^2))) + \\
+2 e^{-2   (x^2 + y^2)} (2   sin(-2   (x^2 + y^2)) + 2   (1-8   y^2) cos(-2   (x^2 + y^2))) + \\
+2 e^{-1   (x^2 + y^2)} (1   sin(-1   (x^2 + y^2)) + 1   (1-4   x^2) cos(-1   (x^2 + y^2))) + \\
+2 e^{-1   (x^2 + y^2)} (1   sin(-1   (x^2 + y^2)) + 1   (1-4   y^2) cos(-1   (x^2 + y^2))) + \\
+2 e^{-0.1 (x^2 + y^2)} (0.1 sin(-0.1 (x^2 + y^2)) + 0.1 (1-0.4 x^2) cos(-0.1 (x^2 + y^2))) + \\
+2 e^{-0.1 (x^2 + y^2)} (0.1 sin(-0.1 (x^2 + y^2)) + 0.1 (1-0.4 y^2) cos(-0.1 (x^2 + y^2))) \\
+\text{on the domain } \Omega : x, y \in [-2,2] \\
+\text{subjected to: } \\
+u(x,2) =	 e^{-2  (x^2 + 4  )}  sin(2  ((x^2 + 4  ))) + e^{-1  (x^2 + 4  )}  sin(1  ((x^2 + 4  ))) + e^{-0.1(x^2 + 4  )}  sin(0.1((x^2 + 4  ))) \\				u(x,-2)= 	 e^{-2  (x^2 + 4  )}  sin(2  ((x^2 + 4  ))) + e^{-1  (x^2 + 4  )}  sin(1  ((x^2 + 4  ))) + e^{-0.1(x^2 + 4  )}  sin(0.1((x^2 + 4  ))) \\				u(2,y) = 	 e^{-2  (4   + y^2)}  sin(2  ((4   + y^2))) + e^{-1  (4   + y^2)}  sin(1  ((4   + y^2))) + e^{-0.1(4   + y^2)}  sin(0.1((4   + y^2))) \\
+u(-2,y)= 	 e^{-2  (4   + y^2)}  sin(2  ((4   + y^2))) + e^{-1  (4   + y^2)}  sin(1  ((4   + y^2))) + e^{-0.1(4   + y^2)}  sin(0.1((4   + y^2))) \\
+\end{split}
+\end{equation}
+
+\newpage
+
+\underline{Solution:}
+\begin{equation}
+\label{eq:sol0B}
+\begin{split}
+u_{ext}(x,y) = & e^{-2  (x^2 + y^2)}  sin(2  ((x^2 + y^2))) \\
+ 			   & e^{-1  (x^2 + y^2)}  sin(1  ((x^2 + y^2))) \\
+ 			   & e^{-0.1(x^2 + y^2)}  sin(0.1((x^2 + y^2))) \\
+\end{split}
+\end{equation}
+
+
+\begin{figure}[H]
+	\centering
+	\noindent\adjustbox{max width=\linewidth}{
+		\includegraphics[width=0.69\textwidth]{../../code/testbed/pde0B/sol_pde_0b.pdf}
+	}
+	\unterschrift{PDE 0B Gsin Kernel solution plot}{}{}
+	\label{fig:sol_plot_0B}
+\end{figure}
+
+
+
+\newpage
+
+
+\underline{\textbf{PDE 1: Polynomial 2D}} 
+
+\underline{Problem PDE:} 
+\begin{equation}
+\label{eq:pde1}
+\begin{split}
+-\frac{\partial^2 u}{\partial x^2} - \frac{\partial^2 u}{\partial y^2} = \\
+-2^{40}y^{10}(1-y)^{10}[90x^8(1-x)^{10} -200x^9(1-x)^9 + 90x^{10}(1-x)^8] \\
+-2^{40}x^{10}(1-x)^{10}[90y^8(1-y)^{10} -200y^9(1-y)^9 + 90y^{10}(1-y)^8] \\
+\text{on the domain } \Omega: x,y \in [0,1] \\
+\text{subjected to: } \\
+u(x,1) = 0 \\
+u(x,0) = 0 \\
+u(1,y) = 0 \\
+u(0,y) = 0 \\
+\end{split}
+\end{equation}
+
+
+\underline{Solution:} 
+\begin{equation}
+\label{eq:sol1}
+u_{ext}(x,y) = 2^{40}x^{10}(1-x)^{10}y^{10}(1-y)^{10}
+\end{equation}
+
+
+\begin{figure}[H]
+	\centering
+	\noindent\adjustbox{max width=\linewidth}{
+		\includegraphics[width=0.69\textwidth]{../../code/testbed/pde1/sol_pde_1.pdf}
+	}
+	\unterschrift{PDE 1 Polynomial 2D solution plot}{}{}
+	\label{fig:sol_plot_1}
+\end{figure}
+
+
+
+\newpage
+
+
+\underline{\textbf{PDE 2: Chaquet PDE 1}}
+
+\underline{Problem PDE:} 
+\begin{equation}
+\label{eq:pde2}
+\begin{split}
+\frac{\partial^2 u}{\partial x^2} + \frac{\partial^2 u}{\partial y^2} = e^{-x} (x-2 + y^3 + 6y) \\
+\text{on the domain } \Omega: \mathbf{x} \in [0,1] \\
+\text{subjected to: } \\
+u(x,0) = xe^{-x}
+u(x,1) = (x + 1)e^{-x}
+u(0,y) = y^3 \\
+u(1,y) = (1 + y^3) e^{-1}
+\end{split}
+\end{equation}
+
+
+\underline{Solution:}
+\begin{equation}
+\label{eq:sol2}
+u_{ext}(x,y) = (x + y^3) e^{-x}
+\end{equation}
+
+
+
+\begin{figure}[H]
+	\centering
+	\noindent\adjustbox{max width=\linewidth}{
+		\includegraphics[width=0.69\textwidth]{../../code/testbed/pde2/sol_pde_2.pdf}
+	}
+	\unterschrift{PDE 2 Chaquet PDE 1 solution plot}{}{}
+	\label{fig:sol_plot_2}
+\end{figure}
+
+
+
+
+\newpage
+
+
+
+\underline{\textbf{PDE 3: Chaquet PDE 3}}
+
+\underline{Problem PDE:} 
+\begin{equation}
+\label{eq:pde3}
+\begin{split}
+\frac{\partial^2 u}{\partial x^2} + \frac{\partial^2 u}{\partial y^2} = 4 \\
+\text{on the domain } \Omega: \mathbf{x} \in [0,1] \\
+\text{subjected to: } \\
+u(x,0) = x^2 + x + 1 \\
+u(x,1) = x^2 + x + 3 \\
+u(1,y) = y^2 + y + 3 \\
+u(0,y) = y^2 + y + 1 \\
+\end{split}
+\end{equation}
+
+
+\underline{Solution}
+\begin{equation}
+\label{eq:sol3}
+u_{ext}(x,y) = x^2 + y^2 + x + y + 1
+\end{equation}
+
+
+\begin{figure}[H]
+	\centering
+	\noindent\adjustbox{max width=\linewidth}{
+		\includegraphics[width=0.69\textwidth]{../../code/testbed/pde3/sol_pde_3.pdf}
+	}
+	\unterschrift{PDE 3 Chaquet PDE 3 solution plot}{}{}
+	\label{fig:sol_plot_3}
+\end{figure}
+
+
+
+\newpage
+
+
+
+
+\underline{\textbf{PDE 4: Sine Bump 2D}} 
+
+\underline{Problem PDE:}
+\begin{equation}
+\label{eq:pde4}
+\begin{split}
+-\frac{\partial^2 u}{\partial x^2} - \frac{\partial^2 u}{\partial y^2} = 2\pi^2 sin(\pi x) sin(\pi y) \\
+\text{on the domain } \Omega: \mathbf{x} \in [0,1] \\
+\text{subjected to: } \\
+u(x,0) = 0 \\
+u(x,1) = 0 \\
+u(0,y) = 0 \\
+u(1,y) = 0 \\
+\end{split}
+\end{equation}
+
+
+\underline{Solution:}
+\begin{equation}
+\label{eq:sol4}
+u_{ext}(x,y) = sin(\pi x)sin(\pi y)
+\end{equation}
+
+
+
+\begin{figure}[H]
+	\centering
+	\noindent\adjustbox{max width=\linewidth}{
+		\includegraphics[width=0.69\textwidth]{../../code/testbed/pde4/sol_pde_4.pdf}
+	}
+	\unterschrift{PDE 4 Sine Bump 2D solution plot}{}{}
+	\label{fig:sol_plot_4}
+\end{figure}
+
+
+
+
+\newpage
+
+
+
+
+
+
+
+\underline{\textbf{PDE 5: Arctan Circular Wave Front}} 
+
+\underline{Problem PDE:}
+\begin{equation}
+\label{eq:pde5}
+\begin{split}
+-\frac{\partial^2 u}{\partial x^2} - \frac{\partial^2 u}{\partial y^2} = \frac{16000(\sqrt{(x - 0.05)^2 + (y - 0.05)^2} -0.7)}{(1 + 400 (-0.7 + \sqrt{(x - 0.05)^2 + (y - 0.05)^2})^2)^2} \\
++ \frac{20 (x - 0.05)^2 + 20 (y - 0.05)^2}{(1 + 400 (\sqrt{(x - 0.05)^2 + (y - 0.05)^2} -0.7)^2) ((x - 0.05)^2 + (y - 0.05)^2)^{3/2}} \\
+- \frac{40}{(1 + 400 (\sqrt{(y - 0.05)^2 + (x - 0.05)^2} -0.7)^2) \sqrt{(y - 0.05)^2 + (x - 0.05)^2}} \\
+\text{on the domain } \Omega: \mathbf{x} \in [0,1] \\
+\text{subjected to: } \\
+u(x,0) = tan^{-1}\left(20 \left(\sqrt{(x-0.05)^2 + 0.0025} -0.7\right)\right) \\
+u(x,1) = tan^{-1}\left(20 \left(\sqrt{(x-0.05)^2 + 0.9025} -0.7\right)\right) \\
+u(0,y) = tan^{-1}\left(20 \left(\sqrt{0.0025 + (y-0.05)^2} -0.7\right)\right) \\
+u(1,y) = tan^{-1}\left(20 \left(\sqrt{0.9025 + (y-0.05)^2} -0.7\right)\right) \\
+\end{split}
+\end{equation}
+
+\underline{Solution:}
+\begin{equation}
+\label{eq:sol5}
+u_{ext}(x,y) = tan^{-1}\left(20 \left(\sqrt{(x-0.05)^2 + (y-0.05)^2} -0.7\right)\right)
+\end{equation}
+
+
+
+\begin{figure}[H]
+	\centering
+	\noindent\adjustbox{max width=\linewidth}{
+		\includegraphics[width=0.69\textwidth]{../../code/testbed/pde5/sol_pde_5.pdf}
+	}
+	\unterschrift{PDE 5 Arctan Circular Wave Front solution plot}{}{}
+	\label{fig:sol_plot_5}
+\end{figure}
+
+
+
+
+\newpage
+
+
+
+
+\underline{\textbf{PDE 6: Peak 2D}} 
+
+\underline{Problem PDE:}
+\begin{equation}
+\label{eq:pde6}
+\begin{split}
+-\frac{\partial^2 u}{\partial x^2} - \frac{\partial^2 u}{\partial y^2} = \\
+-(4 \cdot 10^6 x^2 -4 \cdot 10^6 x + 998 \cdot 10^3)e^{-1000((x-0.5)^2 + (y-0.5)^2)} \\
+-(4 \cdot 10^6 y^2 -4 \cdot 10^6 y + 998 \cdot 10^3)e^{-1000((x-0.5)^2 + (y-0.5)^2)} \\
+\text{on the domain } \Omega: \mathbf{x} \in [0,1] \\
+\text{subjected to: } \\
+u(x,0) = e^{-1000((x-0.5)^{2} + 0.25)} \\
+u(x,1) = e^{-1000((x-0.5)^{2} + 0.25)} \\
+u(0,y) = e^{-1000(0.25 + (y-0.5)^{2})} \\
+u(1,y) = e^{-1000(0.25 + (y-0.5)^{2})} \\
+\end{split}
+\end{equation}
+
+\underline{Solution:}
+\begin{equation}
+\label{eq:sol6}
+u_{ext}(x,y) = e^{-1000((x-0.5)^{2} + (y-0.5)^{2})}
+\end{equation}
+
+
+
+
+\begin{figure}[H]
+	\centering
+	\noindent\adjustbox{max width=\linewidth}{
+		\includegraphics[width=0.69\textwidth]{../../code/testbed/pde6/sol_pde_6.pdf}
+	}
+	\unterschrift{PDE 6 Peak 2D solution plot}{}{}
+	\label{fig:sol_plot_6}
+\end{figure}
+
+
+
+
+\newpage
+
+
+
+
+
+\underline{\textbf{PDE 7: Boundary Line Singularity}} 
+
+\underline{Problem PDE:} 
+\begin{equation}
+\label{eq:pde7}
+\begin{split}
+-\frac{\partial^2 u}{\partial x^2} - \frac{\partial^2 u}{\partial y^2} = 0.24 x^{-1.4}\\
+\text{on the domain } \Omega: \mathbf{x} \in [0,1] \\
+\text{subjected to: } \\
+u(x,0) = x^{0.6} \\
+u(x,1) = x^{0.6} \\
+u(0,y) = 0 \\
+u(1,y) = 1^{0.6} \\
+\end{split}
+\end{equation}
+
+
+\underline{Solution:} 
+\begin{equation}
+\label{eq:sol7}
+u_{ext}(x,y) = x^{0.6}
+\end{equation}
+
+
+
+\begin{figure}[H]
+	\centering
+	\noindent\adjustbox{max width=\linewidth}{
+		\includegraphics[width=0.69\textwidth]{../../code/testbed/pde7/sol_pde_7.pdf}
+	}
+	\unterschrift{PDE 7 Boundary Line Singularity solution plot}{}{}
+	\label{fig:sol_plot_7}
+\end{figure}
+
+
+
+
+\newpage
+
+
+
+
+
+\underline{\textbf{PDE 8: Interior Point Singularity}} 
+
+\underline{Problem PDE:} 
+\begin{equation}
+\label{eq:pde8}
+\begin{split}
+\frac{\partial^2 u}{\partial x^2} + \frac{\partial^2 u}{\partial y^2} = \frac{1}{\sqrt{x^2 - x + y^2 - y + 0.5}} \\
+\Omega: \mathbf{x} \in [0,1] \\
+\text{on the domain } \text{subjected to: } \\
+u(x,0) = \sqrt{(x-0.5)^2 + 0.25} \\
+u(x,1) =  \sqrt{(x-0.5)^2 + 0.25} \\
+u(0,y) = \sqrt{0.25 + (y-0.5)^2} \\
+u(1,y) =  \sqrt{0.25 + (y-0.5)^2} \\
+\end{split}
+\end{equation}
+
+\underline{Solution:}
+\begin{equation}
+\label{eq:sol8}
+u_{ext}(x,y) = \sqrt{(x-0.5)^2 + (y-0.5)^2}
+\end{equation}
+
+
+\begin{figure}[H]
+	\centering
+	\noindent\adjustbox{max width=\linewidth}{
+		\includegraphics[width=0.69\textwidth]{../../code/testbed/pde8/sol_pde_8.pdf}
+	}
+	\unterschrift{PDE 8 Interior Point Singularity solution plot}{}{}
+	\label{fig:sol_plot_8}
+\end{figure}
+
+
+
+
+
+\newpage
+
+
+
+
+\underline{\textbf{PDE 9: Arctan Wave Front Homogeneous Boundary Conditions 2D}} 
+
+\underline{Problem PDE:}
+\begin{equation}
+\label{eq:pde9}
+\begin{split}
+-\frac{\partial^2 u}{\partial x^2} - \frac{\partial^2 u}{\partial y^2} = \\
+\frac{20\sqrt{2}(x^2 + y^2 -2x^2y - 2xy^2 + 4xy - x - y)}{400(\frac{x+y}{\sqrt{2}}-0.8)^2+1} \\
++\frac{16000(1-x)x(1-y)y(\frac{x+y}{\sqrt{2}}-0.8)}{(400(\frac{x+y}{\sqrt{2}}-0.8)^2+1)^2} \\
++ tan^{-1}\left(20\left(\frac{x+y}{\sqrt{2}}-0.8\right)\right)(2(1-y)y + 2(1-x)x)  \\
+\text{on the domain } \Omega: \mathbf{x} \in [0,1] \\
+\text{subjected to: } \\
+u(x,0) = 0 \\
+u(x,1) = 0 \\
+u(0,y) = 0 \\
+u(1,y) = 0 \\
+\end{split}
+\end{equation}
+
+
+\underline{Solution:}
+\begin{equation}
+\label{eq:sol9}
+u_{ext}(x,y) = tan^{-1}\left(20\left(\frac{(x + y)}{\sqrt{2}} -0.8\right)\right)x(1-x)y(1-y)
+\end{equation}
+
+
+
+\begin{figure}[H]
+	\centering
+	\noindent\adjustbox{max width=\linewidth}{
+		\includegraphics[width=0.65\textwidth]{../../code/testbed/pde9/sol_pde_9.pdf}
+	}
+	\unterschrift{PDE 9 Arctan Wave Front Homogeneous Boundary Conditions 2D solution plot}{}{}
+	\label{fig:sol_plot_9}
+\end{figure}
+
+
+
+
+
+\chapter{Software Architecture}
+\label{chap:software_architecture}
+
+\begin{figure}[H]
+	\centering
+	\noindent\adjustbox{max width=\linewidth}{\includegraphics[width=1\textwidth]{../../code/uml_diag/testbench_uml_class.pdf}
+	}
+	\unterschrift{This \gls{uml} class diagram describes the software architecture defined to prepare, run and evaluate the experiments. }{}{}
+	\label{fig:software_architecture}
+\end{figure}
+
+\chapter{solve function}
+\label{chap:solve_function}
+
+\begin{algorithm}[H]
+	\SetAlgoNoLine
+	\DontPrintSemicolon
+	\SetKwFunction{Fsolve}{solve}
+	\SetKwProg{Fn}{Function}{:}{}
+	\Fn{\Fsolve{}}{
+		$gc.disable()$\;
+		\While{$gc.isenabled()$} {
+			$time.sleep(0.1)$\;
+		}	
+		$process = psutil.Process()$\;
+		$memstart = process.memory\text{\textunderscore}info().rss$\;
+		$t\text{\textunderscore}start = time.time()$\;
+		\tcp{perform solver steps}
+		\tcp{that are particular}
+		\tcp{to FEM or CI solver}
+		$self.\text{\textunderscore}exec\text{\textunderscore}time = time.time() - t\text{\textunderscore}{start}$\;
+		$memstop = process.memory\text{\textunderscore}info().rss - memstart$\;
+		$gc.enable()$\;
+		$gc.collect()$\;
+	}
+	\unterschrift{solve function pseudocode}{}{}
+	\label{algo: solve}
+\end{algorithm}
+
 \end{document}

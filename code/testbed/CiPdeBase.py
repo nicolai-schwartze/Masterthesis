@@ -10,6 +10,7 @@ import numpy as np
 import scipy.integrate as integrate
 import time
 import psutil
+import gc
 
 class CiPdeBase(ITestbenchBase):
     """
@@ -124,7 +125,8 @@ class CiPdeBase(ITestbenchBase):
         difference_func = lambda x,y: \
         (self.approx(np.array([x,y])) - self.exact(np.array([x,y]))) * \
         (self.approx(np.array([x,y])) - self.exact(np.array([x,y])))
-        return np.sqrt(integrate.dblquad(difference_func, self._lx, self._ux, self._ly, self._uy)[0])
+        return np.sqrt(integrate.dblquad(difference_func, self._lx, self._ux, self._ly, self._uy)[0] \
+                       /integrate.dblquad(lambda x,y: 1.0, self._lx, self._ux, self._ly, self._uy)[0])
 
     def fitness_func(self, kernels): pass
 
@@ -136,6 +138,14 @@ class CiPdeBase(ITestbenchBase):
         return (1 + self._kappa*(1-(min(temp_xi_xj)/self._weight_reference)))/(1+self._kappa)
 
     def solve(self): 
+        
+        # disable garbage collector 
+        # --------------------------------------------------------------------#
+        gc.disable()
+        while(gc.isenabled()):
+            time.sleep(0.1)
+        # --------------------------------------------------------------------#
+        
         # start memory measurement
         process = psutil.Process()
         memstart = process.memory_info().rss
@@ -161,13 +171,15 @@ class CiPdeBase(ITestbenchBase):
         self._exec_time = time.time() - t_start
         
         # stop memory measurement
-        process = psutil.Process()
-        memstop = process.memory_info().rss - memstart
+        self._mem_consumption = process.memory_info().rss - memstart
         
-        # subtract lists because they are not needed? 
-        # -> ask Steffen
         
-        self._mem_consumption = memstop
+        # enable garbage collector 
+        # --------------------------------------------------------------------#
+        gc.enable()
+        gc.collect()
+        # --------------------------------------------------------------------#
+        
 
 
 if __name__ == "__main__":

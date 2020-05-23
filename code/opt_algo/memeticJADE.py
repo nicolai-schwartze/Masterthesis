@@ -56,14 +56,14 @@ def memeticJADE(population, function, minError, maxIter):
     p = 0.3
     c = 0.5
     popDynamic, FEDynamic, FDynamic, CRDynamic = JADE(population, p, c, function, \
-                                                      minError, int(np.ceil((2/3)*maxIter)))
+                                                      minError, int(np.ceil(0.5*maxIter)))
     print("finished JADE")
     print("="*45)
     print("start direct search with downhill simplex")
     bestIndex = np.argmin(FEDynamic[-1])
     bestSolution = popDynamic[-1][bestIndex]
     _, _, _, _, _, pop  = sc.optimize.fmin(function, bestSolution, ftol=minError, \
-                                           maxiter=int(np.floor((1/3)*maxIter)), \
+                                           maxiter=int(np.floor(0.5*maxIter)), \
                                            full_output = True, retall = True)
     for p in pop:
         # insert last DS population into pop dynaimc

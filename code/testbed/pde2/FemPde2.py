@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Mon Apr 13 14:57:32 2020
+Created on Wed Apr 29 13:39:40 2020
 
 @author: Nicolai
 """
@@ -13,30 +13,26 @@ import numpy as np
 # import from ngsolve
 import ngsolve as ngs
 from netgen.geom2d import unit_square
+
 import time
 import psutil
+import gc
 
 class FemPde2(FemPdeBase):
     """
     **Implementation of PDE2 of the testbed:** 
         
     .. math:: 
-        - \Delta u(\mathbf{x}) = -2^{40}y^{10}(1-y)^{10}[90x^8(1-x)^{10} 
-        
-        - 200x^9(1-x)^9 + 90x^{10}(1-x)^8] 
-        
-        -2^{40}x^{10}(1-x)^{10}[90y^8(1-y)^{10} 
-        
-        - 200y^9(1-y)^9 + 90y^{10}(1-y)^8]
+        \Delta u(\mathbf{x}) = e^{-x} (x-2 + y^3 + 6y)
         
         \Omega: \mathbf{x} \in [0,1]
         
-        u(\mathbf{x})|_{\partial \Omega} = 0
+        u(\mathbf{x})|_{\partial \Omega} = u(\mathbf{x})
     
     **with the solution:** 
         
     .. math:: 
-        u(\mathbf{x}) = 2^{40}x^{10}(1-x)^{10}y^{10}(1-y)^{10}
+        u(\mathbf{x}) = (x + y^3) e^{-x}
         
         
     Attributes
@@ -81,8 +77,8 @@ class FemPde2(FemPdeBase):
         super().__init__(show_gui)
         
         # init protected
-        self._pde_string = "-laplacian(u(x)) = -(2^40*y^10*(1-y)^10*(90*x^8*(1-x)^10 - 200*x^9*(1-x)^9 + 90*x^10*(1-x)^8)) -(2^40*x^10*(1-x)^10*(90*y^8*(1-y)^10 - 200*y^9*(1-y)^9 + 90*y^10*(1-y)^8))"
-        self._ngs_ex = (2**(4*10))*(ngs.x**10)*((1-ngs.x)**10)*(ngs.y**10)*((1-ngs.y)**10)
+        self._pde_string = "laplacian(u(x)) =e^{-x} (x-2 +y^3 + 6y)"
+        self._ngs_ex = (ngs.x + ngs.y**3)*ngs.exp(-ngs.x)
         
         # init public
         self.max_ndof = max_ndof
@@ -90,6 +86,14 @@ class FemPde2(FemPdeBase):
         
     
     def solve(self): 
+        
+        # disable garbage collector 
+        # --------------------------------------------------------------------#
+        gc.disable()
+        while(gc.isenabled()):
+            time.sleep(0.1)
+        # --------------------------------------------------------------------#
+        
         # measure how much memory is used until here
         process = psutil.Process()
         memstart = process.memory_info().rss
@@ -115,16 +119,14 @@ class FemPde2(FemPdeBase):
     
         # creat linear functional and apply RHS
         self._f = ngs.LinearForm(self._fes)
-        self._f += ( \
-        -(2**40*ngs.y**10*(1-ngs.y)**10*(90*ngs.x**8*(1-ngs.x)**10 - 200*ngs.x**9*(1-ngs.x)**9 + 90*ngs.x**10*(1-ngs.x)**8)) \
-        -(2**40*ngs.x**10*(1-ngs.x)**10*(90*ngs.y**8*(1-ngs.y)**10 - 200*ngs.y**9*(1-ngs.y)**9 + 90*ngs.y**10*(1-ngs.y)**8)) )*v*ngs.dx
+        self._f += (-ngs.exp(-ngs.x)*(ngs.x - 2 + ngs.y**3 + 6*ngs.y) )*v*ngs.dx
         
         # preconditioner: multigrid - what prerequisits must the problem have? 
         self._c = ngs.Preconditioner(self._a,"multigrid")
         
         # create grid function that holds the solution and set the boundary to 0
         self._gfu = ngs.GridFunction(self._fes, autoupdate=True)  # solution 
-        self._g = 0.0
+        self._g = (ngs.x + ngs.y**3)*ngs.exp(-ngs.x)
         self._gfu.Set(self._g, definedon=self._mesh.Boundaries(".*"))
         
         # draw grid function in gui
@@ -153,9 +155,14 @@ class FemPde2(FemPdeBase):
         self._exec_time = time.time() - tstart
         
         # set measured used memory
-        process = psutil.Process()
         memstop = process.memory_info().rss - memstart
         self._mem_consumption = memstop
+        
+        # enable garbage collector 
+        # --------------------------------------------------------------------#
+        gc.enable()
+        gc.collect()
+        # --------------------------------------------------------------------#
         
 
 
@@ -188,7 +195,7 @@ if __name__ == "__main__":
     import matplotlib.pyplot as plt
     from matplotlib import cm
     
-    fig = plt.figure()
+    fig = plt.figure(figsize=(7,5))
     ax = fig.add_subplot(111, projection='3d')
     x = y = np.arange(0, 1.01, 0.01)
     X, Y = np.meshgrid(x, y)
@@ -197,12 +204,17 @@ if __name__ == "__main__":
     np.array([x,y])) for x,y in zip(np.ravel(X), np.ravel(Y))])
     
     Z = zs0.reshape(X.shape)
+    
     ax.plot_surface(X, Y, Z, cmap=cm.gnuplot)
     
-    ax.set_xlabel("X0")
-    ax.set_ylabel("X1")
-    ax.set_zlabel("f(X0,X1)")
+    fig.tight_layout()
+    
+    ax.set_xlabel("x")
+    ax.set_ylabel("y")
+    ax.set_zlabel("z")
+    ax.set_title("Solution of PDE 2", fontsize=20)
     plt.show()
+    fig.savefig("sol_pde_2.pdf", bbox_inches='tight')
     
     
     fig = plt.figure()

@@ -1,0 +1,6 @@
+2*ngs.exp(-2 * (ngs.x**2 + ngs.y**2))*(2 * ngs.sin(-2 * (ngs.x**2 + ngs.y**2)) + 2 * (1-8 * ngs.x**2)*ngs.cos(-2 * (ngs.x**2 + ngs.y**2))) + \
+2*ngs.exp(-2 * (ngs.x**2 + ngs.y**2))*(2 * ngs.sin(-2 * (ngs.x**2 + ngs.y**2)) + 2 * (1-8 * ngs.y**2)*ngs.cos(-2 * (ngs.x**2 + ngs.y**2))) + \
+2*ngs.exp(-1 * (ngs.x**2 + ngs.y**2))*(1 * ngs.sin(-1 * (ngs.x**2 + ngs.y**2)) + 1 * (1-4 * ngs.x**2)*ngs.cos(-1 * (ngs.x**2 + ngs.y**2))) + \
+2*ngs.exp(-1 * (ngs.x**2 + ngs.y**2))*(1 * ngs.sin(-1 * (ngs.x**2 + ngs.y**2)) + 1 * (1-4 * ngs.y**2)*ngs.cos(-1 * (ngs.x**2 + ngs.y**2))) + \
+2*ngs.exp(-0.1*(ngs.x**2 + ngs.y**2))*(0.1*ngs.sin(-0.1*(ngs.x**2 + ngs.y**2)) + 0.1*(1-0.4*ngs.x**2)*ngs.cos(-0.1*(ngs.x**2 + ngs.y**2))) + \
+2*ngs.exp(-0.1*(ngs.x**2 + ngs.y**2))*(0.1*ngs.sin(-0.1*(ngs.x**2 + ngs.y**2)) + 0.1*(1-0.4*ngs.y**2)*ngs.cos(-0.1*(ngs.x**2 + ngs.y**2)))

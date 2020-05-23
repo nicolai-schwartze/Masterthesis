@@ -1,43 +1,50 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Apr 23 09:22:28 2020
+Created on Fri Apr 24 08:10:02 2020
 
 @author: Nicolai
 """
 
 import sys
-sys.path.append("../")
-sys.path.append("../../opt_algo")
-sys.path.append("../../kernels")
-import OptAlgoMemeticJADE as oaMemJade
-import KernelGauss as gk
-
+import os
+importpath = os.path.abspath(__file__) + "../../../"
+sys.path.append(importpath)
 from CiPdeBase import CiPdeBase
+    
 import numpy as np
 
 class CiPde1(CiPdeBase):
+    
     """
-    **Implementation of PDE1 of the testbed:** 
+    **Implementation of PDE2 of the testbed:** 
         
     .. math:: 
-        - \Delta u(\mathbf{x}) = 2\pi^2 sin(\pi x_0) sin(\pi x_1) 
+        - \Delta u(\mathbf{x}) = -2^{40}y^{10}(1-y)^{10}[90x^8(1-x)^{10} 
+        
+        - 200x^9(1-x)^9 + 90x^{10}(1-x)^8] 
+        
+        -2^{40}x^{10}(1-x)^{10}[90y^8(1-y)^{10} 
+        
+        - 200y^9(1-y)^9 + 90y^{10}(1-y)^8]
         
         \Omega: \mathbf{x} \in [0,1]
         
         u(\mathbf{x})|_{\partial \Omega} = 0
-        
+    
     **with the solution:** 
         
     .. math:: 
-        u(\mathbf{x}) = sin(\pi x_{0})sin(\pi x_{1})
+        u(\mathbf{x}) = 2^{40}x^{10}(1-x)^{10}y^{10}(1-y)^{10}
+        
         
     Attributes
     ----------
     sol_kernel: np.array
-        n by 4 dimensional array\n
+        n by 4 dimensional array for gauss kerenl\n
+        n by 6 dimensional array for gsin kernel \n
         n is the number of kernels\n
-        4 are the parameters of the kernel\
-        [wi, yi, c1i, c2i]
+        4/6 are the parameters of the kernel\
+        [wi, yi, c1i, c2i, fi, pi]
         
     Methods
     -------
@@ -61,20 +68,20 @@ class CiPde1(CiPdeBase):
     >>> min_err = 10**(-200)
     >>> mJade = oaMemJade.OptAlgoMemeticJADE(initialPop, max_iter, min_err) 
     >>> gkernel = gk.KernelGauss()
-    >>> cipde1 = CiPde1(mJade, gkernel)
+    >>> cipde2 = CiPde2(mJade, gkernel)
     >>> pos = np.array([0.5, 0.5])
-    >>> cipde1.exact(pos)
+    >>> cipde2.exact(pos)
         1.0
-    >>> cipde1.solve()
-    >>> cipde1.approx(pos)
+    >>> cipde2.solve()
+    >>> cipde2.approx(pos)
         0.0551194418735029
-    >>> cipde1.normL2()
+    >>> cipde2.normL2()
         0.471414887516362
-    >>> cipde1.exec_time
+    >>> cipde2.exec_time
         11886.15
-    >>> cipde1.mem_consumption
+    >>> cipde2.mem_consumption
         180473856
-    >>> cipde1.sol_kernel 
+    >>> cipde2.sol_kernel 
         array([[ 0.18489863,  0.80257658,  2.73320428,  1.4806761 ],
                [ 0.03794604,  0.4414469 , -0.21652954, -0.29846278],
                [ 0.05160915,  3.60778814,  0.46935849,  0.49860103],
@@ -88,12 +95,12 @@ class CiPde1(CiPdeBase):
     """
     
     def __init__(self, opt_algo, kernel, nb, nc):
-        # initialisation from CiPdeBase
+        # init from inheriting class
         super().__init__(opt_algo, kernel, nb, nc)
         
         # descriptive string
-        self._pde_string = "-laplacian(u(x)) = 2*(pi**2)*sin(pi*x)*sin(pi*y)"
-        
+        self._pde_string = "-laplacian(u(x)) = -(2^40*y^10*(1-y)^10*(90*x^8*(1-x)^10 - 200*x^9*(1-x)^9 + 90*x^10*(1-x)^8)) -(2^40*x^10*(1-x)^10*(90*y^8*(1-y)^10 - 200*y^9*(1-y)^9 + 90*y^10*(1-y)^8))"
+            
         # user-defined inner weighting factor
         self._kappa = 1
         
@@ -107,14 +114,14 @@ class CiPde1(CiPdeBase):
         for xb in self._nb:
             self._phi.append(100)
         
-        # boundary for integration in L2 Norm
+        # boundary for integration
         self._lx = 0.0
         self._ux = 1.0
         self._ly = lambda x: 0.0
         self._uy = lambda x: 1.0
         
     def exact(self, x): 
-        return np.sin(np.pi * x[0])*np.sin(np.pi * x[1])
+        return (2**(4*10))*(x[0]**10)*((1-x[0])**10)*(x[1]**10)*((1-x[1])**10)
     
     def fitness_func(self, kernels): 
         
@@ -127,7 +134,8 @@ class CiPde1(CiPdeBase):
         for i in range(len(self._nc)):
             u_x0_x0 = self.kernel.solution_x0_x0(kernels, np.array([self._nc[i][0],self._nc[i][1]]))
             u_x1_x1 = self.kernel.solution_x1_x1(kernels, np.array([self._nc[i][0],self._nc[i][1]]))
-            f = np.sin(np.pi*self._nc[i][0])*np.sin(np.pi*self._nc[i][1])
+            f = -(2**40*self._nc[i][1]**10*(1-self._nc[i][1])**10*(90*self._nc[i][0]**8*(1-self._nc[i][0])**10 - 200*self._nc[i][0]**9*(1-self._nc[i][0])**9 + 90*self._nc[i][0]**10*(1-self._nc[i][0])**8)) \
+                -(2**40*self._nc[i][0]**10*(1-self._nc[i][0])**10*(90*self._nc[i][1]**8*(1-self._nc[i][1])**10 - 200*self._nc[i][1]**9*(1-self._nc[i][1])**9 + 90*self._nc[i][1]**10*(1-self._nc[i][1])**8))
             inner_sum += self._xi[i]*(-u_x0_x0 - u_x1_x1 - f)**2 
         
         boarder_sum = 0.0
@@ -140,8 +148,15 @@ class CiPde1(CiPdeBase):
 
 if __name__ == "__main__":
     
+    import sys
+    sys.path.append("../")
+    sys.path.append("../../opt_algo")
+    sys.path.append("../../kernels")
+    import OptAlgoMemeticJADE as oaMemJade
+    import KernelGauss as gk
+    
     initialPop = 1*np.random.rand(40,20)
-    max_iter = 10**3
+    max_iter = 5*10**2
     min_err = 10**(-200)
     mJade = oaMemJade.OptAlgoMemeticJADE(initialPop, max_iter, min_err)
     

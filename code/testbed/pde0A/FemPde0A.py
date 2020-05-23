@@ -13,33 +13,35 @@ import numpy as np
 # import from ngsolve
 import ngsolve as ngs
 import netgen.geom2d as geom2d
+
 import time
 import psutil
+import gc
 
-class FemPde0(FemPdeBase):
+class FemPde0A(FemPdeBase):
     """
-    **Implementation of PDE0 of the testbed:** 
+    **Implementation of PDE0A of the testbed:** 
         
     .. math:: 
-        - \Delta u(\mathbf{x}) = -(18x^2-6)e^{-1.5(x^2 + y^2)}
+        \Delta u(\mathbf{x}) = (18x^2-6)e^{-1.5(x^2 + y^2)}
                                  
-                                 -(18y^2-6)e^{-1.5(x^2 + y^2)}
+                                + (18y^2-6)e^{-1.5(x^2 + y^2)}
                                  
-                                 -6(6x^2+12x+5)e^{-3((x+1)^2+(y+1)^2)}
+                                + 6(6x^2+12x+5)e^{-3((x+1)^2+(y+1)^2)}
                                  
-                                 -6(6y^2+12y+5)e^{-3((x+1)^2+(y+1)^2)}
+                                + 6(6y^2+12y+5)e^{-3((x+1)^2+(y+1)^2)}
                                  
-                                 -6(6x^2-12x+5)e^{-3((x-1)^2+(y+1)^2)}
+                                + 6(6x^2-12x+5)e^{-3((x-1)^2+(y+1)^2)}
                                  
-                                 -6(6y^2+12y+5)e^{-3((x-1)^2+(y+1)^2)}
+                                + 6(6y^2+12y+5)e^{-3((x-1)^2+(y+1)^2)}
                                  
-                                 -6(6x^2+12x+5)e^{-3((x+1)^2+(y-1)^2)}
+                                + 6(6x^2+12x+5)e^{-3((x+1)^2+(y-1)^2)}
                                  
-                                 -6(6y^2-12y+5)e^{-3((x+1)^2+(y-1)^2)}
+                                + 6(6y^2-12y+5)e^{-3((x+1)^2+(y-1)^2)}
                                  
-                                 -6(6x^2-12x+5)e^{-3((x-1)^2+(y-1)^2)}
+                                + (6x^2-12x+5)e^{-3((x-1)^2+(y-1)^2)}
                                  
-                                 -6(6y^2-12y+5)e^{-3((x-1)^2+(y-1)^2)}
+                                + 6(6y^2-12y+5)e^{-3((x-1)^2+(y-1)^2)}
                                  
                                  
         
@@ -78,23 +80,23 @@ class FemPde0(FemPdeBase):
     Examples
     --------
     >>> import numpy as np
-    >>> fempde0 = FemPde0(True)
+    >>> fempde0A = FemPde0A(True)
     >>> pos = np.array([0.0, 0.0])
-    >>> fempde0.exact(pos)
+    >>> fempde0A.exact(pos)
     >>> x -> numpy.ndarray with shape (2,) 
         _mesh -> ngs.comp.Mesh 
         _ngs_ex -> ngs.fem.CoefficientFunction 
         -> try to call solve() first
-    >>> fempde0.solve()
-    >>> fempde0.exact(pos)
+    >>> fempde0A.solve()
+    >>> fempde0A.exact(pos)
         2.009915008706665
-    >>> fempde0.approx(pos)
+    >>> fempde0A.approx(pos)
         2.009914779748446
-    >>> fempde0.normL2()
+    >>> fempde0A.normL2()
         2.9670770746774782e-05
-    >>> fempde0.exec_time
+    >>> fempde0A.exec_time
         6.375466346740723
-    >>> fempde0.mem_consumption
+    >>> fempde0A.mem_consumption
         159.055872 Mb
     
     
@@ -104,11 +106,11 @@ class FemPde0(FemPdeBase):
         super().__init__(show_gui)
         
         # init protected
-        self._pde_string = """-laplacian(u(x)) = -(18x^2-6)e^{-1.5(x^2 + y^2)} -(18y^2-6)e^{-1.5(x^2 + y^2)} 
-                   -6(6x^2+12x+5)e^{-3((x+1)^2+(y+1)^2)} -6(6y^2+12y+5)e^{-3((x+1)^2+(y+1)^2)} 
-                   -6(6x^2-12x+5)e^{-3((x-1)^2+(y+1)^2)} -6(6y^2+12y+5)e^{-3((x-1)^2+(y+1)^2)} 
-                   -6(6x^2+12x+5)e^{-3((x+1)^2+(y-1)^2)} -6(6y^2-12y+5)e^{-3((x+1)^2+(y-1)^2)} 
-                   -6(6x^2-12x+5)e^{-3((x-1)^2+(y-1)^2)} -6(6y^2-12y+5)e^{-3((x-1)^2+(y-1)^2)}"""
+        self._pde_string = """laplacian(u(x)) = (18x^2-6)e^{-1.5(x^2 + y^2)} +(18y^2-6)e^{-1.5(x^2 + y^2)} 
+                   +6(6x^2+12x+5)e^{-3((x+1)^2+(y+1)^2)} +6(6y^2+12y+5)e^{-3((x+1)^2+(y+1)^2)} 
+                   +6(6x^2-12x+5)e^{-3((x-1)^2+(y+1)^2)} +6(6y^2+12y+5)e^{-3((x-1)^2+(y+1)^2)} 
+                   +6(6x^2+12x+5)e^{-3((x+1)^2+(y-1)^2)} +6(6y^2-12y+5)e^{-3((x+1)^2+(y-1)^2)} 
+                   +6(6x^2-12x+5)e^{-3((x-1)^2+(y-1)^2)} +6(6y^2-12y+5)e^{-3((x-1)^2+(y-1)^2)}"""
         self._ngs_ex = 2*ngs.exp(-1.5*(ngs.x*ngs.x + ngs.y*ngs.y)) + \
                        ngs.exp(-3*((ngs.x + 1)**2 + (ngs.y + 1)**2)) + \
                        ngs.exp(-3*((ngs.x - 1)**2 + (ngs.y + 1)**2)) + \
@@ -121,6 +123,14 @@ class FemPde0(FemPdeBase):
         
     
     def solve(self): 
+        
+        # disable garbage collector 
+        # --------------------------------------------------------------------#
+        gc.disable()
+        while(gc.isenabled()):
+            time.sleep(0.1)
+        # --------------------------------------------------------------------#
+        
         # measure how much memory is used until here
         process = psutil.Process()
         memstart = process.memory_info().rss
@@ -200,56 +210,66 @@ class FemPde0(FemPdeBase):
         self._exec_time = time.time() - tstart
         
         # set measured used memory
-        process = psutil.Process()
         memstop = process.memory_info().rss - memstart
         self._mem_consumption = memstop
+        
+        # enable garbage collector 
+        # --------------------------------------------------------------------#
+        gc.enable()
+        gc.collect()
+        # --------------------------------------------------------------------#
         
 
 
 if __name__ == "__main__":
     
-    fempde0 = FemPde0(False)
-    print(fempde0.pde_string)
+    fempde0A = FemPde0A(True)
+    print(fempde0A.pde_string)
     
     try:
-        fempde0.exact(np.array([0.0,0.0]))
+        fempde0A.exact(np.array([0.0,0.0]))
     except:
         print("Î error message above")
     
     try:
-        fempde0.approx(np.array([0.0,0.0]))
+        fempde0A.approx(np.array([0.0,0.0]))
     except:
         print("Î error message above")
     
-    fempde0.solve()
+    fempde0A.solve()
     
     print("-------------------------------------")
     
-    print("exact(0.0, 0.0) = {}".format(fempde0.exact(np.array([0.0,0.0]))))
-    print("approx(0.0, 0.0) = {}".format(fempde0.approx(np.array([0.0,0.0]))))
-    print("L2 norm to the real solution {}".format(fempde0.normL2()))
-    print("solving took {} sec".format(fempde0.exec_time))
-    print("solving uses {} Mb".format(fempde0.mem_consumption/1000000))
+    print("exact(0.0, 0.0) = {}".format(fempde0A.exact(np.array([0.0,0.0]))))
+    print("approx(0.0, 0.0) = {}".format(fempde0A.approx(np.array([0.0,0.0]))))
+    print("L2 norm to the real solution {}".format(fempde0A.normL2()))
+    print("solving took {} sec".format(fempde0A.exec_time))
+    print("solving uses {} Mb".format(fempde0A.mem_consumption/1000000))
     
     from mpl_toolkits.mplot3d import Axes3D
     import matplotlib.pyplot as plt
     from matplotlib import cm
     
-    fig = plt.figure()
+    fig = plt.figure(figsize=(7,5))
     ax = fig.add_subplot(111, projection='3d')
     x = y = np.arange(-2.0, 2.01, 0.01)
     X, Y = np.meshgrid(x, y)
     
-    zs0 = np.array([fempde0.exact(\
+    zs0 = np.array([fempde0A.exact(\
     np.array([x,y])) for x,y in zip(np.ravel(X), np.ravel(Y))])
     
     Z = zs0.reshape(X.shape)
     ax.plot_surface(X, Y, Z, cmap=cm.gnuplot)
     
-    ax.set_xlabel("X0")
-    ax.set_ylabel("X1")
-    ax.set_zlabel("f(X0,X1)")
+    fig.tight_layout()
+    
+    ax.set_xlabel("x")
+    ax.set_ylabel("y")
+    ax.set_zlabel("z")
+    ax.set_title("Solution of PDE 0A", fontsize=20)
+    
     plt.show()
+    fig.savefig("sol_pde_0a.pdf", bbox_inches='tight')
     
     
     fig = plt.figure()
@@ -257,13 +277,14 @@ if __name__ == "__main__":
     x = y = np.arange(-2.0, 2.01, 0.01)
     X, Y = np.meshgrid(x, y)
     
-    zs0 = np.array([fempde0.approx(\
+    zs0 = np.array([fempde0A.approx(\
     np.array([x,y])) for x,y in zip(np.ravel(X), np.ravel(Y))])
     
     Z = zs0.reshape(X.shape)
     ax.plot_surface(X, Y, Z, cmap=cm.gnuplot)
     
-    ax.set_xlabel("X0")
-    ax.set_ylabel("X1")
-    ax.set_zlabel("f(X0,X1)")
+    ax.set_xlabel("x")
+    ax.set_ylabel("y")
+    ax.set_zlabel("z")
+    ax.dist = 11
     plt.show()

@@ -13,24 +13,33 @@ import numpy as np
 # import from ngsolve
 import ngsolve as ngs
 from netgen.geom2d import unit_square
+
 import time
 import psutil
+import gc
 
 class FemPde1(FemPdeBase):
     """
     **Implementation of PDE1 of the testbed:** 
         
     .. math:: 
-        - \Delta u(\mathbf{x}) = 2\pi^2 sin(\pi x_0) sin(\pi x_1) 
+        - \Delta u(\mathbf{x}) = -2^{40}y^{10}(1-y)^{10}[90x^8(1-x)^{10} 
+        
+        - 200x^9(1-x)^9 + 90x^{10}(1-x)^8] 
+        
+        -2^{40}x^{10}(1-x)^{10}[90y^8(1-y)^{10} 
+        
+        - 200y^9(1-y)^9 + 90y^{10}(1-y)^8]
         
         \Omega: \mathbf{x} \in [0,1]
         
         u(\mathbf{x})|_{\partial \Omega} = 0
-        
+    
     **with the solution:** 
         
     .. math:: 
-        u(\mathbf{x}) = sin(\pi x_{0})sin(\pi x_{1})
+        u(\mathbf{x}) = 2^{40}x^{10}(1-x)^{10}y^{10}(1-y)^{10}
+        
         
     Attributes
     ----------
@@ -50,34 +59,32 @@ class FemPde1(FemPdeBase):
     Examples
     --------
     >>> import numpy as np
-    >>> fempde1 = FemPde1(True)
+    >>> fempde2 = FemPde2(True)
     >>> pos = np.array([0.5, 0.5])
-    >>> fempde1.exact(pos)
+    >>> fempde2.exact(pos)
     >>> x -> numpy.ndarray with shape (2,) 
         _mesh -> ngs.comp.Mesh 
         _ngs_ex -> ngs.fem.CoefficientFunction 
         -> try to call solve() first
-    >>> fempde1.solve()
-    >>> fempde1.exact(pos)
+    >>> fempde2.solve()
+    >>> fempde2.exact(pos)
         1.0
-    >>> fempde1.approx(pos)
-        0.9999999839860894
-    >>> fempde1.normL2()
-        3.4717202708948315e-07
-    >>> fempde1.exec_time
-        7.630256175994873
-    >>> fempde1.mem_consumption
-        166629376
-    
-    
+    >>> fempde2.approx(pos)
+        0.999998924259486
+    >>> fempde2.normL2()
+        5.853102150391562e-07
+    >>> fempde2.exec_time
+        3.830256175994873
+    >>> fempde2.mem_consumption
+        76705792
     """
     
     def __init__(self, show_gui, max_ndof=50000):
         super().__init__(show_gui)
         
         # init protected
-        self._pde_string = "-laplacian(u(x)) = 2*(pi**2)*sin(pi*x)*sin(pi*y)"
-        self._ngs_ex = ngs.sin(np.pi*ngs.x)*ngs.sin(np.pi*ngs.y)
+        self._pde_string = "-laplacian(u(x)) = -(2^40*y^10*(1-y)^10*(90*x^8*(1-x)^10 - 200*x^9*(1-x)^9 + 90*x^10*(1-x)^8)) -(2^40*x^10*(1-x)^10*(90*y^8*(1-y)^10 - 200*y^9*(1-y)^9 + 90*y^10*(1-y)^8))"
+        self._ngs_ex = (2**(4*10))*(ngs.x**10)*((1-ngs.x)**10)*(ngs.y**10)*((1-ngs.y)**10)
         
         # init public
         self.max_ndof = max_ndof
@@ -85,6 +92,14 @@ class FemPde1(FemPdeBase):
         
     
     def solve(self): 
+        
+        # disable garbage collector 
+        # --------------------------------------------------------------------#
+        gc.disable()
+        while(gc.isenabled()):
+            time.sleep(0.1)
+        # --------------------------------------------------------------------#
+        
         # measure how much memory is used until here
         process = psutil.Process()
         memstart = process.memory_info().rss
@@ -110,7 +125,9 @@ class FemPde1(FemPdeBase):
     
         # creat linear functional and apply RHS
         self._f = ngs.LinearForm(self._fes)
-        self._f += 2*(np.pi**2)*ngs.sin(np.pi*ngs.x)*ngs.sin(np.pi*ngs.y)*v*ngs.dx
+        self._f += ( \
+        -(2**40*ngs.y**10*(1-ngs.y)**10*(90*ngs.x**8*(1-ngs.x)**10 - 200*ngs.x**9*(1-ngs.x)**9 + 90*ngs.x**10*(1-ngs.x)**8)) \
+        -(2**40*ngs.x**10*(1-ngs.x)**10*(90*ngs.y**8*(1-ngs.y)**10 - 200*ngs.y**9*(1-ngs.y)**9 + 90*ngs.y**10*(1-ngs.y)**8)) )*v*ngs.dx
         
         # preconditioner: multigrid - what prerequisits must the problem have? 
         self._c = ngs.Preconditioner(self._a,"multigrid")
@@ -146,15 +163,20 @@ class FemPde1(FemPdeBase):
         self._exec_time = time.time() - tstart
         
         # set measured used memory
-        process = psutil.Process()
         memstop = process.memory_info().rss - memstart
         self._mem_consumption = memstop
+        
+        # enable garbage collector 
+        # --------------------------------------------------------------------#
+        gc.enable()
+        gc.collect()
+        # --------------------------------------------------------------------#
         
 
 
 if __name__ == "__main__":
     
-    fempde1 = FemPde1(False)
+    fempde1 = FemPde1(True)
     print(fempde1.pde_string)
     
     try:
@@ -181,7 +203,7 @@ if __name__ == "__main__":
     import matplotlib.pyplot as plt
     from matplotlib import cm
     
-    fig = plt.figure()
+    fig = plt.figure(figsize=(7,5))
     ax = fig.add_subplot(111, projection='3d')
     x = y = np.arange(0, 1.01, 0.01)
     X, Y = np.meshgrid(x, y)
@@ -192,10 +214,14 @@ if __name__ == "__main__":
     Z = zs0.reshape(X.shape)
     ax.plot_surface(X, Y, Z, cmap=cm.gnuplot)
     
-    ax.set_xlabel("X0")
-    ax.set_ylabel("X1")
-    ax.set_zlabel("f(X0,X1)")
+    fig.tight_layout()
+    
+    ax.set_xlabel("x")
+    ax.set_ylabel("y")
+    ax.set_zlabel("z")
+    ax.set_title("Solution of PDE 1", fontsize=20)
     plt.show()
+    fig.savefig("sol_pde_1.pdf", bbox_inches='tight')
     
     
     fig = plt.figure()
@@ -213,3 +239,4 @@ if __name__ == "__main__":
     ax.set_ylabel("X1")
     ax.set_zlabel("f(X0,X1)")
     plt.show()
+    

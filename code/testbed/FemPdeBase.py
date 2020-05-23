@@ -106,7 +106,8 @@ class FemPdeBase(ITestbenchBase):
     
     def normL2(self): 
         try: 
-            return ngs.sqrt(ngs.Integrate((self._gfu-self._ngs_ex)*(self._gfu-self._ngs_ex), self._mesh))
+            return ngs.sqrt(ngs.Integrate((self._gfu-self._ngs_ex)*(self._gfu-self._ngs_ex), self._mesh) \
+                            /ngs.Integrate(1.0, self._mesh))
         except TypeError:
             print("FEM approximate solution not ready - try to call solve() first")
     

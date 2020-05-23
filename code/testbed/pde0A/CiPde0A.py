@@ -6,39 +6,37 @@ Created on Wed Apr 22 10:34:44 2020
 """
 
 import sys
-sys.path.append("../")
-sys.path.append("../../opt_algo")
-sys.path.append("../../kernels")
-import OptAlgoMemeticJADE as oaMemJade
-import KernelGauss as gk
-
+import os
+importpath = os.path.abspath(__file__) + "../../../"
+sys.path.append(importpath)
 from CiPdeBase import CiPdeBase
+
 import numpy as np
 
-class CiPde0(CiPdeBase):
+class CiPde0A(CiPdeBase):
     """
-    **Implementation of PDE1 of the testbed:** 
+    **Implementation of PDE0A of the testbed:** 
         
     .. math:: 
-        - \Delta u(\mathbf{x}) = -(18x^2-6)e^{-1.5(x^2 + y^2)}
+        \Delta u(\mathbf{x}) = (18x^2-6)e^{-1.5(x^2 + y^2)}
                                  
-                                 -(18y^2-6)e^{-1.5(x^2 + y^2)}
+                               + (18y^2-6)e^{-1.5(x^2 + y^2)}
                                  
-                                 -6(6x^2+12x+5)e^{-3((x+1)^2+(y+1)^2)}
+                               + 6(6x^2+12x+5)e^{-3((x+1)^2+(y+1)^2)}
                                  
-                                 -6(6y^2+12y+5)e^{-3((x+1)^2+(y+1)^2)}
+                               + 6(6y^2+12y+5)e^{-3((x+1)^2+(y+1)^2)}
                                  
-                                 -6(6x^2-12x+5)e^{-3((x-1)^2+(y+1)^2)}
+                               + 6(6x^2-12x+5)e^{-3((x-1)^2+(y+1)^2)}
                                  
-                                 -6(6y^2+12y+5)e^{-3((x-1)^2+(y+1)^2)}
+                               + 6(6y^2+12y+5)e^{-3((x-1)^2+(y+1)^2)}
                                  
-                                 -6(6x^2+12x+5)e^{-3((x+1)^2+(y-1)^2)}
+                               + 6(6x^2+12x+5)e^{-3((x+1)^2+(y-1)^2)}
                                  
-                                 -6(6y^2-12y+5)e^{-3((x+1)^2+(y-1)^2)}
+                               + 6(6y^2-12y+5)e^{-3((x+1)^2+(y-1)^2)}
                                  
-                                 -6(6x^2-12x+5)e^{-3((x-1)^2+(y-1)^2)}
+                               + 6(6x^2-12x+5)e^{-3((x-1)^2+(y-1)^2)}
                                  
-                                 -6(6y^2-12y+5)e^{-3((x-1)^2+(y-1)^2)}
+                               + 6(6y^2-12y+5)e^{-3((x-1)^2+(y-1)^2)}
                                  
                                  
         
@@ -62,10 +60,11 @@ class CiPde0(CiPdeBase):
     Attributes
     ----------
     sol_kernel: np.array
-        n by 4 dimensional array\n
+        n by 4 dimensional array for gauss kerenl\n
+        n by 6 dimensional array for gsin kernel \n
         n is the number of kernels\n
-        4 are the parameters of the kernel\
-        [wi, yi, c1i, c2i]
+        4/6 are the parameters of the kernel\
+        [wi, yi, c1i, c2i, fi, pi]
         
     Methods
     -------
@@ -89,20 +88,20 @@ class CiPde0(CiPdeBase):
     >>> min_err = 10**(-200)
     >>> mJade = oaMemJade.OptAlgoMemeticJADE(initialPop, max_iter, min_err) 
     >>> gkernel = gk.KernelGauss()
-    >>> cipde1 = CiPde1(mJade, gkernel)
+    >>> cipde0A = CiPde0A(mJade, gkernel)
     >>> pos = np.array([0.5, 0.5])
-    >>> cipde1.exact(pos)
+    >>> cipde0A.exact(pos)
         1.0
-    >>> cipde1.solve()
-    >>> cipde1.approx(pos)
+    >>> cipde0A.solve()
+    >>> cipde0A.approx(pos)
         0.0551194418735029
-    >>> cipde1.normL2()
+    >>> cipde0A.normL2()
         0.471414887516362
-    >>> cipde1.exec_time
+    >>> cipde0A.exec_time
         11886.15
-    >>> cipde1.mem_consumption
+    >>> cipde0A.mem_consumption
         180473856
-    >>> cipde1.sol_kernel 
+    >>> cipde0A.sol_kernel 
         array([[ 0.18489863,  0.80257658,  2.73320428,  1.4806761 ],
                [ 0.03794604,  0.4414469 , -0.21652954, -0.29846278],
                [ 0.05160915,  3.60778814,  0.46935849,  0.49860103],
@@ -120,11 +119,11 @@ class CiPde0(CiPdeBase):
         super().__init__(opt_algo, kernel, nb, nc)
         
         # descriptive string
-        self._pde_string = """-laplacian(u(x)) = -(18x^2-6)e^{-1.5(x^2 + y^2)} -(18y^2-6)e^{-1.5(x^2 + y^2)} 
-                   -6(6x^2+12x+5)e^{-3((x+1)^2+(y+1)^2)} -6(6y^2+12y+5)e^{-3((x+1)^2+(y+1)^2)} 
-                   -6(6x^2-12x+5)e^{-3((x-1)^2+(y+1)^2)} -6(6y^2+12y+5)e^{-3((x-1)^2+(y+1)^2)} 
-                   -6(6x^2+12x+5)e^{-3((x+1)^2+(y-1)^2)} -6(6y^2-12y+5)e^{-3((x+1)^2+(y-1)^2)} 
-                   -6(6x^2-12x+5)e^{-3((x-1)^2+(y-1)^2)} -6(6y^2-12y+5)e^{-3((x-1)^2+(y-1)^2)}"""
+        self._pde_string = """-laplacian(u(x)) = (18x^2-6)e^{-1.5(x^2 + y^2)} +(18y^2-6)e^{-1.5(x^2 + y^2)} 
+                   +6(6x^2+12x+5)e^{-3((x+1)^2+(y+1)^2)} +6(6y^2+12y+5)e^{-3((x+1)^2+(y+1)^2)} 
+                   +6(6x^2-12x+5)e^{-3((x-1)^2+(y+1)^2)} +6(6y^2+12y+5)e^{-3((x-1)^2+(y+1)^2)} 
+                   +6(6x^2+12x+5)e^{-3((x+1)^2+(y-1)^2)} +6(6y^2-12y+5)e^{-3((x+1)^2+(y-1)^2)} 
+                   +6(6x^2-12x+5)e^{-3((x-1)^2+(y-1)^2)} +6(6y^2-12y+5)e^{-3((x-1)^2+(y-1)^2)}"""
         
         # user-defined inner weighting factor
         self._kappa = 1
@@ -163,22 +162,24 @@ class CiPde0(CiPdeBase):
         for i in range(len(self._nc)):
             u_x0_x0 = self.kernel.solution_x0_x0(kernels, np.array([self._nc[i][0],self._nc[i][1]]))
             u_x1_x1 = self.kernel.solution_x1_x1(kernels, np.array([self._nc[i][0],self._nc[i][1]]))
-            f = -(18*self._nc[i][0]**2-6)*np.e**(-1.5*(self._nc[i][0]**2 + self._nc[i][1]**2)) \
-                -(18*self._nc[i][1]**2-6)*np.e**(-1.5*(self._nc[i][0]**2 + self._nc[i][1]**2)) \
-                -6*(6*self._nc[i][0]**2+12*self._nc[i][0]+5)*np.e**(-3*((self._nc[i][0]+1)**2+(self._nc[i][1]+1)**2)) \
-                -6*(6*self._nc[i][1]**2+12*self._nc[i][1]+5)*np.e**(-3*((self._nc[i][0]+1)**2+(self._nc[i][1]+1)**2)) \
-                -6*(6*self._nc[i][0]**2-12*self._nc[i][0]+5)*np.e**(-3*((self._nc[i][0]-1)**2+(self._nc[i][1]+1)**2)) \
-                -6*(6*self._nc[i][1]**2+12*self._nc[i][1]+5)*np.e**(-3*((self._nc[i][0]-1)**2+(self._nc[i][1]+1)**2)) \
-                -6*(6*self._nc[i][0]**2+12*self._nc[i][0]+5)*np.e**(-3*((self._nc[i][0]+1)**2+(self._nc[i][1]-1)**2)) \
-                -6*(6*self._nc[i][1]**2-12*self._nc[i][1]+5)*np.e**(-3*((self._nc[i][0]+1)**2+(self._nc[i][1]-1)**2)) \
-                -6*(6*self._nc[i][0]**2-12*self._nc[i][0]+5)*np.e**(-3*((self._nc[i][0]-1)**2+(self._nc[i][1]-1)**2)) \
-                -6*(6*self._nc[i][1]**2-12*self._nc[i][1]+5)*np.e**(-3*((self._nc[i][0]-1)**2+(self._nc[i][1]-1)**2))
+            f = (18*self._nc[i][0]**2-6)*np.e**(-1.5*(self._nc[i][0]**2 + self._nc[i][1]**2)) \
+                +(18*self._nc[i][1]**2-6)*np.e**(-1.5*(self._nc[i][0]**2 + self._nc[i][1]**2)) \
+                +6*(6*self._nc[i][0]**2+12*self._nc[i][0]+5)*np.e**(-3*((self._nc[i][0]+1)**2+(self._nc[i][1]+1)**2)) \
+                +6*(6*self._nc[i][1]**2+12*self._nc[i][1]+5)*np.e**(-3*((self._nc[i][0]+1)**2+(self._nc[i][1]+1)**2)) \
+                +6*(6*self._nc[i][0]**2-12*self._nc[i][0]+5)*np.e**(-3*((self._nc[i][0]-1)**2+(self._nc[i][1]+1)**2)) \
+                +6*(6*self._nc[i][1]**2+12*self._nc[i][1]+5)*np.e**(-3*((self._nc[i][0]-1)**2+(self._nc[i][1]+1)**2)) \
+                +6*(6*self._nc[i][0]**2+12*self._nc[i][0]+5)*np.e**(-3*((self._nc[i][0]+1)**2+(self._nc[i][1]-1)**2)) \
+                +6*(6*self._nc[i][1]**2-12*self._nc[i][1]+5)*np.e**(-3*((self._nc[i][0]+1)**2+(self._nc[i][1]-1)**2)) \
+                +6*(6*self._nc[i][0]**2-12*self._nc[i][0]+5)*np.e**(-3*((self._nc[i][0]-1)**2+(self._nc[i][1]-1)**2)) \
+                +6*(6*self._nc[i][1]**2-12*self._nc[i][1]+5)*np.e**(-3*((self._nc[i][0]-1)**2+(self._nc[i][1]-1)**2))
                  
-            inner_sum += self._xi[i]*(-u_x0_x0 - u_x1_x1 - f)**2 
+            inner_sum += self._xi[i]*(u_x0_x0 + u_x1_x1 - f)**2 
         
         boarder_sum = 0.0
         for i in range(len(self._nb)):
-            boarder_sum += self._phi[i]*(self.exact(np.array([self._nb[i][0], self._nb[i][1]])) - self.kernel.solution(kernels, np.array([self._nb[i][0],self._nb[i][1]])))**2
+            x=self._nb[i][0]
+            y=self._nb[i][1]
+            boarder_sum += self._phi[i]*(self.exact(np.array([x, y])) - self.kernel.solution(kernels, np.array([x,y])))**2
         
         return (boarder_sum + inner_sum)/(len(self._nb) + len(self._nc))
         
@@ -186,8 +187,15 @@ class CiPde0(CiPdeBase):
 
 if __name__ == "__main__":
     
+    import sys
+    sys.path.append("../")
+    sys.path.append("../../opt_algo")
+    sys.path.append("../../kernels")
+    import OptAlgoMemeticJADE as oaMemJade
+    import KernelGauss as gk
+    
     initialPop = np.random.randn(40,20)
-    max_iter = 5*10**3
+    max_iter = 500
     min_err = 10**(-200)
     mJade = oaMemJade.OptAlgoMemeticJADE(initialPop, max_iter, min_err)
     
@@ -195,7 +203,7 @@ if __name__ == "__main__":
     
     # collocation points
     nc = []
-    omega = np.arange(-1.9, 2.0, 0.2)
+    omega = np.arange(-1.9, 2.0, 0.345454545454545)
     for x0 in omega:
         for x1 in omega:
             nc.append((x0, x1))
@@ -207,29 +215,29 @@ if __name__ == "__main__":
     for i in range(len(nby)):
         nb.append((nbx[i], nby[i]))
     
-    cipde0 = CiPde0(mJade, gkernel, nb, nc)
+    cipde0A = CiPde0A(mJade, gkernel, nb, nc)
     
-    print(cipde0.pde_string)
+    print(cipde0A.pde_string)
     
     try:
-        cipde0.exact(np.array([0.0,0.0]))
+        cipde0A.exact(np.array([0.0,0.0]))
     except:
         print("Î error message above")
     
     try:
-        cipde0.approx(np.array([0.0,0.0]))
+        cipde0A.approx(np.array([0.0,0.0]))
     except:
         print("Î error message above")
     
-    cipde0.solve()
+    cipde0A.solve()
     
     print("-------------------------------------")
     
-    print("exact(0.0, 0.0) = {}".format(cipde0.exact(np.array([0.0,0.0]))))
-    print("approx(0.0, 0.0) = {}".format(cipde0.approx(np.array([0.0,0.0]))))
-    print("L2 norm to the real solution {}".format(cipde0.normL2()))
-    print("solving took {} sec".format(cipde0.exec_time))
-    print("solving uses {} Mb".format(cipde0.mem_consumption/1000000))
+    print("exact(0.0, 0.0) = {}".format(cipde0A.exact(np.array([0.0,0.0]))))
+    print("approx(0.0, 0.0) = {}".format(cipde0A.approx(np.array([0.0,0.0]))))
+    print("L2 norm to the real solution {}".format(cipde0A.normL2()))
+    print("solving took {} sec".format(cipde0A.exec_time))
+    print("solving uses {} Mb".format(cipde0A.mem_consumption/1000000))
     
     from mpl_toolkits.mplot3d import Axes3D
     import matplotlib.pyplot as plt
@@ -240,7 +248,7 @@ if __name__ == "__main__":
     x = y = np.arange(-2.0, 2.01, 0.01)
     X, Y = np.meshgrid(x, y)
     
-    zs0 = np.array([cipde0.exact(\
+    zs0 = np.array([cipde0A.exact(\
     np.array([x,y])) for x,y in zip(np.ravel(X), np.ravel(Y))])
     
     Z = zs0.reshape(X.shape)
@@ -257,7 +265,7 @@ if __name__ == "__main__":
     x = y = np.arange(-2.0, 2.01, 0.01)
     X, Y = np.meshgrid(x, y)
     
-    zs0 = np.array([cipde0.approx(\
+    zs0 = np.array([cipde0A.approx(\
     np.array([x,y])) for x,y in zip(np.ravel(X), np.ravel(Y))])
     
     Z = zs0.reshape(X.shape)

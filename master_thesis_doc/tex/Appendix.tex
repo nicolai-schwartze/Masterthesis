@@ -695,19 +695,11 @@ u_{ext}(x,y) = tan^{-1}\left(20\left(\frac{(x + y)}{\sqrt{2}} -0.8\right)\right)
 \chapter{pJADE}
 \label{chap:pseudocode_pjade}
 
-% declaration of the new block
-\algblock{ParFor}{EndParFor}
-% customising the new block
-\algnewcommand\algorithmicparfor{\textbf{parfor}}
-\algnewcommand\algorithmicpardo{\textbf{do}}
-\algnewcommand\algorithmicendparfor{\textbf{end\ parfor}}
-\algrenewtext{ParFor}[1]{\algorithmicparfor\ #1\ \algorithmicpardo}
-\algrenewtext{EndParFor}{\algorithmicendparfor}
-
 \begin{algorithm}[H]
 	\SetAlgoNoLine
 	\DontPrintSemicolon
 	\SetKwFunction{FpJADE}{pJADE}
+	\SetKwFor{PFor}{for}{do parallel}{end}
 	\SetKwProg{Fn}{Function}{:}{}
 	\Fn{\FpJADE{$\mathbf{x}_{g=0}$, $p$, $c$, $function$, $minError$, $maxGen$}}{
 		$fValue_{g=0} \gets function(\mathbf{x}_{g=0})$\;
@@ -717,21 +709,23 @@ u_{ext}(x,y) = tan^{-1}\left(20\left(\frac{(x + y)}{\sqrt{2}} -0.8\right)\right)
 		\For {$g = 1$ to $G$}{
 			$S_F \gets \emptyset$\;
 			$S_{CR} \gets \emptyset$\; 
-			\For {$i = 1$ to $NP$} { 
+			$pResults \gets \emptyset$\;
+			\PFor {$i = 1$ to $NP$} {
 				$F_i  \gets randc_i(\mu_{F},0.1)$\;
 				$v_i \gets mutationCurrentToPBest1(\mathbf{x}_{i,g}, A, fValue_g, F_i, p)$\;
 				
 				$CR_i \gets randn_i(\mu_{CR},0.1)$\;
 				$u_i  \gets crossoverBIN(\mathbf{x}_{i,g}, v_i, CR_i)$\;
+				$(u_i, function(u_i)) \rightarrow pResults$
 			}
 			\For {$i = 1$ to $NP$} {	
-				\If {$function(\mathbf{x}_{i,g}) \geq function(\mathbf{u}_{i,g})$} {
+				\If {$function(\mathbf{x}_{i,g}) \geq pResults_{i,f,g}$} {
 					$\mathbf{x}_{i,g+1} \gets \mathbf{x}_{i,g}$\;
 				}
 				\Else
 				{
-					$\mathbf{x}_{i,g+1} \gets \mathbf{u}_{i,g}$\;
-					$fValue_{i,g+1} \gets function(\mathbf{u}_{i,g})$\;
+					$\mathbf{x}_{i,g+1} \gets pResults_{i,u,g}$\;
+					$fValue_{i,g+1} \gets pResults_{i,f,g}$\;
 					$\mathbf{x}_{i,g} \rightarrow \mathbf{A}$\;
 					$CR_i \rightarrow S_{CR}$\;
 					$F_i \rightarrow S_F$\;
@@ -745,7 +739,7 @@ u_{ext}(x,y) = tan^{-1}\left(20\left(\frac{(x + y)}{\sqrt{2}} -0.8\right)\right)
 			$\mu_{F} \gets (1-c) \cdot \mu_{F} + c \cdot lehmerMean(S_{F})$\;
 		}	
 	}
-	\unterschrift{JADE Pseudocode}{}{}
+	\unterschrift{pJADE Pseudocode}{}{}
 	\label{algo: pjade}
 \end{algorithm}
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sun May 24 11:05:18 2020
+Created on Tue May 26 16:07:45 2020
 
 @author: Nicolai
 """
@@ -77,16 +77,16 @@ if __name__ == "__main__":
         nb1.append((nbx[i], nby[i]))
     
     
-#    ##########################
-#    #   testbed problem 0A   #
-#    ##########################
-#    for i in range(replications):
-#        initialPop = np.random.randn(40,20)
-#        mJade = oaMemJade.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
-#        cipde0A = pde0A.CiPde0A(mJade, gkernel, nb2, nc2)
-#        cipde0A.solve()
-#        pp.saveExpObject(cipde0A, "D:/Nicolai/MA_Data/cipde0a_rep_" + str(i) + ".json")
-#        print("D:/Nicolai/MA_Data/experiment0/cipde0a_rep_" + str(i) + ".json" + " -> saved")
+    ##########################
+    #   testbed problem 0A   #
+    ##########################
+    for i in range(replications):
+        initialPop = np.random.randn(40,20)
+        mJade = oaMemJade.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
+        cipde0A = pde0A.CiPde0A(mJade, gkernel, nb2, nc2)
+        cipde0A.solve()
+        pp.saveExpObject(cipde0A, "D:/Nicolai/MA_Data/experiment0/cipde0a_rep_" + str(i) + ".json")
+        print("D:/Nicolai/MA_Data/experiment0/cipde0a_rep_" + str(i) + ".json" + " -> saved")
     
     ##########################
     #   testbed problem 0B   #
@@ -96,7 +96,7 @@ if __name__ == "__main__":
         mJade = oaMemJade.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
         cipde0B = pde0B.CiPde0B(mJade, gkernel, nb2, nc2)
         cipde0B.solve()
-        pp.saveExpObject(cipde0B, "D:/Nicolai/MA_Data/cipde0b_rep_" + str(i) + ".json")
+        pp.saveExpObject(cipde0B, "D:/Nicolai/MA_Data/experiment0/cipde0b_rep_" + str(i) + ".json")
         print("D:/Nicolai/MA_Data/experiment0/cipde0b_rep_" + str(i) + ".json" + " -> saved")
         
     ##########################
@@ -107,7 +107,7 @@ if __name__ == "__main__":
         mJade = oaMemJade.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
         cipde1 = pde1.CiPde1(mJade, gkernel, nb1, nc1)
         cipde1.solve()
-        pp.saveExpObject(cipde1, "D:/Nicolai/MA_Data/cipde1_rep_" + str(i) + ".json")
+        pp.saveExpObject(cipde1, "D:/Nicolai/MA_Data/experiment0/cipde1_rep_" + str(i) + ".json")
         print("D:/Nicolai/MA_Data/experiment0/cipde1_rep_" + str(i) + ".json" + " -> saved")
         
     ##########################
@@ -118,7 +118,7 @@ if __name__ == "__main__":
         mJade = oaMemJade.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
         cipde2 = pde2.CiPde2(mJade, gkernel, nb1, nc1)
         cipde2.solve()
-        pp.saveExpObject(cipde2, "D:/Nicolai/MA_Data/cipde2_rep_" + str(i) + ".json")
+        pp.saveExpObject(cipde2, "D:/Nicolai/MA_Data/experiment0/cipde2_rep_" + str(i) + ".json")
         print("D:/Nicolai/MA_Data/experiment0/cipde2_rep_" + str(i) + ".json" + " -> saved")
     
     ##########################
@@ -129,7 +129,7 @@ if __name__ == "__main__":
         mJade = oaMemJade.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
         cipde3 = pde3.CiPde3(mJade, gkernel, nb1, nc1)
         cipde3.solve()
-        pp.saveExpObject(cipde3, "D:/Nicolai/MA_Data/cipde3_rep_" + str(i) + ".json")
+        pp.saveExpObject(cipde3, "D:/Nicolai/MA_Data/experiment0/cipde3_rep_" + str(i) + ".json")
         print("D:/Nicolai/MA_Data/experiment0/cipde3_rep_" + str(i) + ".json" + " -> saved")
         
     ##########################
@@ -140,7 +140,7 @@ if __name__ == "__main__":
         mJade = oaMemJade.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
         cipde4 = pde4.CiPde4(mJade, gkernel, nb1, nc1)
         cipde4.solve()
-        pp.saveExpObject(cipde4, "D:/Nicolai/MA_Data/cipde4_rep_" + str(i) + ".json")
+        pp.saveExpObject(cipde4, "D:/Nicolai/MA_Data/experiment0/cipde4_rep_" + str(i) + ".json")
         print("D:/Nicolai/MA_Data/experiment0/cipde4_rep_" + str(i) + ".json" + " -> saved")
         
     ##########################
@@ -151,7 +151,7 @@ if __name__ == "__main__":
         mJade = oaMemJade.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
         cipde5 = pde5.CiPde5(mJade, gkernel, nb1, nc1)
         cipde5.solve()
-        pp.saveExpObject(cipde5, "D:/Nicolai/MA_Data/cipde5_rep_" + str(i) + ".json")
+        pp.saveExpObject(cipde5, "D:/Nicolai/MA_Data/experiment0/cipde5_rep_" + str(i) + ".json")
         print("D:/Nicolai/MA_Data/experiment0/cipde5_rep_" + str(i) + ".json" + " -> saved")
         
     ##########################
@@ -162,7 +162,7 @@ if __name__ == "__main__":
         mJade = oaMemJade.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
         cipde6 = pde6.CiPde6(mJade, gkernel, nb1, nc1)
         cipde6.solve()
-        pp.saveExpObject(cipde6, "D:/Nicolai/MA_Data/cipde6_rep_" + str(i) + ".json")
+        pp.saveExpObject(cipde6, "D:/Nicolai/MA_Data/experiment0/cipde6_rep_" + str(i) + ".json")
         print("D:/Nicolai/MA_Data/experiment0/cipde6_rep_" + str(i) + ".json" + " -> saved")
         
     ##########################
@@ -173,7 +173,7 @@ if __name__ == "__main__":
         mJade = oaMemJade.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
         cipde7 = pde7.CiPde7(mJade, gkernel, nb1, nc1)
         cipde7.solve()
-        pp.saveExpObject(cipde7, "D:/Nicolai/MA_Data/cipde7_rep_" + str(i) + ".json")
+        pp.saveExpObject(cipde7, "D:/Nicolai/MA_Data/experiment0/cipde7_rep_" + str(i) + ".json")
         print("D:/Nicolai/MA_Data/experiment0/cipde7_rep_" + str(i) + ".json" + " -> saved")
         
     ##########################
@@ -184,7 +184,7 @@ if __name__ == "__main__":
         mJade = oaMemJade.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
         cipde8 = pde8.CiPde8(mJade, gkernel, nb1, nc1)
         cipde8.solve()
-        pp.saveExpObject(cipde8, "D:/Nicolai/MA_Data/cipde8_rep_" + str(i) + ".json")
+        pp.saveExpObject(cipde8, "D:/Nicolai/MA_Data/experiment0/cipde8_rep_" + str(i) + ".json")
         print("D:/Nicolai/MA_Data/experiment0/cipde8_rep_" + str(i) + ".json" + " -> saved")
         
     ##########################
@@ -195,7 +195,7 @@ if __name__ == "__main__":
         mJade = oaMemJade.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
         cipde9 = pde9.CiPde9(mJade, gkernel, nb1, nc1)
         cipde9.solve()
-        pp.saveExpObject(cipde9, "D:/Nicolai/MA_Data/cipde9_rep_" + str(i) + ".json")
+        pp.saveExpObject(cipde9, "D:/Nicolai/MA_Data/experiment0/cipde9_rep_" + str(i) + ".json")
         print("D:/Nicolai/MA_Data/experiment0/cipde9_rep_" + str(i) + ".json" + " -> saved")
         
         

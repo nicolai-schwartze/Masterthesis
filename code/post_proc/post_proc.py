@@ -32,6 +32,7 @@ def saveExpObject(obj, filename):
                     "opt_algo": str(type(obj.opt_algo)),\
                     "exec_time": obj.exec_time,\
                     "mem_consumption": obj.mem_consumption,\
+                    "normL2": obj.normL2(),\
                     "sol_kernel": obj.sol_kernel.tolist(),\
                     "pop_history": [o.tolist() for o in obj.pop_history],\
                     "fit_history": [o.tolist() for o in obj.fit_history],\
@@ -299,6 +300,7 @@ if __name__ == "__main__":
     assert cipde1.kernel.kernel_type == load_dict["kernel_type"]
     assert cipde1.exec_time == load_dict["exec_time"]
     assert cipde1.mem_consumption == load_dict["mem_consumption"]
+    assert cipde1.normL2() == load_dict["normL2"]
     assert np.allclose(cipde1.sol_kernel, load_dict["sol_kernel"])
     assert np.allclose(cipde1.pop_history, load_dict["pop_history"])
     assert np.allclose(cipde1.fit_history, load_dict["fit_history"])

@@ -117,7 +117,6 @@ def pJADE(population, p, c, function, minError, maxFeval):
         muF = (1-c) * muF + c * lehmerMean(sF, muF)
             
         feCount = feCount + populationSize
-        print("#FE: {}".format(feCount))
         popDynamic.append(np.copy(population))
         CRDynamic.append(CR)
         FDynamic.append(F)
@@ -155,16 +154,16 @@ if __name__ == "__main__":
     population = 100*np.random.rand(40,20)
     p = 0.3
     maxError = 10**-200
-    maxGen = 5*10**2
+    maxFE = 5*10**2
     c = 0.5
     
     import JADE
     t1 = time.time()
-    JADE.JADE(population, p, c, tf.sphere, maxError, maxGen)
+    JADE.JADE(population, p, c, tf.sphere, maxError, maxFE)
     t1_end = time.time()
     
     t2 = time.time()
-    pJADE(population, p, c, tf.sphere, maxError, maxGen)
+    pJADE(population, p, c, tf.sphere, maxError, maxFE)
     t2_end = time.time()
     
     print("time to run JADE: " + str(t1_end - t1))

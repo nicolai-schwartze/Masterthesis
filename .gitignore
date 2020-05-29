@@ -1,7 +1,10 @@
 
 # ignore prebuilt python cach files
 *.pyc
-*.__pycache__/
+__pycache__/
 
 # ignore jupyter notepbook checkpoints
-*.ipynb_checkpoints/
+.ipynb_checkpoints/
+
+# ignore fem experiment data
+*.p

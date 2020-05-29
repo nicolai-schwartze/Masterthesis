@@ -156,9 +156,9 @@ if __name__ == "__main__":
     import KernelGauss as gk
     
     initialPop = np.random.randn(40,20)
-    max_iter = 5*10**2
+    max_fe = 5*10**3
     min_err = 10**(-200)
-    mJade = oaMemJade.OptAlgoMemeticJADE(initialPop, max_iter, min_err)
+    mJade = oaMemJade.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
     
     gkernel = gk.KernelGauss()
     

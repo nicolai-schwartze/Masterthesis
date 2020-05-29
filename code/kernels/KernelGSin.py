@@ -44,7 +44,7 @@ class KernelGSin(IKernelBase):
     """
     
     def __init__(self):
-        self._kernel_type = "GSin Kernel: sum_{i}^{N}(w_i*e^(-y_i*((x_0 - c_0)^2 + (x_1 - c_1)^2)))sin(f_i*((x_0 - c_0)^2 + (x_1 - c_1)^2)-p_i)"
+        self._kernel_type = "GSin Kernel: sum_{i}^{N}(w_i*e^(-y_i*((x_0 - c_0_i)^2 + (x_1 - c_1_i)^2)))sin(f_i*((x_0 - c_0_i)^2 + (x_1 - c_1_i)^2)-p_i)"
         self._kernel_size = 6
         
     @property

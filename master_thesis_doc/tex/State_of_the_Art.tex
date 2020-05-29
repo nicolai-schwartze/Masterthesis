@@ -15,7 +15,7 @@ The general steps taken to solve a PDE with an FEM solver are:
 		  \begin{equation}
 			  u \in V \text{   } a(u,v) = F(v) \text{   } \forall v \in V
 		  \end{equation}
-		  This can be achieved by reformulating the strong form into the weak form as seen in equation \ref{eq: weak form}. There the left-hand side represents the $a(u,v)$ and the right side is $F(v)$. In this case $u$ is often called the trial-function and $v$ is named the test-function. 
+		  This can be achieved by reformulating the strong form into the weak form as seen in equation \ref{eq: weak form}. There, the left-hand side represents the $a(u,v)$ and the \gls{rhs} is $F(v)$. In this case $u$ is often called the trial-function and $v$ is named the test-function. 
 	\item \underline{Strong Form} \\
 		  This is the standard formulation of the \gls{pde} with a Dirichlet boundary condition: \\
 		  \begin{equation}
@@ -34,7 +34,7 @@ The general steps taken to solve a PDE with an FEM solver are:
 			      + \int_{\Omega} c u(\mathbf{x}) v(\mathbf{x}) dV = \int_{\Omega} f(\mathbf{x}) v(\mathbf{x}) dV
 			  \end{split}
 		  \end{equation}
-		  In this equation, the $A$, $b$ and $c$ correspond to the constant factors of the derivatives in strong form, where they are hidden in the differential operator $\mathbf{L}$.
+		  In this equation, the $A$, $b$ and $c$ correspond to the constant factors of the derivatives in strong form. The derivatives are hidden in the differential operator $\mathbf{L}$.
 	\item \underline{Discretisation} of $\Omega$ \\
 		  Create a mesh of finite elements that span the whole domain. Usually these are triangles. Thus, this step is sometimes called ``triangulation''.
 	\item \underline{Basis functions} \\

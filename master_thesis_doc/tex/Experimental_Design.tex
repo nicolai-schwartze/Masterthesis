@@ -42,7 +42,7 @@ The testbed is a collection of multiple different 2-dimensional scalar \gls{pde}
 To simplify the preparation, execution and evaluation of the experiments, a comprehensive software architecture is defined. The \gls{uml} class diagram can be seen in the appendix \ref{chap:software_architecture}. The architecture is organised in 4 main segments. 
 
 \textcolor{opt_algo_colour}{\large \underline{\textbf{optimisation algorithm in red}}} \\
-The \colorbox{light-gray}{\lstinline[basicstyle=\ttfamily\color{black}]|IOptAlgoBase|} interface must be implemented by every \colorbox{light-gray}{\lstinline[basicstyle=\ttfamily\color{black}]|OptAlgo|} class to ensure the compatibility with \colorbox{light-gray}{\lstinline[basicstyle=\ttfamily\color{black}]|CiPdeBase|} class of the testbed. A nice side-effect is that it reduces the number of user-defined parameters. An optimisation algorithm of this class must only take an initial guess (e.g. the starting population) as well as two stopping criteria: the maximum number of generation or a minimum error to reach. Also a fitness function (i.e. the function to be optimised) must be provided. Four lists of the same length are returned: the optimum-guess, the function value, the crossover probability and the scale factor per each generation. The actual implementation of the algorithm is not predefined. 
+The \colorbox{light-gray}{\lstinline[basicstyle=\ttfamily\color{black}]|IOptAlgoBase|} interface must be implemented by every \colorbox{light-gray}{\lstinline[basicstyle=\ttfamily\color{black}]|OptAlgo|} class to ensure the compatibility with \colorbox{light-gray}{\lstinline[basicstyle=\ttfamily\color{black}]|CiPdeBase|} class of the testbed. A nice side-effect is that it reduces the number of user-defined parameters. An optimisation algorithm of this class must only take an initial guess (e.g. the starting population) as well as two stopping criteria: the maximum number of function evaluation or a minimum error to reach. Also a fitness function (i.e. the function to be optimised) must be provided. Four lists of the same length are returned: the optimum-guess, the function value, the crossover probability and the scale factor per each generation. The actual implementation of the algorithm is not predefined. 
 
 \textcolor{kernels_colour}{\large \underline{\textbf{kernels in blue}}} \\
 As described in chapter \ref{chap:candidate_rep}, a candidate solution is defined as a sum of radial basis function. In order to test different candidate representations, different classes must be implemented. Again, to ensure compatibility with the \colorbox{light-gray}{\lstinline[basicstyle=\ttfamily\color{black}]|CiPdeBase|} class, all representations must implement the \colorbox{light-gray}{\lstinline[basicstyle=\ttfamily\color{black}]|IKernelBase|} interface. This assures that all classes have a method that can calculate the solution as well as first and second order derivatives. Here, only two kernels are imlemented.
@@ -54,10 +54,10 @@ The testbed holds the 11 differential equations used in all experiments. The tes
 Although the post processing block is not actually a class, it is still represented in this diagram. This module provides funtions that take \colorbox{light-gray}{\lstinline[basicstyle=\ttfamily\color{black}]|FemPdeN|} or \colorbox{light-gray}{\lstinline[basicstyle=\ttfamily\color{black}]|CiPdeN|} objects and performs actions with them. \todo{update implemented function description}
 
 \begin{itemize}
-	\item \colorbox{light-gray}{\lstinline[basicstyle=\ttfamily\color{black}]|bool saveExpObj(obj, path)|} \\
-	Save an experiment object as 
-	\item \colorbox{light-gray}{\lstinline[basicstyle=\ttfamily\color{black}]|CiPdeBase loadExpObject(path)|} \\
-	Load an experiment object
+	\item \colorbox{light-gray}{\lstinline[basicstyle=\ttfamily\color{black}]|bool saveExpObj(obj, filename)|} \\
+	Save an \colorbox{light-gray}{\lstinline[basicstyle=\ttfamily\color{black}]|CiPdeN|} object as a \gls{json} file. The filename parameter can include a path, but it must end with .json. The results: execution time, memory usage, solution quality and all intergenerational data of the optimisation algoritm are stored in the file. 
+	\item \colorbox{light-gray}{\lstinline[basicstyle=\ttfamily\color{black}]|dict loadExpObject(filename)|} \\
+	Loads the \gls{json} file located at the specified filename, which again can include a path. A dictionary with the saved \colorbox{light-gray}{\lstinline[basicstyle=\ttfamily\color{black}]|CiPdeN|} parameters is returned. 
 	\item \colorbox{light-gray}{\lstinline[basicstyle=\ttfamily\color{black}]|bool drawGaussKernel(parameter, ggb)|} \\
 	Draw Gauss kernel to 
 	\item \colorbox{light-gray}{\lstinline[basicstyle=\ttfamily\color{black}]|bool drawGSinKernel(parameter, ggb)|} \\
@@ -105,18 +105,21 @@ Although this integral is numerically evaluated, the discretisation is much fine
 
 
 
-
-
 \section{Baseline: NGSolve}
 As mentioned above, the NGSolve framework (\cite{schoberl_ngsolvengsolve_2020}) is used as the baseline for all experiments. NGSolve is a state of the art \gls{fem} solver, that is in part developed and maintained by numerous well-known institutes such as Vienna University of Technology, University of Göttingen and Portland State University. This chapter describes the results obtained by running NGSolve on the testbed. The metrics from chapter \ref{chap:metric} are applied. 
 
 \subsection{Setup}
-weak form\\
-preconditioner\\
-max ndofs \\
+At first the \gls{pde}s must be transformed into their corresponding weak form. As all testbed problems are Poisson equations and only differ in their algebraic sign and inhomogeneous part, the weak form is similar for all problems. Refering to equation \ref{eq: weak form}, the terms $\vec{b} = 0$ and $c = 0$, thus these parts vanish. The matrix $A$ is either $\begin{bsmallmatrix} 1 & 0 \\ 0 & 1 \end{bsmallmatrix}$ or with a negative sign $\begin{bsmallmatrix} -1 & 0 \\ 0 & -1 \end{bsmallmatrix}$ as only the non-mixed second order derivatives occure in the equations. This results in weak form as presented in equation \ref{eq: weak form testbed}, where the f is the \gls{rhs} of problem.
+\begin{equation}
+\label{eq: weak form testbed}
+\int_{\Omega} \nabla u^T \nabla v dV = \int_{\Omega} f v dV
+\end{equation}
 
+To enhance the performance of NGSolve, static condensation is turned on. Further, a multigrid preconditioner is used. All problems are approximated by second order polynomials. The automatic mesh refinement is performed until a maximum of $5 \cdot 10^4$ \gls{dof} is reached. To properly interprete the results, 20 replications for each problem are performed. This is only needed for regarding time and memory, the solution itself is not a random variant. To further reduce the memory consumption, the GUI of NGSolve is switched off. 
 
 \subsection{Result}
+With the parameters described above, the following results are produced. The solving time as well as the memory usage are displayed in the boxplots \ref{fig:_fem_time_boxplot} and \ref{fig:_fem_mem_boxplot}, respectively. In general, the solving time ranges from 2.5 to 5.5 seconds at about 45 to 70 MByte of main memory. Only problem 3 stands out as a notable exception. To keep the diagram visually appealing, this \gls{pde} is omitted and plotted in a separate figure. \\
+The table \ref{tab:fem_sol_quality} presents the achieved distances between the exact and the approximated solutions. On \gls{pde} 3 the best numerical quality is achieved.
 
 \begin{table}[h]
 	\centering
@@ -149,7 +152,7 @@ max ndofs \\
 
 \begin{figure}[H]
 	\centering
-	\noindent\adjustbox{max width=\linewidth}{
+	\noindent\adjustbox{max width=0.66\linewidth}{
 		\includegraphics[width=\textwidth]{../../code/experiments/_experiment_fem_base/time_boxplot_pde_0a_0b_1_2_4_5_6_7_8_9.pdf}
 	}
 	\unterschrift{boxplot: time (in seconds) needed to solve the testbed \gls{pde} (without \gls{pde}3)}{}{}
@@ -158,16 +161,19 @@ max ndofs \\
 
 \begin{figure}[H]
 	\centering
-	\noindent\adjustbox{max width=\linewidth}{
+	\noindent\adjustbox{max width=0.66\linewidth}{
 		\includegraphics[width=\textwidth]{../../code/experiments/_experiment_fem_base/mem_boxplot_pde_0a_0b_1_2_4_5_6_7_8_9.pdf}
 	}
 	\unterschrift{boxplot: memory (in Mbyte) needed to solve the testbed \gls{pde} (without \gls{pde}3)}{}{}
 	\label{fig:_fem_mem_boxplot}
 \end{figure}
 
+The problem \gls{pde} 7 only needs around 2.5 seconds to solve. A reason could be that the solution only depends on one variable and the derivative with respect to y $\frac{\partial u}{\partial y} = 0$ vanishes. This does not effect the memory usage, since all $5 \cdot 10^4$ \gls{dof} must be created to terminate. \\
+The following images \ref{fig:_fem_time_boxplot_pde3} and \ref{fig:_fem_mem_boxplot_pde3} show the boxplots of the time and memory consumption for the testbed \gls{pde} 3. Compared to the other equations, this problem takes longer to solve while also needing more memory: a little less then 70 seconds at about 130 Mbyte. A possible explanation for that is the underlying structure of the \gls{pde}. As described in equation \ref{eq:sol3}, the exact solution to this problem is a polynomial of second order. This can be approximated perfectly by the \gls{fem} solver, since it also uses second order polynomials as basis functions. The mesh-refinement step takes more iteration to produce the $5 \cdot 10^4$ \gls{dof} as compared to the other testbed problems. 
+
 \begin{figure}[H]
 	\centering
-	\noindent\adjustbox{max width=\linewidth}{
+	\noindent\adjustbox{max width=0.66\linewidth}{
 		\includegraphics[width=\textwidth]{../../code/experiments/_experiment_fem_base/time_boxplot_pde_3.pdf}
 	}
 	\unterschrift{boxplot: time to solve testbed \gls{pde}3}{}{}
@@ -176,7 +182,7 @@ max ndofs \\
 
 \begin{figure}[H]
 	\centering
-	\noindent\adjustbox{max width=\linewidth}{
+	\noindent\adjustbox{max width=0.66\linewidth}{
 		\includegraphics[width=\textwidth]{../../code/experiments/_experiment_fem_base/mem_boxplot_pde_3.pdf}
 	}
 	\unterschrift{boxplot: memory to solve testbed \gls{pde}3}{}{}

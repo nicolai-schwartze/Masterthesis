@@ -44,7 +44,7 @@ class KernelGauss(IKernelBase):
     """
     
     def __init__(self):
-        self._kernel_type = "Gauss Kernel: sum_{i}^{N}(w_i*e^(-y_i*((x_0 - c_1)^2 + (x_1 - c_1)^2)))"
+        self._kernel_type = "Gauss Kernel: sum_{i}^{N}(w_i*e^(-y_i*((x_0 - c_0_i)^2 + (x_1 - c_1_i)^2)))"
         self._kernel_size = 4
         
     @property

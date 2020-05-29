@@ -9,8 +9,9 @@ Created on Tue Mar  3 15:10:24 2020
 import numpy as np
 import time
 from scipy.stats import cauchy
+import testFunctions as tf
 
-def JADE(population, p, c, function, minError, maxGeneration):
+def JADE(population, p, c, function, minError, maxFeval):
     '''
     implementation of JADE based on: \n
     JADE: Adaptive Differential Evolution with Optional External Archiv \n
@@ -28,8 +29,8 @@ def JADE(population, p, c, function, minError, maxGeneration):
         fitness function that is optimised
     minError: float 
         stopping condition on function value
-    maxGeneration: int
-        stopping condition on max number of generation
+    maxFeval: int
+        stopping condition on max number of function evaluation
     
     Returns
     -------
@@ -59,7 +60,7 @@ def JADE(population, p, c, function, minError, maxGeneration):
     # initialisation of variables 
     populationSize, dimension = population.shape
     functionValue = np.asarray([function(candidate) for candidate in population])
-    genCount = 1
+    feCount = populationSize
     F = 0.5
     CR = 0.5
     archive = np.array([population[0]])
@@ -81,7 +82,7 @@ def JADE(population, p, c, function, minError, maxGeneration):
     FDynamic.append(F)
     CRDynamic.append(CR)
 
-    while(genCount < maxGeneration and np.min(functionValue) > minError):
+    while(feCount < maxFeval and np.min(functionValue) > minError):
         # success history S for control parameters 
         sCR = []
         sF = []
@@ -119,8 +120,8 @@ def JADE(population, p, c, function, minError, maxGeneration):
         muCR = (1-c) * muCR + c * arithmeticMean(sCR, muCR)
         muF = (1-c) * muF + c * lehmerMean(sF, muF)
             
-        genCount = genCount + 1
-        print("generation: {}".format(genCount))
+        feCount = feCount + populationSize
+        print("#FE: {}".format(feCount))
         popDynamic.append(np.copy(population))
         CRDynamic.append(CR)
         FDynamic.append(F)
@@ -240,12 +241,9 @@ if __name__ == "__main__":
     C = unionRowVec(A, B)
     print("union of two matrices: " + str(time.time() - t1)) 
     
-    def sphere(x):
-        return np.dot(x,x)
-    
     population = 100*np.random.rand(4,2)
     archive = 500*np.random.rand(4,2)
-    functionValue = np.asarray([sphere(candidate) for candidate in population])
+    functionValue = np.asarray([tf.sphere(candidate) for candidate in population])
     F = 0.5
     p = 0.3
     t1 = time.time()
@@ -256,8 +254,9 @@ if __name__ == "__main__":
     maxGen = 10**3
     c = 0.5
     t1 = time.time()
-    (popDynamic, FEDynamic, FDynamic, CRDynamic) = JADE(population, p, c, sphere, maxError, maxGen)
+    (popDynamic, FEDynamic, FDynamic, CRDynamic) = JADE(population, p, c, tf.sphere, maxError, maxGen)
     print("time to run JADE: " + str(time.time() - t1))
+    asdf = input()
     
     
     

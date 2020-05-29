@@ -181,23 +181,23 @@ if __name__ == "__main__":
     import KernelGSin as gsk
     
     initialPop = 2*np.random.randn(40,18)
-    max_iter = 500
+    max_fe = 1*10**6
     min_err = 10**(-200)
-    mJade = oaMemJade.OptAlgoMemeticJADE(initialPop, max_iter, min_err)
+    mJade = oaMemJade.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
     
     gskernel = gsk.KernelGSin()
     
     # collocation points
     nc = []
-    omega = np.arange(-1.9, 2.0, 0.345454545454545)
+    omega = np.arange(-1.6, 2.0, 0.4)
     for x0 in omega:
         for x1 in omega:
             nc.append((x0, x1))
         
     # boundary points
     nb = []
-    nby = np.hstack((-2*np.ones(20), np.arange(-2.0, 2.0, 0.2), 2*np.ones(20), np.arange(2.0, -2.0, -0.2)))
-    nbx = np.hstack((np.arange(-2.0, 2.0, 0.2), 2*np.ones(20), np.arange(2.0, -2.0, -0.2), -2*np.ones(20)))
+    nby = np.hstack((-2*np.ones(10), np.arange(-2.0, 2.0, 0.4), 2*np.ones(10), np.arange(2.0, -2.0, -0.4)))
+    nbx = np.hstack((np.arange(-2.0, 2.0, 0.4), 2*np.ones(10), np.arange(2.0, -2.0, -0.4), -2*np.ones(10)))
     for i in range(len(nby)):
         nb.append((nbx[i], nby[i]))
     

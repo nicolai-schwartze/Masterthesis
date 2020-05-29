@@ -1,3 +1,7 @@
+
 # ignore prebuilt python cach files
 *.pyc
 __pycache__/
+
+# ignore jupyter notepbook checkpoints
+.ipynb_checkpoints/

@@ -4,27 +4,76 @@ import zipfile
 import xml.etree.ElementTree as ET
 from shutil import copyfile
 import matplotlib.pyplot as plt
+import json
 
 
 # save an experiment object to the file path
-def saveExpObject(obj, path):
+def saveExpObject(obj, filename):
+    """saves a CiPdeN object as a JSON file to the harddrive
+    
+    Parameters
+    ----------
+    obj : CiPdeN 
+        object on which the .solve() method has been called
+        
+    filename : str
+        includes path and filename
+
+    Returns
+    -------
+    bool
+        true if successful \n
+        false if error occured
+
+    """
     try:
-        pass
+        obj_dict = {"pde": str(type(obj)),\
+                    "kernel_type": obj.kernel.kernel_type, \
+                    "opt_algo": str(type(obj.opt_algo)),\
+                    "exec_time": obj.exec_time,\
+                    "mem_consumption": obj.mem_consumption,\
+                    "sol_kernel": obj.sol_kernel.tolist(),\
+                    "pop_history": [o.tolist() for o in obj.pop_history],\
+                    "fit_history": [o.tolist() for o in obj.fit_history],\
+                    "f_history": obj.f_history,\
+                    "cr_history": obj.cr_history}
+        
+        with open(filename, 'w') as json_file:
+            json.dump(obj_dict, json_file)
+            
         return True
-    except:
-        pass
+    except Exception as e:
+        print(str(e))
         return False
         
     
 
 
 # load an experiment object from file
-def loadExpObject(path):
+def loadExpObject(filename):
+    """loads a CiPdeN object from a JSON file
+    
+    Parameters
+    ----------
+    filename : str
+        includes path and filename
+
+    Returns
+    -------
+    dict
+        returns a dict if it worked, 
+        else return None
+
+    """
     try:
-        pass
-        return True
-    except:
-        pass
+        with open(filename, 'r') as json_file:
+            obj_dict = json.load(json_file)
+            obj_dict["sol_kernel"] = np.array(obj_dict["sol_kernel"])
+            obj_dict["pop_history"] = [np.array(o) for o in obj_dict["pop_history"]]
+            obj_dict["fit_history"] = [np.array(o) for o in obj_dict["fit_history"]]
+        return obj_dict
+    except Exception as e:
+        print(str(e))
         return None
         
     
@@ -211,7 +260,7 @@ if __name__ == "__main__":
     
     # imports needed for test
     import sys
-    sys.path.append("../testbed/pde1/")
+    sys.path.append("../testbed/pde1")
     import CiPde1 as pde1
     sys.path.append("../opt_algo")
     import OptAlgoMemeticJADE as oaMemJade
@@ -243,8 +292,23 @@ if __name__ == "__main__":
     cipde1 = pde1.CiPde1(mJade, gkernel, nb, nc)
     cipde1.solve()
     
+    saveExpObject(cipde1, "./save_test_large.json")
     
+    load_dict = loadExpObject("./save_test_large.json")
     
+    assert cipde1.kernel.kernel_type == load_dict["kernel_type"]
+    assert cipde1.exec_time == load_dict["exec_time"]
+    assert cipde1.mem_consumption == load_dict["mem_consumption"]
+    assert np.allclose(cipde1.sol_kernel, load_dict["sol_kernel"])
+    assert np.allclose(cipde1.pop_history, load_dict["pop_history"])
+    assert np.allclose(cipde1.fit_history, load_dict["fit_history"])
+    assert np.allclose(cipde1.f_history, load_dict["f_history"])
+    assert np.allclose(cipde1.cr_history, load_dict["cr_history"])
+    
+    plt.plot(cipde1.fit_history)
+    plt.show()
+    plt.plot(load_dict["fit_history"])
+    plt.show()
     
     print("finished test")
     

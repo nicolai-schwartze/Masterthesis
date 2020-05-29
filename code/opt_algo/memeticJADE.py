@@ -10,12 +10,13 @@ sys.path.append("../differential_evolution")
 from JADE import JADE
 import numpy as np
 import scipy as sc
+import testFunctions as tf
 
-def memeticJADE(population, function, minError, maxIter): 
+def memeticJADE(population, function, minError, maxFeval): 
     '''
     implementation of a memetic JADE: \n
-    2/3 of the iterations (generations) are spend on JADE
-    1/3 of the iterations is used to performa a downhill simplex
+    0.75 of the iterations (generations) are spend on JADE
+    0.25 of the iterations is used to perform a downhill simplex
     internal parameters of JADE are set to p=0.3 and c=0.5
     
     Parameters
@@ -26,8 +27,8 @@ def memeticJADE(population, function, minError, maxIter):
         fitness function that is optimised
     minError: float 
         stopping condition on function value
-    maxIter: int
-        stopping condition on max number of generation
+    maxFeval: int
+        stopping condition on max number of function evaluation
     
     Returns
     -------
@@ -56,14 +57,14 @@ def memeticJADE(population, function, minError, maxIter):
     p = 0.3
     c = 0.5
     popDynamic, FEDynamic, FDynamic, CRDynamic = JADE(population, p, c, function, \
-                                                      minError, int(np.ceil(0.5*maxIter)))
+                                                      minError, int(np.ceil(0.75*maxFeval)))
     print("finished JADE")
     print("="*45)
     print("start direct search with downhill simplex")
     bestIndex = np.argmin(FEDynamic[-1])
     bestSolution = popDynamic[-1][bestIndex]
     _, _, _, _, _, pop  = sc.optimize.fmin(function, bestSolution, ftol=minError, \
-                                           maxiter=int(np.floor(0.5*maxIter)), \
+                                           maxfun=int(np.floor(0.25*maxFeval)), \
                                            full_output = True, retall = True)
     for p in pop:
         # insert last DS population into pop dynaimc
@@ -86,17 +87,14 @@ def memeticJADE(population, function, minError, maxIter):
 if __name__ == "__main__": 
     
     import matplotlib.pyplot as plt
-    
-    def sphere(x):
-        return np.dot(x,x)
-    
+
     population = 100*np.random.rand(4,2)
     minError = 10**-200
-    maxIter = 10**3
+    maxFeval = 10**3
     H = 100
     p = 0.3
     c = 0.5
     (popDynamic, FEDynamic, FDynamic, CRDynamic) = memeticJADE(population, \
-    sphere, minError, maxIter)
+    tf.sphere, minError, maxFeval)
     plt.semilogy(FEDynamic)
     

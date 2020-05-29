@@ -9,6 +9,7 @@ Created on Tue Mar  3 15:10:24 2020
 import numpy as np
 import time
 from scipy.stats import cauchy
+import testFunctions as tf
 
 def SHADE(population, p, H, function, minError, maxGeneration):
     '''
@@ -267,12 +268,9 @@ if __name__ == "__main__":
     C = unionRowVec(A, B)
     print("union of two matrices: " + str(time.time() - t1)) 
     
-    def sphere(x):
-        return np.dot(x,x)
-    
     population = 100*np.random.rand(50,2)
     archive = 500*np.random.rand(50,2)
-    functionValue = np.asarray([sphere(candidate) for candidate in population])
+    functionValue = np.asarray([tf.sphere(candidate) for candidate in population])
     F = 0.5
     p = 0.3
     t1 = time.time()
@@ -284,7 +282,7 @@ if __name__ == "__main__":
     H = 3
     A = 20
     t1 = time.time()
-    (popDynamic, FEDynamic, FDynamic, CRDynamic) = SHADE(population, p, H, sphere, maxError, maxGen)
+    (popDynamic, FEDynamic, FDynamic, CRDynamic) = SHADE(population, p, H, tf.sphere, maxError, maxGen)
     print("time to run SHADE: " + str(time.time() - t1))
     print("optimum: " + str(np.min(FEDynamic[-1])))
     

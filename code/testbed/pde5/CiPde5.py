@@ -101,7 +101,7 @@ class CiPde5(CiPdeBase):
                    + (16000*(sqrt((x - 0.05)**2 + (y - 0.05)**2) -0.7))/((400*(sqrt((x - 0.05)**2 + (y - 0.05)**2) -0.7)**2 + 1)**2)"""
         
         # user-defined inner weighting factor
-        self._kappa = 1
+        self._kappa = 10
         
         # inner weights for collocation points
         self._xi = []
@@ -161,9 +161,9 @@ if __name__ == "__main__":
     import KernelGauss as gk
     
     initialPop = 1*np.random.rand(40,12)
-    max_iter = 5*10**2
+    max_fe = 5*10**3
     min_err = 10**(-200)
-    mJade = oaMemJade.OptAlgoMemeticJADE(initialPop, max_iter, min_err)
+    mJade = oaMemJade.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
     
     gkernel = gk.KernelGauss()
     

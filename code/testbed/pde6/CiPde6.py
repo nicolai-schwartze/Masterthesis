@@ -7,7 +7,7 @@ Created on Fri May 15 14:49:40 2020
 
 import sys
 import os
-importpath = os.path.abspath(__file__) + "../../../"
+importpath = os.path.dirname(os.path.realpath(__file__)) + "/../"
 sys.path.append(importpath)
 from CiPdeBase import CiPdeBase
 

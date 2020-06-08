@@ -8,3 +8,6 @@ __pycache__/
 
 # ignore fem experiment data
 *.p
+
+# ignore ci experiment data
+*.json

@@ -20,11 +20,17 @@ import numpy as np
 sys.path.append("../../post_proc/")
 import post_proc as pp
 
+from multiprocessing import Pool
+
+def solveObj(obj_list, i):
+    obj_list[i].solve()
+    return obj_list[i]
+
 if __name__ == "__main__":
     
     # experiment parameter
-    replications = 1
-    max_fe = 1*10**6
+    replications = 20
+    max_fe = 1*10**4
     min_err = 0
     gakernel = gk.KernelGauss()
     
@@ -44,16 +50,25 @@ if __name__ == "__main__":
         
     
     ####################################
-    #   testbed problem 0A for mpJADE  #
+    #   testbed problem 0A for mJADE   #
     ####################################
     cipde0A = []
     for i in range(replications):
         initialPop = np.random.randn(40,20)
         mJADE = oaMJ.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
         cipde0A.append(pde0A.CiPde0A(mJADE, gakernel, nb2, nc2))
+        
+    pool = Pool(processes= 20)
+    parallelResults = []
+    for i in range(replications):
+        parallelResults.append(pool.apply_async(solveObj, args=(cipde0A, i)))
     
     for i in range(replications):
-        cipde0A[i].solve()
-        pp.saveExpObject(cipde0A[i], "../../cipde0a_mj_rep_" + str(i) + ".json")
+        obj = parallelResults[i].get()
+        pp.saveExpObject(obj, "../../cipde0a_mj_rep_" + str(i) + ".json")
         print("../../cipde0a_mj_rep_" + str(i) + ".json" + " -> saved")
+    
+    pool.close()
+    pool.join()
+        
     

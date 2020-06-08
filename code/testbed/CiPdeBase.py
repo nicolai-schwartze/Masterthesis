@@ -125,8 +125,7 @@ class CiPdeBase(ITestbenchBase):
         difference_func = lambda x,y: \
         (self.approx(np.array([x,y])) - self.exact(np.array([x,y]))) * \
         (self.approx(np.array([x,y])) - self.exact(np.array([x,y])))
-        return np.sqrt(integrate.dblquad(difference_func, self._lx, self._ux, self._ly, self._uy)[0] \
-                       /integrate.dblquad(lambda x,y: 1.0, self._lx, self._ux, self._ly, self._uy)[0])
+        return np.sqrt(integrate.dblquad(difference_func, self._lx, self._ux, self._ly, self._uy)[0])
 
     def fitness_func(self, kernels): pass
 
@@ -148,14 +147,15 @@ class CiPdeBase(ITestbenchBase):
         
         # start memory measurement
         process = psutil.Process()
-        memstart = process.memory_info().rss
+        memstart = process.memory_info().vms
         
         # start timer 
         t_start = time.time()
         
         # call optimisation algorithm
+        fitness_func = self.fitness_func
         self.pop_history, self.fit_history, self.f_history, self.cr_history  = \
-        self.opt_algo.opt(self.fitness_func)
+        self.opt_algo.opt(fitness_func)
         
         # save found solution to self.sol_kernel
         bestIndex = np.argmin(self.fit_history[-1])
@@ -171,7 +171,7 @@ class CiPdeBase(ITestbenchBase):
         self._exec_time = time.time() - t_start
         
         # stop memory measurement
-        self._mem_consumption = process.memory_info().rss - memstart
+        self._mem_consumption = process.memory_info().vms - memstart
         
         
         # enable garbage collector 

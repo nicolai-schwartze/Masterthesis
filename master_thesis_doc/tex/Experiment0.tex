@@ -1,9 +1,45 @@
 \documentclass[./\jobname.tex]{subfiles}
 \begin{document}
-\chapter {Experiment 0: Gauss Kernel}
+\chapter {Experiment 0: Comparison and Reproducing Results}
 \label{chap:experimet_0}
 
+with $10^6$ function evaluation: \\
+is the JADE actually helpful - is it possible to create the same results with a DS alone? \\
+hyphotosis test in the difference of L2 norm reached \\
+statistically relevant vs. practically relevant -> show 3D plot of what the difference in L2 norm looks like (= effect size) \\
+this servers as an experimental prove, that the objective function is multimodal and DS runs into premature convergence \\
+
+show convergence on PDE0A \\
+Compare to Chaquet Results PDE2 and PDE3\\
+
+with $10^4$ function evaluation: \\
+box plot of time and memory usage -> compare to FEM \\
+L2 norm table reached \\
+how does time/memory scale with number of FE? -> O(n)\\
+memory not needed: only for evaluation -> could be smaller \\
+what can be done about time? -> transition to next chapter: parallel
+what are simpler and more complex testbed pdes? \\
+
 \section{Hypotheses}
+
+\begin{algorithm}[H]
+	\SetAlgoNoLine
+	\DontPrintSemicolon
+	\SetKwFunction{FmJADE}{memeticJADE}
+	\SetKwProg{Fn}{Function}{:}{}
+	\Fn{\FmJADE{$\mathbf{X}$, $funct$, $minErr$, $maxFE$}}{
+		$dim$, $popsize$ $\gets size(\mathbf{X})$\;
+		$p \gets 0.3$\;
+		$c \gets 0.5$\;
+		$pop$, $FE$, $F$, $CR$ $\gets JADE($$\mathbf{X}$, $p$, $c$, $funct$, $minErr$, $maxFE - 2 dim$ $)$\;
+		$bestIndex = argmin(FE)$\;
+		$bestSol = pop[bestIndex]$\;
+		$pop$, $FE$ $ = downhill\text{ }simplex($$funct$, $bestSol$, $minErr$, $2 dim)$
+		\Return $pop$, $FE$, $F$, $CR$
+	}
+	\unterschrift{memeticJADE Pseudocode}{}{}
+	\label{algo: memeticJADE}
+\end{algorithm}
 
 \section{Experiment Setup}
 

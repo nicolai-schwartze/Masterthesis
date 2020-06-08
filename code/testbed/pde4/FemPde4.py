@@ -97,7 +97,7 @@ class FemPde4(FemPdeBase):
         
         # measure how much memory is used until here
         process = psutil.Process()
-        memstart = process.memory_info().rss
+        memstart = process.memory_info().vms
         
         # starts timer
         tstart = time.time()
@@ -156,7 +156,7 @@ class FemPde4(FemPdeBase):
         self._exec_time = time.time() - tstart
         
         # set measured used memory
-        memstop = process.memory_info().rss - memstart
+        memstop = process.memory_info().vms - memstart
         self._mem_consumption = memstop
         
         
@@ -170,7 +170,7 @@ class FemPde4(FemPdeBase):
 
 if __name__ == "__main__":
     
-    fempde4 = FemPde4(False)
+    fempde4 = FemPde4(True)
     print(fempde4.pde_string)
     
     try:

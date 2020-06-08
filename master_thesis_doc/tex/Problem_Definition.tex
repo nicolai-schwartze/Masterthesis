@@ -2,6 +2,7 @@
 \begin{document}
 
 \chapter{Problem Definition}
+In this chapter the basic idea of reformulating any differential equation into an optimisation problem is described. Further, the origin and the inner parametes of the fitness function as well as the different approximation methods are outlined. 
 
 \section{Optimisation Problem}
 \label{chap:opt_problem}
@@ -14,10 +15,74 @@ There is no easy way to approach this optimisation problem. It can not be transf
 \label{chap:fit_func}
 The Fitness function is formulated as ... 
 
+\begin{equation}
+\label{eq:fit_func}
+F(\vec{u}_{apx}) = \frac{\sum_{i=1}^{n_C} \xi (\mathbf{x}_i) || \mathbf{L}u(\mathbf{x}_i) - f(\mathbf{x}_i)||^2 + \phi \sum_{j=1}^{n_B} || \mathbf{B}u(\mathbf{x}_j) - g(\mathbf{x}_j)||^2}{(n_C + n_B)}  
+\end{equation}
+
+\begin{equation}
+\label{eq:nc_weight}
+\xi(\mathbf{x}_i) = \frac{1 + \kappa \left(1 - \frac{min_{\forall \mathbf{x}_j\in n_B}|| \mathbf{x}_i - \mathbf{x}_j ||}{max_{\forall\mathbf{x}_k \in n_C}(min_{\forall \mathbf{x}_j \in n_B} || \mathbf{x}_k - \mathbf{x}_j ||)}\right)}{1 + \kappa}
+\end{equation}
+
 
 \section{Candidate Representation}
 \label{chap:candidate_rep}
 
+\subsection{Gauss Kernel}
+\label{chap:gauss_kernel}
 
+\begin{equation}
+\label{eq:gauss_kernel}
+gak(\mathbf{x}) = \omega e^{\gamma \left|\left|\mathbf{x} - \mathbf{c} \right|\right|^2}
+\end{equation}
+
+\begin{equation}
+\label{eq:uapx_gauss_kernel}
+u_{apx}(\mathbf{x}) = \sum_{i=0}^{N} \omega_i e^{\gamma_i \left|\left|\mathbf{x} - \mathbf{c}_i \right|\right|^2}
+\end{equation}
+
+\begin{equation}
+\label{eq:uapx_gauss_kernel_x0}
+\frac{\partial u_{apx}(\mathbf{x})}{\partial x_0} = -2 \sum_{i=0}^{N} \omega_i \gamma_i (x_0 - c_{i0}) e^{\gamma_i \left|\left|\mathbf{x} - \mathbf{c}_i \right|\right|^2}
+\end{equation}
+
+\begin{equation}
+\label{eq:uapx_gauss_kernel_x0x0}
+\frac{\partial^2 u_{apx}(\mathbf{x})}{\partial x_0^2} = \sum_{i=0}^{N} \omega_i \gamma_i \left[ 4 \gamma_i (x_0 - c_{i0})^2 - 2 \right] e^{\gamma_i \left|\left|\mathbf{x} - \mathbf{c}_i \right|\right|^2}
+\end{equation}
+
+\begin{equation}
+\label{eq:uapx_gauss_kernel_x0x1}
+\frac{\partial^2 u_{apx}(\mathbf{x})}{\partial x_0 x_1} = 4 \sum_{i=0}^{N} \omega_i \gamma_i^2 (x_0 - c_{i0}) (x_1 - c_{i1}) e^{\gamma_i \left|\left|\mathbf{x} - \mathbf{c}_i \right|\right|^2} 
+\end{equation}
+
+\subsection{GSin Kernel}
+\label{chap:gsin_kernel}
+
+\begin{equation}
+\label{eq:gsin_kernel}
+gsk(\mathbf{x}) = \omega e^{\gamma \left|\left|\mathbf{x} - \mathbf{c} \right|\right|^2} sin(f \left|\left|\mathbf{x} - \mathbf{c} \right|\right|^2 - \varphi)
+\end{equation}
+
+\begin{equation}
+\label{eq:uapx_gsin_kernel}
+u_{apx}(\mathbf{x}) = \sum_{i=0}^{N} \omega_i e^{\gamma_i \left|\left|\mathbf{x} - \mathbf{c}_i \right|\right|^2} sin(f_i \left|\left|\mathbf{x} - \mathbf{c} \right|\right|^2 - \varphi_i)
+\end{equation}
+
+\begin{equation}
+\label{eq:uapx_gsin_kernel_x0}
+
+\end{equation}
+
+\begin{equation}
+\label{eq:uapx_gsin_kernel_x0_x0}
+
+\end{equation}
+
+\begin{equation}
+\label{eq:uapx_gsin_kernel_x0_x1}
+
+\end{equation}
 
 \end{document}

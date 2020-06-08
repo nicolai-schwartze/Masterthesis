@@ -44,8 +44,8 @@ if __name__ == "__main__":
     
     # experiment parameter
     replications = 20
-    max_fe = 5*10**4
-    min_err = 10**(-200)
+    max_fe = 1*10**4
+    min_err = 0
     gkernel = gk.KernelGauss()
     
     # collocation points for 0A and 0B
@@ -76,131 +76,165 @@ if __name__ == "__main__":
     for i in range(40):
         nb1.append((nbx[i], nby[i]))
     
+    # remove outlier in memory measurement
+    initialPop = np.random.randn(40,20)
+    mJade = oaMemJade.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
+    remove_outlier = pde0A.CiPde0A(mJade, gkernel, nb2, nc2)
+    remove_outlier.solve()
     
     ##########################
     #   testbed problem 0A   #
     ##########################
+    cipde0A = []
     for i in range(replications):
         initialPop = np.random.randn(40,20)
         mJade = oaMemJade.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
-        cipde0A = pde0A.CiPde0A(mJade, gkernel, nb2, nc2)
-        cipde0A.solve()
-        pp.saveExpObject(cipde0A, "D:/Nicolai/MA_Data/experiment0/cipde0a_rep_" + str(i) + ".json")
+        cipde0A.append(pde0A.CiPde0A(mJade, gkernel, nb2, nc2))
+    
+    for i in range(replications):
+        cipde0A[i].solve()
+        pp.saveExpObject(cipde0A[i], "D:/Nicolai/MA_Data/experiment0/cipde0a_rep_" + str(i) + ".json")
         print("D:/Nicolai/MA_Data/experiment0/cipde0a_rep_" + str(i) + ".json" + " -> saved")
     
     ##########################
     #   testbed problem 0B   #
     ##########################
+    cipde0B = []
     for i in range(replications):
         initialPop = np.random.randn(40,20)
         mJade = oaMemJade.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
-        cipde0B = pde0B.CiPde0B(mJade, gkernel, nb2, nc2)
-        cipde0B.solve()
-        pp.saveExpObject(cipde0B, "D:/Nicolai/MA_Data/experiment0/cipde0b_rep_" + str(i) + ".json")
+        cipde0B.append(pde0B.CiPde0B(mJade, gkernel, nb2, nc2))
+    
+    for i in range(replications):
+        cipde0B[i].solve()
+        pp.saveExpObject(cipde0B[i], "D:/Nicolai/MA_Data/experiment0/cipde0b_rep_" + str(i) + ".json")
         print("D:/Nicolai/MA_Data/experiment0/cipde0b_rep_" + str(i) + ".json" + " -> saved")
         
     ##########################
     #   testbed problem 1    #
     ##########################
+    cipde1 = []
     for i in range(replications):
         initialPop = np.random.randn(40,20)
         mJade = oaMemJade.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
-        cipde1 = pde1.CiPde1(mJade, gkernel, nb1, nc1)
-        cipde1.solve()
-        pp.saveExpObject(cipde1, "D:/Nicolai/MA_Data/experiment0/cipde1_rep_" + str(i) + ".json")
+        cipde1.append(pde1.CiPde1(mJade, gkernel, nb1, nc1))
+    
+    for i in range(replications):
+        cipde1[i].solve()
+        pp.saveExpObject(cipde1[i], "D:/Nicolai/MA_Data/experiment0/cipde1_rep_" + str(i) + ".json")
         print("D:/Nicolai/MA_Data/experiment0/cipde1_rep_" + str(i) + ".json" + " -> saved")
         
     ##########################
     #   testbed problem 2    #
     ##########################
+    cipde2 = []
     for i in range(replications):
         initialPop = np.random.randn(40,20)
         mJade = oaMemJade.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
-        cipde2 = pde2.CiPde2(mJade, gkernel, nb1, nc1)
-        cipde2.solve()
-        pp.saveExpObject(cipde2, "D:/Nicolai/MA_Data/experiment0/cipde2_rep_" + str(i) + ".json")
+        cipde2.append(pde2.CiPde2(mJade, gkernel, nb1, nc1))
+    
+    for i in range(replications):
+        cipde2[i].solve()
+        pp.saveExpObject(cipde2[i], "D:/Nicolai/MA_Data/experiment0/cipde2_rep_" + str(i) + ".json")
         print("D:/Nicolai/MA_Data/experiment0/cipde2_rep_" + str(i) + ".json" + " -> saved")
     
     ##########################
     #   testbed problem 3    #
     ##########################
+    cipde3 = []
     for i in range(replications):
         initialPop = np.random.randn(40,20)
         mJade = oaMemJade.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
-        cipde3 = pde3.CiPde3(mJade, gkernel, nb1, nc1)
-        cipde3.solve()
-        pp.saveExpObject(cipde3, "D:/Nicolai/MA_Data/experiment0/cipde3_rep_" + str(i) + ".json")
+        cipde3.append(pde3.CiPde3(mJade, gkernel, nb1, nc1))
+    
+    for i in range(replications):
+        cipde3[i].solve()
+        pp.saveExpObject(cipde3[i], "D:/Nicolai/MA_Data/experiment0/cipde3_rep_" + str(i) + ".json")
         print("D:/Nicolai/MA_Data/experiment0/cipde3_rep_" + str(i) + ".json" + " -> saved")
         
     ##########################
     #   testbed problem 4    #
     ##########################
+    cipde4 = []
     for i in range(replications):
         initialPop = np.random.randn(40,20)
         mJade = oaMemJade.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
-        cipde4 = pde4.CiPde4(mJade, gkernel, nb1, nc1)
-        cipde4.solve()
-        pp.saveExpObject(cipde4, "D:/Nicolai/MA_Data/experiment0/cipde4_rep_" + str(i) + ".json")
+        cipde4.append(pde4.CiPde4(mJade, gkernel, nb1, nc1))
+    
+    for i in range(replications):
+        cipde4[i].solve()
+        pp.saveExpObject(cipde4[i], "D:/Nicolai/MA_Data/experiment0/cipde4_rep_" + str(i) + ".json")
         print("D:/Nicolai/MA_Data/experiment0/cipde4_rep_" + str(i) + ".json" + " -> saved")
         
     ##########################
     #   testbed problem 5    #
     ##########################
+    cipde5 = []
     for i in range(replications):
         initialPop = np.random.randn(40,20)
         mJade = oaMemJade.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
-        cipde5 = pde5.CiPde5(mJade, gkernel, nb1, nc1)
-        cipde5.solve()
-        pp.saveExpObject(cipde5, "D:/Nicolai/MA_Data/experiment0/cipde5_rep_" + str(i) + ".json")
+        cipde5.append(pde5.CiPde5(mJade, gkernel, nb1, nc1))
+    
+    for i in range(replications):
+        cipde5[i].solve()
+        pp.saveExpObject(cipde5[i], "D:/Nicolai/MA_Data/experiment0/cipde5_rep_" + str(i) + ".json")
         print("D:/Nicolai/MA_Data/experiment0/cipde5_rep_" + str(i) + ".json" + " -> saved")
         
     ##########################
     #   testbed problem 6    #
     ##########################
+    cipde6 = []
     for i in range(replications):
         initialPop = np.random.randn(40,20)
         mJade = oaMemJade.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
-        cipde6 = pde6.CiPde6(mJade, gkernel, nb1, nc1)
-        cipde6.solve()
-        pp.saveExpObject(cipde6, "D:/Nicolai/MA_Data/experiment0/cipde6_rep_" + str(i) + ".json")
+        cipde6.append(pde6.CiPde6(mJade, gkernel, nb1, nc1))
+    
+    for i in range(replications):
+        cipde6[i].solve()
+        pp.saveExpObject(cipde6[i], "D:/Nicolai/MA_Data/experiment0/cipde6_rep_" + str(i) + ".json")
         print("D:/Nicolai/MA_Data/experiment0/cipde6_rep_" + str(i) + ".json" + " -> saved")
         
     ##########################
     #   testbed problem 7    #
     ##########################
+    cipde7 = []
     for i in range(replications):
         initialPop = np.random.randn(40,20)
         mJade = oaMemJade.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
-        cipde7 = pde7.CiPde7(mJade, gkernel, nb1, nc1)
-        cipde7.solve()
-        pp.saveExpObject(cipde7, "D:/Nicolai/MA_Data/experiment0/cipde7_rep_" + str(i) + ".json")
+        cipde7.append(pde7.CiPde7(mJade, gkernel, nb1, nc1))
+    
+    for i in range(replications):
+        cipde7[i].solve()
+        pp.saveExpObject(cipde7[i], "D:/Nicolai/MA_Data/experiment0/cipde7_rep_" + str(i) + ".json")
         print("D:/Nicolai/MA_Data/experiment0/cipde7_rep_" + str(i) + ".json" + " -> saved")
         
     ##########################
     #   testbed problem 8    #
     ##########################
+    cipde8 = []
     for i in range(replications):
         initialPop = np.random.randn(40,20)
         mJade = oaMemJade.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
-        cipde8 = pde8.CiPde8(mJade, gkernel, nb1, nc1)
-        cipde8.solve()
-        pp.saveExpObject(cipde8, "D:/Nicolai/MA_Data/experiment0/cipde8_rep_" + str(i) + ".json")
+        cipde8.append(pde8.CiPde8(mJade, gkernel, nb1, nc1))
+    
+    for i in range(replications):
+        cipde8[i].solve()
+        pp.saveExpObject(cipde8[i], "D:/Nicolai/MA_Data/experiment0/cipde8_rep_" + str(i) + ".json")
         print("D:/Nicolai/MA_Data/experiment0/cipde8_rep_" + str(i) + ".json" + " -> saved")
         
     ##########################
     #   testbed problem 9    #
     ##########################
+    cipde9 = []
     for i in range(replications):
         initialPop = np.random.randn(40,20)
         mJade = oaMemJade.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
-        cipde9 = pde9.CiPde9(mJade, gkernel, nb1, nc1)
-        cipde9.solve()
-        pp.saveExpObject(cipde9, "D:/Nicolai/MA_Data/experiment0/cipde9_rep_" + str(i) + ".json")
+        cipde9.append(pde9.CiPde9(mJade, gkernel, nb1, nc1))
+    
+    for i in range(replications):
+        cipde9[i].solve()
+        pp.saveExpObject(cipde9[i], "D:/Nicolai/MA_Data/experiment0/cipde9_rep_" + str(i) + ".json")
         print("D:/Nicolai/MA_Data/experiment0/cipde9_rep_" + str(i) + ".json" + " -> saved")
-        
-        
-        
-        
     
     
     

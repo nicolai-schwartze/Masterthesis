@@ -77,7 +77,7 @@ In general, all of these papers from the table use the \gls{wrm}, or some varian
 
 In their paper \cite{chaquet_using_2019} describe an algorithm that approximates a solution with a linear combination of gaussian \gls{rbf} as kernels:
 \begin{equation}
-	u(\mathbf{x})_{apx} = \sum_{i=1}^{N} \omega_i e^{\gamma_i (\left|\mathbf{x} - \mathbf{c}_i\right|^2)}
+	u(\mathbf{x})_{apx} = \sum_{i=1}^{N} \omega_i e^{\gamma_i (\left||\mathbf{x} - \mathbf{c}_i\right||^2)}
 \end{equation}
 The approximated function $u(\mathbf{x})_{approx}$ can be fully determined by a finite number of parameters: $\omega_i, \gamma_i, c0_i, \text{ and } c1_i$. These are stacked together into a vector $\vec{u}_{apx}$ and called the decision variables which are optimised by the algorithm. 
 The objective function can be seen in equation \ref{eq:fit_func_chaquet}. 
@@ -112,7 +112,7 @@ F(u(\mathbf{x})_{apx}) = \sum_{i=1}^{n_C} || \mathbf{L}u(\mathbf{x}_i) - f(\math
 \end{equation}
 After the \gls{gp} procedure, a linear combination of radial basis functions $u(\mathbf{x})_{RBF} = \sum_{i=1}^{n_b} \alpha_i \Phi (||\mathbf{x}-\mathbf{x}_{i+n_d}||)$ is specifically tailored to $u(\mathbf{x})_{GP}$, that ensures the boundary condition at all $\mathbf{x}_{i+n_d}$ points on $\partial \Omega$. Finding the parameters $\alpha_i$ can be formulated as a least squares problem. 
 
-\cite{chaquet_solving_2012} use a simple self-adaptive \gls{es} to evolve the coefficients of a partial Fourier series. The fitness function from equation \ref{eq:fit_func_chaquet} is reused. To reduce the search dimension (represented by the number of harmonics), they developed a scheme that only optimises one harmonic at a time and freezes the other coefficients. This scheme is based on the often observed principle that lower frequencies are more important in reconstructing a signal than higher ones. Albeit this concept might not be valid for all possible functions, it worked on all differential equations of their testbed. 
+\cite{chaquet_solving_2012} use a simple self-adaptive \gls{es} (as developed by \cite{schwefel_evolutionsstrategien_1977} and \cite{rechenberg_evolutionsstrategien_1978}) to evolve the coefficients of a partial Fourier series. The fitness function from equation \ref{eq:fit_func_chaquet} is reused. To reduce the search dimension (represented by the number of harmonics), they developed a scheme that only optimises one harmonic at a time and freezes the other coefficients. This scheme is based on the often observed principle that lower frequencies are more important in reconstructing a signal than higher ones. Albeit this concept might not be valid for all possible functions, it worked on all differential equations of their testbed. 
 
 \cite{sadollah_metaheuristic_2017} compares three different optimisation algorithms to approximate differential equations: \gls{pso}, \gls{hs} (\cite{geem_new_2001}) and \gls{wca} (\cite{eskandar_water_2012}). The objective function for all algorithms is the same. They use the formulation in equation \ref{eq:inner_WRF}, where the weighting function is the same as the residual $|\mathbf{W}(\mathbf{x})| = |\mathbf{R}(\mathbf{x})| \implies WRF = \int_{\Omega} |\mathbf{R}(\mathbf{x})|^2 dx$. The integral is again approximated using a numerical integration scheme. They find that the \gls{pso} is slightly better at producing low error solutions, however the \gls{wca} is better at satisfying the boundary condition. 
 
@@ -128,7 +128,7 @@ F(u(\mathbf{x})_{apx}) = \sqrt{\sum_{i=0}^{n} R(\mathbf{x}_i)^2}
 
 \cite{tsoulos_solving_2006} use a \gls{ge} (\cite{ryan_grammatical_1998}) to find solutions to various differential equations. In contrary to \gls{gp}, \gls{ge} uses vectors instead of trees to represent the candidate string. The solution is evaluated as an analytical string, constructed of the functions $sin$, $cos$, $exp$ and $log$, as well as all digits and all four basic arithmetic operations. The solution is measured by the same idea as displayed in equation \ref{eq:fit_func_sobester}. The algorithm was tested on multiple problems of \gls{ode}, system of ODEs and \gls{pde}. Only the results for ODEs were promising. 
 
-\cite{mastorakis_unstable_2006} couples a \gls{ga} (\cite{goldberg_messy_1989}) with a \gls{ds} method for the local solution refinement. The candidates are represented as polynomials of the order 5 where the coefficients are optimised. The boundary condition is directly incorporated into the candidate, thus simplifying the objective function to equation \ref{eq:fit_func_sobester}. The focus here lays on unstable ODEs, that can not be solved with finite difference methods. 
+\cite{mastorakis_unstable_2006} couples a \gls{ga} (\cite{holland_outline_1962}) with a \gls{ds} method for the local solution refinement. The candidates are represented as polynomials of the order 5 where the coefficients are optimised. The boundary condition is directly incorporated into the candidate, thus simplifying the objective function to equation \ref{eq:fit_func_sobester}. The focus here lays on unstable ODEs, that can not be solved with finite difference methods. 
 
 \cite{kirstukas_hybrid_2005} proposes a three-step procedure. The first step is time consuming and employs \gls{gp} techniques to find basis functions that span the solution space. The second step is faster and uses a Gram–Schmidt algorithm to compute the basis function multipliers to develop a complete solution for a given set of boundary conditions. Using linear solver methods, a set of coefficients is found that produces a single function that both satisfies the differential equation and the boundary or initial conditions at all collocation points. 
 
@@ -171,24 +171,24 @@ F(u(\mathbf{x})_{apx}) = \sqrt{\sum_{i=0}^{n} R(\mathbf{x}_i)^2}
 			
 		\end{tabular}
 	}
-	\unterschrift{Literature research on the general topic of stochastic slovers and their application. The papers are sorted by relevance to the present work. }{}{}
+	\unterschrift{Literature research on the general topic of stochastic slover and their application. The papers are sorted by relevance to the present work. }{}{}
 	\label{tab:literature_research}
 \end{table}
 
 
 \section{Differential Evolution}
 
-The differential evolution optimisation framework was first introduced in \cite{storn_differential_1997}. Due to its simple and flexible structure, it quickly became one of the most successful evolutionary algorithm. Over the years, several adaptation to the original framework have been proposed and some of them currently count to the best performing algorithms, as the 100-Digit Challenge at the GECCO 2019 (\cite{suganthan_p-n-suganthancec2019_2020}) shows. 
+The differential evolution optimisation framework was first introduced in \cite{storn_differential_1997}. Due to its simple and flexible structure, it quickly became one of the most successful evolutionary algorithm. Over the years, several adaptations to the original framework have been proposed and some of them currently count to the best performing algorithms, as the 100-Digit Challenge at the GECCO 2019 (\cite{suganthan_p-n-suganthancec2019_2020}) shows. 
 
 The main \gls{de} framework consists of three necessary steps, that continuously update a population of possible solutions. The population can be interpreted as a matrix, where each vector is a possible candidate for the optimum of the fitness function $f: \mathbf{R}^n \rightarrow \mathbf{R}$. These steps are performed in a loop until some termination condition is reached. Each of these steps are controlled by a user-defined parameter: 
 \begin{itemize}
 	\item \underline{mutation}: \\
 		  mutation strength parameter F;\\
 		  uses the information from within the population to create a trial vector $v_i$;\\
-		  this is done by scaling the difference between random vectors $x_{r}$ in the population - hence the name \textit{differential} evolution; a simple \textit{/rand/1} mutation operator can be seen in equation \ref{eq:mut_rand_1};
+		  this is done by scaling the difference between some vectors in the population - hence the name \textit{differential} evolution; the \textit{/current-to-pbest/1} mutation operator can be seen in equation \ref{eq:mut_rand_1}; $x_i$ is the current individual, $x_{best}^p$ is one random vector of the p\% top vectors, $x_{r1}$ is a random vector of the population while $\tilde{x}_{r2}$ is randomly choosen from the population and the archive;
 		  \begin{equation}
 		  \label{eq:mut_rand_1}
-		  v_i = x_{i} + F(x_{r1} - x_{r2})
+		  v_i = x_{i} + F_i(x_{best}^p - x_{i}) + F_i(x_{r1} - \tilde{x}_{r2})
 		  \end{equation}
 	\item \underline{crossover}: \\
 		  crossover probability parameter CR;\\

@@ -5,7 +5,8 @@ import xml.etree.ElementTree as ET
 from shutil import copyfile
 import matplotlib.pyplot as plt
 import json
-
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib import cm
 
 # save an experiment object to the file path
 def saveExpObject(obj, filename):
@@ -79,6 +80,160 @@ def loadExpObject(filename):
         
     
 
+
+
+# draw gauss kernel to geogebra
+def drawGSinKernel(parameter, ggb):
+    """Draws a 2-dimensional GSin kernel function of the form
+    
+    .. math::
+        approx(\mathbf{x})=\sum_{i=1}^{\\infty}\omega_{i}
+        e^{\gamma_{i}||\mathbf{x}-\mathbf{c}_{i}||^2} sin(f ||\mathbf{x}-\mathbf{c}_{i}||^2 - p)
+    
+    to a GeoGebra file. 
+    
+    Parameters
+    ----------
+    parameter : numpy array
+        must be of size (n,) where n % 6 = 0 \n
+        [wi, yi, c0i, c1i, fi, pi] are parameters of the kernel
+    ggb : str
+        saves .ggb file to path
+
+    Returns
+    -------
+    bool
+        true if successful \n
+        false if error occured
+
+    Examples
+    --------
+    >>> parameter = np.array([3, 1.5, 1, 1, 0.5, 0])
+    >>> ggb = "../testbed/pde0/pde0.ggb"
+    >>> drawGSinKernel(parameter, ggb)
+    ../testbed/pde0/pde0.ggb does not exist
+    copied template to ../testbed/pde0/pde0.ggb
+    False
+    >>> drawGSinKernel(parameter, ggb)
+    D:/Nicolai/Desktop/asdf.ggb exists
+    renaming to zip
+    extracting zip file
+    removing zip
+    parsing geogebra.xml
+    modifying geogebra.xml
+    saving modified xml
+    creating zip archive
+    renaming to ggb
+    True
+    
+    """
+    try:
+        dimension = parameter.shape[0]
+        numberOfKernels = dimension/6
+        # candidate solution coding: 
+        # [wi, yi, c0i, c1i] where i is the number of kernels which is adaptive
+        kernels = parameter.reshape((int(numberOfKernels), 6))
+        kernels = kernels.T
+        w = kernels[0]
+        y = kernels[1]
+        c0 = kernels[2]
+        c1 = kernels[3]
+        f = kernels[4]
+        p = kernels[5]
+        
+        # split filename from filepath
+        ggb_path, ggb_name = os.path.split(ggb)
+        if ggb_path == "":
+            ggb_path = "."
+            
+        if not os.path.isfile(ggb):
+            print(ggb + " does not exist")
+            module_dir, _ = os.path.split(__file__)
+            temp_path = module_dir + "/gsin_template.ggb"
+            copyfile(temp_path, ggb)
+            print("copied template to " + ggb)
+            
+        if os.path.isfile(ggb):
+            print(ggb + " exists") 
+            # convert to zip
+            
+            print("renaming to zip")
+            zip_file = os.path.splitext(ggb)[0] + ".zip"
+            os.rename(ggb, zip_file)
+            
+            # extract zip
+            print("extracting zip file")
+            with zipfile.ZipFile(zip_file, 'r') as zip_ref:
+                zip_ref.extractall(ggb_path)
+            zip_ref.close()
+            
+            # remove zip file
+            print("removing zip")
+            os.remove(zip_file)
+            
+            # open xml 
+            print("parsing geogebra.xml")
+            tree = ET.parse(ggb_path + "/geogebra.xml")
+            root = tree.getroot()
+            
+            # write w, y, c0, c1
+            print("modifying geogebra.xml")
+            for element in root.findall('construction')[0].iter('expression'):
+                if element.attrib['label'] == 'w_{approx}':
+                    element.attrib['exp'] = nparrayToggblist(w)
+                if element.attrib['label'] == 'y_{approx}':
+                    element.attrib['exp'] = nparrayToggblist(y)
+                if element.attrib['label'] == 'c0_{approx}':
+                    element.attrib['exp'] = nparrayToggblist(c0)
+                if element.attrib['label'] == 'c1_{approx}':
+                    element.attrib['exp'] = nparrayToggblist(c1)
+                if element.attrib['label'] == 'f_{approx}':
+                    element.attrib['exp'] = nparrayToggblist(f)
+                if element.attrib['label'] == 'p_{approx}':
+                    element.attrib['exp'] = nparrayToggblist(p)
+            # adapt length of sum
+            for element in root.findall('construction')[0].iter('command'):
+                for subelement in element:
+                    for cmd in subelement.iter('input'):
+                        if 'approx' in cmd.attrib['a0']:
+                            cmd.attrib['a3'] = str(numberOfKernels)
+            
+            # write modified xml to file
+            print("saving modified xml")
+            tree.write(ggb_path + "/geogebra.xml")
+            
+            # zip files
+            print("creating zip archive")
+            zipArchiveName = os.path.splitext(ggb)[0] + ".zip"
+            zipObj = zipfile.ZipFile(zipArchiveName, 'w')
+            # Add multiple files to the zip
+            zipObj.write(ggb_path + "/geogebra.xml", "/geogebra.xml")
+            zipObj.write(ggb_path + "/geogebra_defaults2d.xml", "/geogebra_defaults2d.xml")
+            zipObj.write(ggb_path + "/geogebra_defaults3d.xml", "/geogebra_defaults3d.xml")
+            zipObj.write(ggb_path + "/geogebra_javascript.js", "/geogebra_javascript.js")
+            zipObj.write(ggb_path + "/geogebra_thumbnail.png", "/geogebra_thumbnail.png")
+            zipObj.close()
+            
+            # removing unzipped files
+            os.remove(ggb_path + "/geogebra.xml")
+            os.remove(ggb_path + "/geogebra_defaults2d.xml")
+            os.remove(ggb_path + "/geogebra_defaults3d.xml")
+            os.remove(ggb_path + "/geogebra_javascript.js")
+            os.remove(ggb_path + "/geogebra_thumbnail.png")
+            
+            # convert to ggb
+            print("renaming to ggb")
+            zip_file = os.path.splitext(ggb)[0] + ".zip"
+            os.rename(zip_file, ggb)
+        
+        return True
+    
+    except Exception as e:
+        print("")
+        print("error occured: ")
+        print(e)
+        return False
+    
 
 
 
@@ -231,6 +386,50 @@ def drawGaussKernel(parameter, ggb):
     
     
     
+    
+    
+def plotApprox3D(kernel, parameter, lD, uD):
+    """Draws a 2-dimensional Gaussian kernel function of the form
+    
+    Parameters
+    ----------
+    kernel : IKernelBase
+        object that implements the IKernelBase interface
+    parameter : numpy array
+        parameter associated with the solution
+    lD: float
+        lower boundary of the squared domain
+    uD: float
+        upper boundary of the squared domain
+
+    Examples
+    --------
+    >>> import KernelGauss as gk
+    >>> gkernel = gk.KernelGauss()
+    >>> param = np.array([[1,4,0.5,0.5]])
+    >>> plotApprox3D(gkernel, param, 0.0, 1.0)
+    
+    """
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    x = y = np.arange(lD, uD+0.01, 0.01)
+    X, Y = np.meshgrid(x, y)
+    
+    zs0 = np.array([kernel.solution(parameter, np.array([x,y]))\
+                    for x,y in zip(np.ravel(X), np.ravel(Y))])
+    
+    Z = zs0.reshape(X.shape)
+    ax.plot_surface(X, Y, Z, cmap=cm.gnuplot)
+    
+    ax.set_xlabel("X0")
+    ax.set_ylabel("X1")
+    ax.set_zlabel("f(X0,X1)")
+    plt.show()
+    return None
+    
+    
+    
+    
 # --------------------------------------------------------------------------- #
 # --------------------------- internal functions ---------------------------- #
 # --------------------------------------------------------------------------- #
@@ -249,15 +448,23 @@ if __name__ == "__main__":
     
     print("starting test")
     
+    # ----------------------------------------------------------------------- #
+    
     print("test draw gauss kernel to ggb")
-    # ------------------------------------------------------------------------#
     
     # test drawGaussKernel()
     parameter = np.array([1, 1, 1, 1, 1, 1, -1, -1])
-    drawGaussKernel(parameter, "geogebra_test.ggb")
+    drawGaussKernel(parameter, "geogebra_test_gauss.ggb")
+    
+    print("test draw gsin kernel to ggb")
+    
+    # test drawGSinKernel()
+    parameter = np.array([1, 1, 1, 1, 1, 1, 1, 1, -1, -1, 1, 1])
+    drawGSinKernel(parameter, "geogebra_test_gsin.ggb")
+    
+    # ----------------------------------------------------------------------- #
     
     print("test save function")
-    # ------------------------------------------------------------------------#
     
     # imports needed for test
     import sys
@@ -270,7 +477,7 @@ if __name__ == "__main__":
     
     # initialisation 
     initialPop = 1*np.random.rand(40,20)
-    max_iter = 5*10**2
+    max_iter = 1*10**3
     min_err = 10**(-200)
     mJade = oaMemJade.OptAlgoMemeticJADE(initialPop, max_iter, min_err)
     gkernel = gk.KernelGauss()
@@ -311,6 +518,11 @@ if __name__ == "__main__":
     plt.show()
     plt.plot(load_dict["fit_history"])
     plt.show()
+    
+    
+    #-------------------------------------------------------------------------#
+    
+    plotApprox3D(gkernel, cipde1.sol_kernel, 0.0, 1.0)
     
     print("finished test")
     

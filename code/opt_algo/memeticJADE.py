@@ -15,8 +15,8 @@ import testFunctions as tf
 def memeticJADE(population, function, minError, maxFeval): 
     '''
     implementation of a memetic JADE: \n
-    0.75 of the iterations (generations) are spend on JADE
-    0.25 of the iterations is used to perform a downhill simplex
+    maxFeval-2*dim of the function evaluation are spend on JADE
+    2*dim of the function evaluation is used to perform a downhill simplex
     internal parameters of JADE are set to p=0.3 and c=0.5
     
     Parameters
@@ -57,14 +57,14 @@ def memeticJADE(population, function, minError, maxFeval):
     p = 0.3
     c = 0.5
     popDynamic, FEDynamic, FDynamic, CRDynamic = JADE(population, p, c, function, \
-                                                      minError, int(np.ceil(0.75*maxFeval)))
+                                                      minError, maxFeval-2*dim)
     print("finished JADE")
     print("="*45)
     print("start direct search with downhill simplex")
     bestIndex = np.argmin(FEDynamic[-1])
     bestSolution = popDynamic[-1][bestIndex]
     _, _, _, _, _, pop  = sc.optimize.fmin(function, bestSolution, ftol=minError, \
-                                           maxfun=int(np.floor(0.25*maxFeval)), \
+                                           maxfun=2*dim, \
                                            full_output = True, retall = True)
     for p in pop:
         # insert last DS population into pop dynaimc

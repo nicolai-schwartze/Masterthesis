@@ -130,8 +130,8 @@ class CiPde0B(CiPdeBase):
         # boundary for integration in L2 Norm
         self._lx = -2.0
         self._ux = 2.0
-        self._ly = lambda x: -2.0
-        self._uy = lambda x: 2.0
+        self._ly = -2.0
+        self._uy = 2.0
         
     def exact(self, x): 
         y = x[1]
@@ -178,12 +178,14 @@ if __name__ == "__main__":
     sys.path.append("../../opt_algo")
     sys.path.append("../../kernels")
     import OptAlgoMemeticJADE as oaMemJade
+    import OptAlgoDownhillSimplex as oaDS
     import KernelGSin as gsk
     
     initialPop = 2*np.random.randn(40,18)
-    max_fe = 1*10**6
+    max_fe = 1*10**4
     min_err = 10**(-200)
-    mJade = oaMemJade.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
+    mJADE = oaMemJade.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
+    ds = oaDS.OptAlgoDownhillSimplex(initialPop, max_fe, min_err)
     
     gskernel = gsk.KernelGSin()
     
@@ -201,7 +203,7 @@ if __name__ == "__main__":
     for i in range(len(nby)):
         nb.append((nbx[i], nby[i]))
     
-    cipde0B = CiPde0B(mJade, gskernel, nb, nc)
+    cipde0B = CiPde0B(ds, gskernel, nb, nc)
     
     print(cipde0B.pde_string)
     

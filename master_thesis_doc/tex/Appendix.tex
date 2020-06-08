@@ -11,12 +11,13 @@
 	\DontPrintSemicolon
 	\SetKwFunction{FJADE}{JADE}
 	\SetKwProg{Fn}{Function}{:}{}
-	\Fn{\FJADE{$\mathbf{x}_{g=0}$, $p$, $c$, $function$, $minError$, $maxGen$}}{
+	\Fn{\FJADE{$\mathbf{X}_{g=0}$, $p$, $c$, $function$, $minError$, $maxFE$}}{
 		$fValue_{g=0} \gets function(\mathbf{x}_{g=0})$\;
 		$\mu_{CR} \gets 0.5$\;
 		$\mu_{F}  \gets 0.5$\;
 		$A        \gets \emptyset$\;
-		\For {$g = 1$ to $G$}{
+		\While {$fe \leq maxFE$}{
+			$g \gets g + 1$\;
 			$S_F \gets \emptyset$\;
 			$S_{CR} \gets \emptyset$\; 
 			\For {$i = 1$ to $NP$} {
@@ -42,6 +43,7 @@
 			\If{$|A| > NP$} {
 				$A \gets A \setminus A_{rand_i}$
 			}
+			$fe \gets fe + size(\mathbf{X})$\;
 			$\mu_{CR} \gets (1-c) \cdot \mu_{CR} + c \cdot arithmeticMean(S_{CR})$\;
 			$\mu_{F} \gets (1-c) \cdot \mu_{F} + c \cdot lehmerMean(S_{F})$\;
 		}	
@@ -58,7 +60,7 @@
 	\DontPrintSemicolon
 	\SetKwFunction{FSHADE}{SHADE}
 	\SetKwProg{Fn}{Function}{:}{}
-	\Fn{\FSHADE{$\mathbf{x}_{G=0}$, $p$, $H$, $function$, $minError$, $maxGen$}}{
+	\Fn{\FSHADE{$\mathbf{x}_{G=0}$, $p$, $H$, $function$, $minError$, $maxFE$}}{
 		$M_{CR} \gets 0.5 \text{; } M_{F} \gets 0.5 \text{; } A \gets \emptyset \text{; } G \gets 0 \text{; }k \gets 1$\;
 		$fValue_{G=0} \gets function(\mathbf{x}_{G=0})$\;
 		\While{termination condition not met}
@@ -114,7 +116,7 @@
 	\DontPrintSemicolon
 	\SetKwFunction{FLSHADE}{LSHADE}
 	\SetKwProg{Fn}{Function}{:}{}
-	\Fn{\FLSHADE{$\mathbf{x}_{G=0}$, $p$, $H$, $function$, $minError$, $maxGen$}}{
+	\Fn{\FLSHADE{$\mathbf{x}_{G=0}$, $p$, $H$, $function$, $minError$, $maxFE$}}{
 		$M_{CR} \gets 0.5 \text{; } M_{F} \gets 0.5 \text{; } A \gets \emptyset \text{; } G \gets 0 \text{; }k \gets 1$\;
 		$fValue_{G=0} \gets function(\mathbf{x}_{G=0}) \text{; } NG_{init} \gets size(\mathbf{x}_{G=0}) \text{; }NG_{min} = \lceil 1/p \rceil$\;
 		\While{termination condition not met}
@@ -676,17 +678,17 @@ u_{ext}(x,y) = tan^{-1}\left(20\left(\frac{(x + y)}{\sqrt{2}} -0.8\right)\right)
 			$time.sleep(0.1)$\;
 		}	
 		$process = psutil.Process()$\;
-		$memstart = process.memory\text{\textunderscore}info().rss$\;
+		$memstart = process.memory\text{\textunderscore}info().vms$\;
 		$t\text{\textunderscore}start = time.time()$\;
 		\tcp{perform solver steps}
 		\tcp{that are particular}
 		\tcp{to FEM or CI solver}
 		$self.\text{\textunderscore}exec\text{\textunderscore}time = time.time() - t\text{\textunderscore}{start}$\;
-		$memstop = process.memory\text{\textunderscore}info().rss - memstart$\;
+		$memstop = process.memory\text{\textunderscore}info().vms - memstart$\;
 		$gc.enable()$\;
 		$gc.collect()$\;
 	}
-	\unterschrift{solve function pseudocode}{}{}
+	\unterschrift{Solve Method Pseudocode}{}{}
 	\label{algo: solve}
 \end{algorithm}
 
@@ -701,12 +703,13 @@ u_{ext}(x,y) = tan^{-1}\left(20\left(\frac{(x + y)}{\sqrt{2}} -0.8\right)\right)
 	\SetKwFunction{FpJADE}{pJADE}
 	\SetKwFor{PFor}{for}{do parallel}{end}
 	\SetKwProg{Fn}{Function}{:}{}
-	\Fn{\FpJADE{$\mathbf{x}_{g=0}$, $p$, $c$, $function$, $minError$, $maxGen$}}{
+	\Fn{\FpJADE{$\mathbf{X}_{g=0}$, $p$, $c$, $function$, $minError$, $maxFE$}}{
 		$fValue_{g=0} \gets function(\mathbf{x}_{g=0})$\;
 		$\mu_{CR} \gets 0.5$\;
 		$\mu_{F}  \gets 0.5$\;
 		$A        \gets \emptyset$\;
-		\For {$g = 1$ to $G$}{
+		\While {$fe \leq maxFE$}{
+			$g \gets g+1$\;
 			$S_F \gets \emptyset$\;
 			$S_{CR} \gets \emptyset$\; 
 			$pResults \gets \emptyset$\;
@@ -735,6 +738,7 @@ u_{ext}(x,y) = tan^{-1}\left(20\left(\frac{(x + y)}{\sqrt{2}} -0.8\right)\right)
 			\If{$|A| > NP$} {
 				$A \gets A \setminus A_{rand_i}$
 			}
+			$fe \gets fe + size(\mathbf{X})$\;
 			$\mu_{CR} \gets (1-c) \cdot \mu_{CR} + c \cdot arithmeticMean(S_{CR})$\;
 			$\mu_{F} \gets (1-c) \cdot \mu_{F} + c \cdot lehmerMean(S_{F})$\;
 		}	

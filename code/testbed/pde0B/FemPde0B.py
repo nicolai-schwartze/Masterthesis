@@ -119,7 +119,7 @@ class FemPde0B(FemPdeBase):
         
         # measure how much memory is used until here
         process = psutil.Process()
-        memstart = process.memory_info().rss
+        memstart = process.memory_info().vms
         
         # starts timer
         tstart = time.time()
@@ -194,7 +194,7 @@ class FemPde0B(FemPdeBase):
         self._exec_time = time.time() - tstart
         
         # set measured used memory
-        memstop = process.memory_info().rss - memstart
+        memstop = process.memory_info().vms - memstart
         self._mem_consumption = memstop
         
         # enable garbage collector 

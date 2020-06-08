@@ -109,8 +109,8 @@ class CiPde4(CiPdeBase):
         # boundary for integration in L2 Norm
         self._lx = 0.0
         self._ux = 1.0
-        self._ly = lambda x: 0.0
-        self._uy = lambda x: 1.0
+        self._ly = 0.0
+        self._uy = 1.0
         
     def exact(self, x): 
         return np.sin(np.pi * x[0])*np.sin(np.pi * x[1])

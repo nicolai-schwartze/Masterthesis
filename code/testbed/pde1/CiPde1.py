@@ -117,8 +117,8 @@ class CiPde1(CiPdeBase):
         # boundary for integration
         self._lx = 0.0
         self._ux = 1.0
-        self._ly = lambda x: 0.0
-        self._uy = lambda x: 1.0
+        self._ly = 0.0
+        self._uy = 1.0
         
     def exact(self, x): 
         return (2**(4*10))*(x[0]**10)*((1-x[0])**10)*(x[1]**10)*((1-x[1])**10)
@@ -153,12 +153,14 @@ if __name__ == "__main__":
     sys.path.append("../../opt_algo")
     sys.path.append("../../kernels")
     import OptAlgoMemeticJADE as oaMemJade
+    import OptAlgoDownhillSimplex as oaDS
     import KernelGauss as gk
     
     initialPop = 1*np.random.rand(40,20)
-    max_fe = 5*10**3
+    max_fe = 1*10**4
     min_err = 10**(-200)
-    mJade = oaMemJade.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
+    mJADE = oaMemJade.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
+    ds = oaDS.OptAlgoDownhillSimplex(initialPop, max_fe, min_err)
     
     gkernel = gk.KernelGauss()
     
@@ -176,7 +178,7 @@ if __name__ == "__main__":
     for i in range(40):
         nb.append((nbx[i], nby[i]))
     
-    cipde1 = CiPde1(mJade, gkernel, nb, nc)
+    cipde1 = CiPde1(ds, gkernel, nb, nc)
     
     print(cipde1.pde_string)
     

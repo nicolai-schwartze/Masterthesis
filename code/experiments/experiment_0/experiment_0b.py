@@ -49,7 +49,7 @@ if __name__ == "__main__":
     cipde0A = []
     for i in range(replications):
         initialPop = np.random.randn(40,20)
-        mJADE = oaMJ.OptAlgoMemeticpJADE(initialPop, max_fe, min_err)
+        mJADE = oaMJ.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
         cipde0A.append(pde0A.CiPde0A(mJADE, gakernel, nb2, nc2))
     
     for i in range(replications):

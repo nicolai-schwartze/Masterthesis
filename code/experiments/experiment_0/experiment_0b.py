@@ -30,7 +30,7 @@ if __name__ == "__main__":
     
     # experiment parameter
     replications = 20
-    max_fe = 1*10**4
+    max_fe = 1*10**6
     min_err = 0
     gakernel = gk.KernelGauss()
     

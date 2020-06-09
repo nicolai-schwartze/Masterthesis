@@ -9,25 +9,25 @@ import sys
 sys.path.append("../../testbed/pde0A/")
 import CiPde0A as pde0A
 sys.path.append("../../testbed/pde0B/")
-import CiPde0A as pde0B
+import CiPde0B as pde0B
 sys.path.append("../../testbed/pde1/")
-import CiPde0A as pde1
+import CiPde1 as pde1
 sys.path.append("../../testbed/pde2/")
-import CiPde0A as pde2
+import CiPde2 as pde2
 sys.path.append("../../testbed/pde3/")
-import CiPde0A as pde3
+import CiPde3 as pde3
 sys.path.append("../../testbed/pde4/")
-import CiPde0A as pde4
+import CiPde4 as pde4
 sys.path.append("../../testbed/pde5/")
-import CiPde0A as pde5
+import CiPde5 as pde5
 sys.path.append("../../testbed/pde6/")
-import CiPde0A as pde6
+import CiPde6 as pde6
 sys.path.append("../../testbed/pde7/")
-import CiPde0A as pde7
+import CiPde7 as pde7
 sys.path.append("../../testbed/pde8/")
-import CiPde0A as pde8
+import CiPde8 as pde8
 sys.path.append("../../testbed/pde9/")
-import CiPde0A as pde9
+import CiPde9 as pde9
 
 sys.path.append("../../opt_algo")
 import OptAlgoMemeticJADE as oaMJ
@@ -50,7 +50,7 @@ if __name__ == "__main__":
     
     # experiment parameter
     replications = 20
-    max_fe = 1*10**6
+    max_fe = 1*10**2
     min_err = 0
     gakernel = gk.KernelGauss()
     

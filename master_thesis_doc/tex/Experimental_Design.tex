@@ -7,27 +7,27 @@ This chapter serves as an introduction to the experiments and gives an overview 
 \section{Testbed}
 The testbed is a collection of multiple different 2-dimensional scalar \gls{pde}s that are analytically solved such that $u(\mathbf{x}): \mathbf{R}^2 \rightarrow \mathbf{R}$ is a solution to the underlaying PDE. These can be used to demonstrate the correct implementation of a solver. The testbed can also be used to compare the performance of the classical \gls{fem} solver (NGSolve) with the \gls{ci} solver. The actual equations are displayed in the appendix \ref{chap:testbed}. The equations used here are a mixture of multiple different testbeds. Specifically, the equations 2 and 3 are picked from the testbed in \cite{chaquet_using_2019}. These problems were also used by \cite{tsoulos_solving_2006} and \cite{panagant_solving_2014}. Preliminary tests have shown that the equations used in these papers are rather simple to approximate. Thus, more complicate equations are added to test the solvability over a wider variety of functions. The more complex equations are taken from the National Institute of Standards and Technology (NIST) website (\cite{mitchell_nist_2018}) that provides benchmarking problems for \gls{fem} slovers with adaptive mesh refinement methods. The other equations 0A, 0B and 8 are specially created to show different properties of the solver. 
 
-\textbf{PDE 0A: Gauss Kernel (equation \ref{eq:pde0a})} The analytic solution of this problem can be approximated arbitrarely close, since the solution is a sum of 5 different \gls{gak} as represented in equation \ref{eq:gauss_kernel}. The purpose of this PDE is to show that the algorithm converges towards the analytical solution. \\
+\textbf{PDE 0A: Gauss Kernel (equation \ref{eq:pde0a})} The analytic solution of this problem can be approximated arbitrarely close, since the solution is a sum of 5 different \gls{gak} as represented in equation \ref{eq:gauss_kernel}. The purpose of this PDE is to show that the algorithm converges towards the analytical solution. 
 
-\textbf{PDE 0B: GSin Kernel (equation \ref{eq:pde0b})} Similar to the PDE 0A, this problem is a sum of \gls{gsk}, as seen in equation \ref{eq:gsin_kernel}. To keep the search dimensionality roughly the same as in PDE 0A, the problem can be solved with 3 kernels. Again, the purpose of this equation is to determine the convergence with other kernel types.  \\
+\textbf{PDE 0B: GSin Kernel (equation \ref{eq:pde0b})} Similar to the PDE 0A, this problem is a sum of \gls{gsk}, as seen in equation \ref{eq:gsin_kernel}. To keep the search dimensionality roughly the same as in PDE 0A, the problem can be solved with 3 kernels. Again, the purpose of this equation is to determine the convergence with other kernel types. 
 
-\textbf{PDE 1: Polynomial 2D (equation \ref{eq:pde1})} The solution of this equation is a polynomial of order 20. The function is 0 on the boundary of the unit square. (\cite{mitchell_nist_2018}) \\
+\textbf{PDE 1: Polynomial 2D (equation \ref{eq:pde1})} The solution of this equation is a polynomial of order 20. The function is 0 on the boundary of the unit square. (\cite{mitchell_nist_2018}) 
 
-\textbf{PDE 2: Chaquet PDE 1 (equation \ref{eq:pde2})} This is the problem of the Chaquet testbed, that is also used by several other authors. Its main purpose is to build the bridge to those papers so that the results can be compared. \cite{chaquet_using_2019} \\
+\textbf{PDE 2: Chaquet PDE 1 (equation \ref{eq:pde2})} This is the problem of the Chaquet testbed, that is also used by several other authors. Its main purpose is to build the bridge to those papers so that the results can be compared. (\cite{chaquet_using_2019}, \cite{chaquet_solving_2012}, \cite{tsoulos_solving_2006}, \cite{sobester_genetic_2008}, \cite{panagant_solving_2014}) 
 
-\textbf{PDE 3: Chaquet PDE 3 (equation \ref{eq:pde3})} This equation is solved by a polynomial of order 2. Again, the purpose is to compare the results to other papers. \cite{chaquet_using_2019} \\
+\textbf{PDE 3: Chaquet PDE 3 (equation \ref{eq:pde3})} This equation is solved by a polynomial of order 2. Again, the purpose is to compare the results to other papers. (\cite{chaquet_using_2019}, \cite{chaquet_solving_2012}, \cite{tsoulos_solving_2006}, \cite{panagant_solving_2014}) 
 
-\textbf{PDE 4: Sine Bump 2D (equation \ref{eq:pde4})} The sine bump occures in a similar fashion in both, the Chaquet testbed (PDE 8 in \cite{chaquet_using_2019}) as well as the NIST (\cite{mitchell_nist_2018}) testbed. This means that the underlying solution function is the same, but the \gls{pde} is posed differently. Preliminary results have shown that the formulation of the NIST testbed is harder to solve. Thus, the formulation of Chaquet is disregarded and the NIST problem is implemented. \\
+\textbf{PDE 4: Sine Bump 2D (equation \ref{eq:pde4})} The sine bump occures in a similar fashion in both, the Chaquet testbed (PDE 8 in \cite{chaquet_using_2019}) as well as the NIST (\cite{mitchell_nist_2018}) testbed. This means that the underlying solution function is the same, but the \gls{pde} is posed differently. Preliminary results have shown that the formulation of the NIST testbed is harder to solve. Thus, the formulation of Chaquet is disregarded and the NIST problem is implemented. 
 
-\textbf{PDE 5: Arctan Circular Wave Front (equation \ref{eq:pde5})} The main difficulty of this problem is the transition from the flat plateaus to the steep gradient of the circular wave front. Preliminary tests have shown that this equation is one of the most difficult problems in this testbed. (\cite{mitchell_nist_2018})\\
+\textbf{PDE 5: Arctan Circular Wave Front (equation \ref{eq:pde5})} The main difficulty of this problem is the transition from the flat plateaus to the steep gradient of the circular wave front. Preliminary tests have shown that this equation is one of the most difficult problems in this testbed. (\cite{mitchell_nist_2018})
 
-\textbf{PDE 6: Peak 2D (equation \ref{eq:pde6})} The solution to this problem is described by a single Gaussian ``peak'' at $(0.5, 0.5)$ with a large exponent. This solution could be approximated by a single \gls{gak}. The difficulty here is the steep gradient and a small region of interest. (\cite{mitchell_nist_2018})\\
+\textbf{PDE 6: Peak 2D (equation \ref{eq:pde6})} The solution to this problem is described by a single Gaussian ``peak'' at $(0.5, 0.5)$ with a large exponent. This solution could be approximated by a single \gls{gak}. The difficulty here is the steep gradient and a small region of interest. (\cite{mitchell_nist_2018})
 
-\textbf{PDE 7: Boundary Line Singularity (equation \ref{eq:pde7})} This equation is only determined on $x \in \mathbf{R}^{+}$, which results in a singularity line at $x = 0$. Towards this line the gradient increases.  (\cite{mitchell_nist_2018})\\
+\textbf{PDE 7: Boundary Line Singularity (equation \ref{eq:pde7})} This equation is only determined on $x \in \mathbf{R}^{+}$, which results in a singularity line at $x = 0$. Towards this line the gradient increases.  (\cite{mitchell_nist_2018})
 
-\textbf{PDE 8: Interior Point Singularity (equation \ref{eq:pde8})} The idea of this \gls{pde} is similar to the problem 7, but the singularity is located on the inner domain. The solution to this problem is not defined at $(0.5, 0.5)$, resulting in a very difficult problem. \\
+\textbf{PDE 8: Interior Point Singularity (equation \ref{eq:pde8})} The idea of this \gls{pde} is similar to the problem 7, but the singularity is located on the inner domain. The solution to this problem is not defined at $(0.5, 0.5)$, resulting in a very difficult problem. 
 
-\textbf{PDE 9: Arctan Wave Front Homogeneous Boundary Conditions 2D (equation \ref{eq:pde9})} Similar to \gls{pde} 5, the difficulty of this problem is the steep gradient. Additionaly, the boundary condition is zero wich results in sharp corners on the boundary, that are hard to approximate. (\cite{mitchell_nist_2018})\\
+\textbf{PDE 9: Arctan Wave Front Homogeneous Boundary Conditions 2D (equation \ref{eq:pde9})} Similar to \gls{pde} 5, the difficulty of this problem is the steep gradient. Additionaly, the boundary condition is zero wich results in sharp corners on the boundary, that are hard to approximate. (\cite{mitchell_nist_2018})
 
 
 \section{Software Architecture}
@@ -97,7 +97,7 @@ Thus, \cite{chaquet_using_2019} define a new quality measurement based on the \g
 \label{eq:rmse_chaquet}
 RMSE^2 = \frac{\sum_{i=1, \mathbf{x}_i \in C}^{n_C} \left|\left| \mathbf{u}(\mathbf{x}_i) - \mathbf{u_{ext}}(\mathbf{x}_i) \right|\right|^2 + \sum_{j=1, \mathbf{x}_j \in B}^{n_B} \left|\left| \mathbf{u}(\mathbf{x}_j) - \mathbf{u_{ext}}(\mathbf{x}_j) \right|\right|^2}{m(n_C + n_B)}
 \end{equation}
-This quality criterion has three inherent issues. At first, it firmly depends on the number of collocation points used. In an algorithm that uses self-adaptive collocation points, this measurement would be rendered useless. Further, the quality is only measured on the collocation points and not in between. However, a good solution fits not only these discrete points, but the whole domain. Finally, the \gls{fem} method doesn't use collocation points, so this quality measurement could not be calculated. A good quality measurement tool only uses the numerical and analytical solution, independently of the solving method. \\
+This quality criterion has three inherent issues. At first, it firmly depends on the number of collocation points used. In an algorithm that uses self-adaptive collocation points, this measurement would be rendered useless. Further, the quality is only measured on the collocation points and not in between. However, a good solution fits not only these discrete points, but the whole domain. Finally, the \gls{fem} method doesn't use collocation points, so this quality measurement could not be calculated. A good quality measurement tool only uses the numerical and analytical solution, independently of the solving method. 
 
 This leads to the quality measurement formulation used in this thesis: the L2 norm defined for functions as denoted in equation \ref{eq:quality_measurement}. This actually measures the distance between the analytical solution and the numerical approximation.  
 \begin{equation}
@@ -121,9 +121,9 @@ At first the \gls{pde}s must be transformed into their corresponding weak form. 
 To enhance the performance of NGSolve, static condensation is turned on. Further, a multigrid preconditioner is used. All problems are approximated by second order polynomials. The automatic mesh refinement is performed until a maximum of $5 \cdot 10^4$ \gls{dof} is reached. To properly interprete the results, 20 replications for each problem are performed. This is only needed for regarding time and memory, the solution itself is not a random variant. To further reduce the memory consumption, the GUI of NGSolve is switched off. 
 
 \subsection{Result}
-With the parameters described above, the following results are produced. The solving time as well as the memory usage are displayed in the boxplots \ref{fig:_fem_time_boxplot} and \ref{fig:_fem_mem_boxplot}, respectively. In general, the solving time ranges from 2.5 to 5.0 seconds at about 50 to 80 MByte of memory. Only problem 3 stands out as a notable exception. To keep the diagram visually appealing, this \gls{pde} is omitted and plotted in a separate figure. \\
+With the parameters described above, the following results are produced. The solving time as well as the memory usage are displayed in the boxplots \ref{fig:_fem_time_boxplot} and \ref{fig:_fem_mem_boxplot}, respectively. In general, the solving time ranges from 2.5 to 5.0 seconds at about 50 to 80 MByte of memory. Only problem 3 stands out as a notable exception. To keep the diagram visually appealing, this \gls{pde} is omitted and plotted in a separate figure. 
 
-The table \ref{tab:fem_sol_quality} presents the achieved distances between the exact and the approximated solutions. On \gls{pde} 3 the best numerical quality is achieved.\\
+The table \ref{tab:fem_sol_quality} presents the achieved distances between the exact and the approximated solutions. On \gls{pde} 3 the best numerical quality is achieved.
 
 The problem \gls{pde} 7 only needs around 2.5 seconds to be solved. A reason could be that the solution only depends on one variable and the derivative with respect to y $\frac{\partial u}{\partial y} = 0$ vanishes. This does not effect the memory usage, since all $5 \cdot 10^4$ \gls{dof} must be created to terminate. 
 
@@ -229,7 +229,7 @@ The parameters $\varphi$ and $\kappa$ are used in the fitness function (equation
 
 \begin{figure}[h]
 	\centering
-	\noindent\adjustbox{max width=0.75\linewidth}{
+	\noindent\adjustbox{max width=0.6\linewidth}{
 		\includegraphics[width=\textwidth]{../img/pdf/collocation_weight.pdf}
 	}
 	\unterschrift{weighting factor $\varphi$ and $\xi$ on every collocation point}{}{}
@@ -251,14 +251,14 @@ To account for the statistical influence, all experiments are restarted 20 times
 	\begin{subfigure}[b]{0.5\linewidth}
 		\centering
 		\includegraphics[width=1\textwidth]{../img/pdf/testbed_small_domain.pdf}
-		\caption{collocation points on $\Omega: x\in [0,1]$}
+		\caption{points on $\Omega: x\in [0,1]$}
 		\label{fig:collocation_points_domain_small}
 	\end{subfigure}% 
 	%
 	\begin{subfigure}[b]{0.5\linewidth}
 		\centering
 		\includegraphics[width=1\textwidth]{../img/pdf/testbed_big_domain.pdf}
-		\caption{collocation points on $\Omega: x\in [-2,2]$}
+		\caption{points on $\Omega: x\in [-2,2]$}
 		\label{fig:collocation_points_domain_big}
 	\end{subfigure}%
 	\unterschrift{collocation points used on the two domains of the testbed}{}{}%

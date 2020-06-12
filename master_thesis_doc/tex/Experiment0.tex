@@ -1,6 +1,6 @@
 \documentclass[./\jobname.tex]{subfiles}
 \begin{document}
-\chapter {Experiment 0: Comparison and Reproducing Results}
+\chapter {Experiment 0: Serial Memetic JADE}
 \label{chap:experimet_0}
 
 with $10^6$ function evaluation: \\
@@ -44,6 +44,29 @@ what are simpler and more complex testbed pdes? \\
 \section{Experiment Setup}
 
 \section{Result}
+Table \ref{tab:results_literature_comparison} shows a compariosn on the common testbed functions \gls{pde} 2 and \gls{pde} 3 with numerical results obtained in other research papers. It is important to notice, that the parameters, used to obtain the results, might not coinside. \cite{tsoulos_solving_2006} also use these two \gls{pde}, but their paper did not provide any usable error metric. 
+\begin{table}[h]
+	\centering
+	\noindent\adjustbox{max width=\linewidth}{
+		\begin{tabular}{|c|c|c|c|}
+			
+			\hline
+			\rowcolor[HTML]{\farbeTabA}
+			
+			Paper & parameter & \gls{pde} 2 & \gls{pde} 3 \\ \hline
+			\cite{chaquet_using_2019} & \multilinecell{4 kernel \\ max \#FE=$10^6$ \\ 50 replications } & $(1.75 \pm 1.14) 10^{-4}$ RMSE & $(1.09 \pm 0.846) 10^{-5}$ RMSE \\ \hline
+			\cite{chaquet_solving_2012} & \multilinecell{10 harmonics \\ max \#FE = $G \cdot \lambda$ = $1.2 \cdot 10^6$ \\ 10 replications} & $(6.37 \pm 0.733) 10^{-3}$ RMSE & $(5.90 \pm 0.799)10^{-3}$ RMSE \\ \hline
+			\cite{sobester_genetic_2008}& \multilinecell{50 max tree lenght \\ 12 generations \\ 20 replications} & $(6.9 \pm 8.3)10^{-4}$ & - \\ \hline
+			\cite{panagant_solving_2014}& \multilinecell{unknowns: N/A \\ \#FE=$5\cdot 10^5$ \\ replications: N/A} & $7.256 10^{-4}$ & $9.489 10^{-6}$ \\ \hline
+			serial memetic JADE & \multilinecell{5 kernel \\ max \#FE = $10^6$ \\ 20 replications} & & \\ \hline
+			
+			
+		\end{tabular}
+	}
+	\unterschrift{This table compares the results obtained with the serial memetic JADE to the numerical results obtained by similar work in literature. The same metric must be used, thus the RMSE as defined in equation \ref{eq:rmse_chaquet} is calculated.}{}{}
+	\label{tab:results_literature_comparison}
+\end{table}
+
 
 \section{Interpretation}
 

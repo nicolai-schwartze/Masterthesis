@@ -2,10 +2,28 @@
 \begin{document}
 
 \chapter{Problem Definition}
-In this chapter the basic idea of reformulating any differential equation into an optimisation problem is described. Further, the origin and the inner parametes of the fitness function as well as the different approximation methods are outlined. 
+This chapter describes the broader idea of the \gls{wrm}, which is used to reformulate any differential equation into an optimisation problem, and its application in the field of spectral methods. The fitness function originates from these approaches. Further, the different approximation schemes and numerical solution representation are depicted. The following paragraphes also introduce the mathematical notation used for this work. 
 
-\section{Optimisation Problem}
+\section{Theoretical Foundation}
 \label{chap:opt_problem}
+
+The most general description of a \gls{pde} is described in equation \ref{eq:general_pde}.
+\begin{equation}
+\label{eq:general_pde}
+\begin{split}
+\mathbf{L}u(\mathbf{x} & = f(\mathbf{x})) \\
+\text{subjected to: }\mathbf{B}u(\mathbf{x} & = g(\mathbf{x})) \\
+\end{split}
+\end{equation}
+This is similar to the formulation of the strong form in equantion \ref{eq: strong form}, but not limited to a Dirichlet boundary problem. The matrix $\mathbf{B}$ can include differentiation, effectively allowing i.e. Neumann boundary condition. 
+
+\begin{equation}
+u(\mathbf{x}) \approx u_{N}(\mathbf{x}) = \sum_{k=0}^{N} a_k \phi_k (\mathbf{x})
+\end{equation}
+
+\begin{equation}
+\mathbf{R}_N(\mathbf{x}) = \mathbf{L}u_N(\mathbf{x}) - f(\mathbf{x})
+\end{equation}
 
 introduce notation: $u_{apx}(x,y) = approximated solution$, $\vec{u_{apx}} = design variables$, $u_{ext}(x,y) = exact solution$, $F(\vec{u_{apx}}) = fitness of approximated solution$
 
@@ -29,32 +47,38 @@ F(\vec{u}_{apx}) = \frac{\sum_{i=1}^{n_C} \xi (\mathbf{x}_i) || \mathbf{L}u(\mat
 \section{Candidate Representation}
 \label{chap:candidate_rep}
 
+radial basis functions with r
+\begin{equation}
+\label{eq: radius}
+\mathbf{r} = \left|\left|\mathbf{x} - \mathbf{c} \right|\right|
+\end{equation}
+
 \subsection{Gauss Kernel}
 \label{chap:gauss_kernel}
 
 \begin{equation}
 \label{eq:gauss_kernel}
-gak(\mathbf{x}) = \omega e^{\gamma \left|\left|\mathbf{x} - \mathbf{c} \right|\right|^2}
+gak(\mathbf{x}) = \omega e^{-\gamma \mathbf{r}^2}
 \end{equation}
 
 \begin{equation}
 \label{eq:uapx_gauss_kernel}
-u_{apx}(\mathbf{x}) = \sum_{i=0}^{N} \omega_i e^{\gamma_i \left|\left|\mathbf{x} - \mathbf{c}_i \right|\right|^2}
+u_{apx}(\mathbf{x}) = \sum_{i=0}^{N} \omega_i e^{-\gamma_i \mathbf{r}_i^2}
 \end{equation}
 
 \begin{equation}
 \label{eq:uapx_gauss_kernel_x0}
-\frac{\partial u_{apx}(\mathbf{x})}{\partial x_0} = -2 \sum_{i=0}^{N} \omega_i \gamma_i (x_0 - c_{i0}) e^{\gamma_i \left|\left|\mathbf{x} - \mathbf{c}_i \right|\right|^2}
+\frac{\partial u_{apx}(\mathbf{x})}{\partial x_0} = -2 \sum_{i=0}^{N} \omega_i \gamma_i (x_0 - c_{i0}) e^{-\gamma_i \mathbf{r}_i^2}
 \end{equation}
 
 \begin{equation}
 \label{eq:uapx_gauss_kernel_x0x0}
-\frac{\partial^2 u_{apx}(\mathbf{x})}{\partial x_0^2} = \sum_{i=0}^{N} \omega_i \gamma_i \left[ 4 \gamma_i (x_0 - c_{i0})^2 - 2 \right] e^{\gamma_i \left|\left|\mathbf{x} - \mathbf{c}_i \right|\right|^2}
+\frac{\partial^2 u_{apx}(\mathbf{x})}{\partial x_0^2} = \sum_{i=0}^{N} \omega_i \gamma_i \left[ 4 \gamma_i (x_0 - c_{i0})^2 - 2 \right] e^{-\gamma_i \mathbf{r}_i^2}
 \end{equation}
 
 \begin{equation}
 \label{eq:uapx_gauss_kernel_x0x1}
-\frac{\partial^2 u_{apx}(\mathbf{x})}{\partial x_0 x_1} = 4 \sum_{i=0}^{N} \omega_i \gamma_i^2 (x_0 - c_{i0}) (x_1 - c_{i1}) e^{\gamma_i \left|\left|\mathbf{x} - \mathbf{c}_i \right|\right|^2} 
+\frac{\partial^2 u_{apx}(\mathbf{x})}{\partial x_0 x_1} = 4 \sum_{i=0}^{N} \omega_i \gamma_i^2 (x_0 - c_{i0}) (x_1 - c_{i1}) e^{-\gamma_i \mathbf{r}_i^2} 
 \end{equation}
 
 \subsection{GSin Kernel}
@@ -62,27 +86,31 @@ u_{apx}(\mathbf{x}) = \sum_{i=0}^{N} \omega_i e^{\gamma_i \left|\left|\mathbf{x}
 
 \begin{equation}
 \label{eq:gsin_kernel}
-gsk(\mathbf{x}) = \omega e^{\gamma \left|\left|\mathbf{x} - \mathbf{c} \right|\right|^2} sin(f \left|\left|\mathbf{x} - \mathbf{c} \right|\right|^2 - \varphi)
+gsk(\mathbf{x}) = \omega e^{-\gamma \mathbf{r}^2} sin(f \mathbf{r}^2 - \varphi)
 \end{equation}
 
 \begin{equation}
 \label{eq:uapx_gsin_kernel}
-u_{apx}(\mathbf{x}) = \sum_{i=0}^{N} \omega_i e^{\gamma_i \left|\left|\mathbf{x} - \mathbf{c}_i \right|\right|^2} sin(f_i \left|\left|\mathbf{x} - \mathbf{c} \right|\right|^2 - \varphi_i)
+u_{apx}(\mathbf{x}) = \sum_{i=0}^{N} \omega_i e^{\gamma_i \mathbf{r}_i^2} sin(f_i \mathbf{r}_i^2 - \varphi_i)
 \end{equation}
 
 \begin{equation}
 \label{eq:uapx_gsin_kernel_x0}
-
+\frac{\partial u_{apx}(\mathbf{x})}{\partial x_0} = \sum_{i=0}^{N} 2 \omega_i (x_0 - c_{i0}) e^{-\gamma_i \mathbf{r}_i^2} (\gamma_i sin(\varphi_i - f_i \mathbf{r}_i^2) + f_i cos(\varphi_i - f_i \mathbf{r}_i^2))
 \end{equation}
 
 \begin{equation}
 \label{eq:uapx_gsin_kernel_x0_x0}
-
+\begin{split}
+& \frac{\partial^2 u_{apx}(\mathbf{x})}{\partial x_0^2} = \sum_{i=0}^{N} 2 \omega_i e^{-\gamma_i \mathbf{r}_i^2} \\ & [ (2 c_{i0}^2 (f_i^2 - \gamma_i^2) + 4 c_{i0} x (\gamma_i^2 - f_i^2) + 2 f_i^2 x^2 - 2 \gamma_i^2 x^2 + \gamma_i) sin(\varphi_i - f_i \mathbf{r}_i^2) + \\ & f_i (-4 c_{i0}^2 \gamma_i + 8 c_{i0} \gamma_i x - 4 \gamma_i x^2 + 1) cos(\varphi_i - f_i \mathbf{r}_i^2) ]
+\end{split}
 \end{equation}
 
 \begin{equation}
 \label{eq:uapx_gsin_kernel_x0_x1}
-
+\begin{split}
+& \frac{\partial^2 u_{apx}(\mathbf{x})}{\partial x_0 x_1} = \sum_{i=0}^{N}  4 \omega_i (c_{i0} - x) (c_{i1} - y) e^{-\gamma_i \mathbf{r}_i^2} \\ & \left[(f_i^2 - \gamma_i^2) sin(\varphi_i - f_i \mathbf{r}_i^2) - 2 f_i \gamma_i cos(\varphi_i - f_i \mathbf{r}_i^2)\right]
+\end{split}
 \end{equation}
 
 \end{document}

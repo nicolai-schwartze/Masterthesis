@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sun May 24 11:05:18 2020
+Created on Sat Jun  6 13:52:23 2020
 
 @author: Nicolai
 """
@@ -30,7 +30,7 @@ sys.path.append("../../testbed/pde9/")
 import CiPde9 as pde9
 
 sys.path.append("../../opt_algo")
-import OptAlgoMemeticJADE as oaMemJade
+import OptAlgoMemeticJADE as oaMJ
 
 sys.path.append("../../kernels")
 import KernelGauss as gk
@@ -40,13 +40,19 @@ import numpy as np
 sys.path.append("../../post_proc/")
 import post_proc as pp
 
+from multiprocessing import Pool
+
+def solveObj(obj_list, i):
+    obj_list[i].solve()
+    return obj_list[i]
+
 if __name__ == "__main__":
     
     # experiment parameter
     replications = 20
-    max_fe = 1*10**4
+    max_fe = 1*10**6
     min_err = 0
-    gkernel = gk.KernelGauss()
+    gakernel = gk.KernelGauss()
     
     # collocation points for 0A and 0B
     nc2 = []
@@ -76,166 +82,290 @@ if __name__ == "__main__":
     for i in range(40):
         nb1.append((nbx[i], nby[i]))
     
-    # remove outlier in memory measurement
-    initialPop = np.random.randn(40,20)
-    mJade = oaMemJade.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
-    remove_outlier = pde0A.CiPde0A(mJade, gkernel, nb2, nc2)
-    remove_outlier.solve()
     
-    ##########################
-    #   testbed problem 0A   #
-    ##########################
-    cipde0A = []
-    for i in range(replications):
-        initialPop = np.random.randn(40,20)
-        mJade = oaMemJade.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
-        cipde0A.append(pde0A.CiPde0A(mJade, gkernel, nb2, nc2))
     
-    for i in range(replications):
-        cipde0A[i].solve()
-        pp.saveExpObject(cipde0A[i], "D:/Nicolai/MA_Data/experiment0/cipde0a_rep_" + str(i) + ".json")
-        print("D:/Nicolai/MA_Data/experiment0/cipde0a_rep_" + str(i) + ".json" + " -> saved")
     
-    ##########################
-    #   testbed problem 0B   #
-    ##########################
+    
+#    ####################################
+#    #   testbed problem 0A for mJADE   #
+#    ####################################
+#    cipde0A = []
+#    for i in range(replications):
+#        initialPop = np.random.randn(40,20)
+#        mJADE = oaMJ.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
+#        cipde0A.append(pde0A.CiPde0A(mJADE, gakernel, nb2, nc2))
+#        
+#    pool = Pool(processes= 20)
+#    parallelResults = []
+#    for i in range(replications):
+#        parallelResults.append(pool.apply_async(solveObj, args=(cipde0A, i)))
+#    
+#    for i in range(replications):
+#        obj = parallelResults[i].get()
+#        pp.saveExpObject(obj, "../../cipde0a_mj_rep_" + str(i) + ".json")
+#        print("../../cipde0a_mj_rep_" + str(i) + ".json" + " -> saved")
+#    
+#    pool.close()
+#    pool.join()
+    
+    
+    
+    
+    
+    ####################################
+    #   testbed problem 0B for mJADE   #
+    ####################################
     cipde0B = []
     for i in range(replications):
         initialPop = np.random.randn(40,20)
-        mJade = oaMemJade.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
-        cipde0B.append(pde0B.CiPde0B(mJade, gkernel, nb2, nc2))
+        mJADE = oaMJ.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
+        cipde0B.append(pde0B.CiPde0B(mJADE, gakernel, nb2, nc2))
+        
+    pool = Pool(processes= 20)
+    parallelResults = []
+    for i in range(replications):
+        parallelResults.append(pool.apply_async(solveObj, args=(cipde0B, i)))
     
     for i in range(replications):
-        cipde0B[i].solve()
-        pp.saveExpObject(cipde0B[i], "D:/Nicolai/MA_Data/experiment0/cipde0b_rep_" + str(i) + ".json")
-        print("D:/Nicolai/MA_Data/experiment0/cipde0b_rep_" + str(i) + ".json" + " -> saved")
-        
-    ##########################
-    #   testbed problem 1    #
-    ##########################
+        obj = parallelResults[i].get()
+        pp.saveExpObject(obj, "../../cipde0b_mj_rep_" + str(i) + ".json")
+        print("../../cipde0b_mj_rep_" + str(i) + ".json" + " -> saved")
+    
+    pool.close()
+    pool.join()
+    
+    
+    
+    
+    
+    ####################################
+    #    testbed problem 1 for mJADE   #
+    ####################################
     cipde1 = []
     for i in range(replications):
         initialPop = np.random.randn(40,20)
-        mJade = oaMemJade.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
-        cipde1.append(pde1.CiPde1(mJade, gkernel, nb1, nc1))
+        mJADE = oaMJ.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
+        cipde1.append(pde1.CiPde1(mJADE, gakernel, nb1, nc1))
+        
+    pool = Pool(processes= 20)
+    parallelResults = []
+    for i in range(replications):
+        parallelResults.append(pool.apply_async(solveObj, args=(cipde1, i)))
     
     for i in range(replications):
-        cipde1[i].solve()
-        pp.saveExpObject(cipde1[i], "D:/Nicolai/MA_Data/experiment0/cipde1_rep_" + str(i) + ".json")
-        print("D:/Nicolai/MA_Data/experiment0/cipde1_rep_" + str(i) + ".json" + " -> saved")
-        
-    ##########################
-    #   testbed problem 2    #
-    ##########################
+        obj = parallelResults[i].get()
+        pp.saveExpObject(obj, "../../cipde1_mj_rep_" + str(i) + ".json")
+        print("../../cipde1_mj_rep_" + str(i) + ".json" + " -> saved")
+    
+    pool.close()
+    pool.join()
+    
+    
+    
+    
+    
+    ####################################
+    #    testbed problem 2 for mJADE   #
+    ####################################
     cipde2 = []
     for i in range(replications):
         initialPop = np.random.randn(40,20)
-        mJade = oaMemJade.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
-        cipde2.append(pde2.CiPde2(mJade, gkernel, nb1, nc1))
+        mJADE = oaMJ.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
+        cipde2.append(pde2.CiPde2(mJADE, gakernel, nb1, nc1))
+        
+    pool = Pool(processes= 20)
+    parallelResults = []
+    for i in range(replications):
+        parallelResults.append(pool.apply_async(solveObj, args=(cipde2, i)))
     
     for i in range(replications):
-        cipde2[i].solve()
-        pp.saveExpObject(cipde2[i], "D:/Nicolai/MA_Data/experiment0/cipde2_rep_" + str(i) + ".json")
-        print("D:/Nicolai/MA_Data/experiment0/cipde2_rep_" + str(i) + ".json" + " -> saved")
+        obj = parallelResults[i].get()
+        pp.saveExpObject(obj, "../../cipde2_mj_rep_" + str(i) + ".json")
+        print("../../cipde2_mj_rep_" + str(i) + ".json" + " -> saved")
     
-    ##########################
-    #   testbed problem 3    #
-    ##########################
+    pool.close()
+    pool.join()
+    
+    
+    
+    
+    
+    ####################################
+    #    testbed problem 3 for mJADE   #
+    ####################################
     cipde3 = []
     for i in range(replications):
         initialPop = np.random.randn(40,20)
-        mJade = oaMemJade.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
-        cipde3.append(pde3.CiPde3(mJade, gkernel, nb1, nc1))
+        mJADE = oaMJ.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
+        cipde3.append(pde3.CiPde3(mJADE, gakernel, nb1, nc1))
+        
+    pool = Pool(processes= 20)
+    parallelResults = []
+    for i in range(replications):
+        parallelResults.append(pool.apply_async(solveObj, args=(cipde3, i)))
     
     for i in range(replications):
-        cipde3[i].solve()
-        pp.saveExpObject(cipde3[i], "D:/Nicolai/MA_Data/experiment0/cipde3_rep_" + str(i) + ".json")
-        print("D:/Nicolai/MA_Data/experiment0/cipde3_rep_" + str(i) + ".json" + " -> saved")
-        
-    ##########################
-    #   testbed problem 4    #
-    ##########################
+        obj = parallelResults[i].get()
+        pp.saveExpObject(obj, "../../cipde3_mj_rep_" + str(i) + ".json")
+        print("../../cipde3_mj_rep_" + str(i) + ".json" + " -> saved")
+    
+    pool.close()
+    pool.join()
+    
+    
+    
+    
+    
+    ####################################
+    #    testbed problem 4 for mJADE   #
+    ####################################
     cipde4 = []
     for i in range(replications):
         initialPop = np.random.randn(40,20)
-        mJade = oaMemJade.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
-        cipde4.append(pde4.CiPde4(mJade, gkernel, nb1, nc1))
+        mJADE = oaMJ.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
+        cipde4.append(pde4.CiPde4(mJADE, gakernel, nb1, nc1))
+        
+    pool = Pool(processes= 20)
+    parallelResults = []
+    for i in range(replications):
+        parallelResults.append(pool.apply_async(solveObj, args=(cipde4, i)))
     
     for i in range(replications):
-        cipde4[i].solve()
-        pp.saveExpObject(cipde4[i], "D:/Nicolai/MA_Data/experiment0/cipde4_rep_" + str(i) + ".json")
-        print("D:/Nicolai/MA_Data/experiment0/cipde4_rep_" + str(i) + ".json" + " -> saved")
-        
-    ##########################
-    #   testbed problem 5    #
-    ##########################
+        obj = parallelResults[i].get()
+        pp.saveExpObject(obj, "../../cipde4_mj_rep_" + str(i) + ".json")
+        print("../../cipde4_mj_rep_" + str(i) + ".json" + " -> saved")
+    
+    pool.close()
+    pool.join()
+    
+    
+    
+    
+    
+    ####################################
+    #    testbed problem 5 for mJADE   #
+    ####################################
     cipde5 = []
     for i in range(replications):
         initialPop = np.random.randn(40,20)
-        mJade = oaMemJade.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
-        cipde5.append(pde5.CiPde5(mJade, gkernel, nb1, nc1))
+        mJADE = oaMJ.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
+        cipde5.append(pde5.CiPde5(mJADE, gakernel, nb1, nc1))
+        
+    pool = Pool(processes= 20)
+    parallelResults = []
+    for i in range(replications):
+        parallelResults.append(pool.apply_async(solveObj, args=(cipde5, i)))
     
     for i in range(replications):
-        cipde5[i].solve()
-        pp.saveExpObject(cipde5[i], "D:/Nicolai/MA_Data/experiment0/cipde5_rep_" + str(i) + ".json")
-        print("D:/Nicolai/MA_Data/experiment0/cipde5_rep_" + str(i) + ".json" + " -> saved")
-        
-    ##########################
-    #   testbed problem 6    #
-    ##########################
+        obj = parallelResults[i].get()
+        pp.saveExpObject(obj, "../../cipde5_mj_rep_" + str(i) + ".json")
+        print("../../cipde5_mj_rep_" + str(i) + ".json" + " -> saved")
+    
+    pool.close()
+    pool.join()
+    
+    
+    
+    
+    
+    ####################################
+    #    testbed problem 6 for mJADE   #
+    ####################################
     cipde6 = []
     for i in range(replications):
         initialPop = np.random.randn(40,20)
-        mJade = oaMemJade.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
-        cipde6.append(pde6.CiPde6(mJade, gkernel, nb1, nc1))
+        mJADE = oaMJ.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
+        cipde6.append(pde6.CiPde6(mJADE, gakernel, nb1, nc1))
+        
+    pool = Pool(processes= 20)
+    parallelResults = []
+    for i in range(replications):
+        parallelResults.append(pool.apply_async(solveObj, args=(cipde6, i)))
     
     for i in range(replications):
-        cipde6[i].solve()
-        pp.saveExpObject(cipde6[i], "D:/Nicolai/MA_Data/experiment0/cipde6_rep_" + str(i) + ".json")
-        print("D:/Nicolai/MA_Data/experiment0/cipde6_rep_" + str(i) + ".json" + " -> saved")
-        
-    ##########################
-    #   testbed problem 7    #
-    ##########################
+        obj = parallelResults[i].get()
+        pp.saveExpObject(obj, "../../cipde6_mj_rep_" + str(i) + ".json")
+        print("../../cipde6_mj_rep_" + str(i) + ".json" + " -> saved")
+    
+    pool.close()
+    pool.join()
+    
+    
+    
+    
+    
+    ####################################
+    #    testbed problem 7 for mJADE   #
+    ####################################
     cipde7 = []
     for i in range(replications):
         initialPop = np.random.randn(40,20)
-        mJade = oaMemJade.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
-        cipde7.append(pde7.CiPde7(mJade, gkernel, nb1, nc1))
+        mJADE = oaMJ.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
+        cipde7.append(pde7.CiPde7(mJADE, gakernel, nb1, nc1))
+        
+    pool = Pool(processes= 20)
+    parallelResults = []
+    for i in range(replications):
+        parallelResults.append(pool.apply_async(solveObj, args=(cipde7, i)))
     
     for i in range(replications):
-        cipde7[i].solve()
-        pp.saveExpObject(cipde7[i], "D:/Nicolai/MA_Data/experiment0/cipde7_rep_" + str(i) + ".json")
-        print("D:/Nicolai/MA_Data/experiment0/cipde7_rep_" + str(i) + ".json" + " -> saved")
-        
-    ##########################
-    #   testbed problem 8    #
-    ##########################
+        obj = parallelResults[i].get()
+        pp.saveExpObject(obj, "../../cipde7_mj_rep_" + str(i) + ".json")
+        print("../../cipde7_mj_rep_" + str(i) + ".json" + " -> saved")
+    
+    pool.close()
+    pool.join()
+    
+    
+    
+    
+    
+    ####################################
+    #    testbed problem 8 for mJADE   #
+    ####################################
     cipde8 = []
     for i in range(replications):
         initialPop = np.random.randn(40,20)
-        mJade = oaMemJade.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
-        cipde8.append(pde8.CiPde8(mJade, gkernel, nb1, nc1))
+        mJADE = oaMJ.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
+        cipde8.append(pde8.CiPde8(mJADE, gakernel, nb1, nc1))
+        
+    pool = Pool(processes= 20)
+    parallelResults = []
+    for i in range(replications):
+        parallelResults.append(pool.apply_async(solveObj, args=(cipde8, i)))
     
     for i in range(replications):
-        cipde8[i].solve()
-        pp.saveExpObject(cipde8[i], "D:/Nicolai/MA_Data/experiment0/cipde8_rep_" + str(i) + ".json")
-        print("D:/Nicolai/MA_Data/experiment0/cipde8_rep_" + str(i) + ".json" + " -> saved")
-        
-    ##########################
-    #   testbed problem 9    #
-    ##########################
+        obj = parallelResults[i].get()
+        pp.saveExpObject(obj, "../../cipde8_mj_rep_" + str(i) + ".json")
+        print("../../cipde8_mj_rep_" + str(i) + ".json" + " -> saved")
+    
+    pool.close()
+    pool.join()
+    
+    
+    
+    
+    
+    ####################################
+    #    testbed problem 9 for mJADE   #
+    ####################################
     cipde9 = []
     for i in range(replications):
         initialPop = np.random.randn(40,20)
-        mJade = oaMemJade.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
-        cipde9.append(pde9.CiPde9(mJade, gkernel, nb1, nc1))
+        mJADE = oaMJ.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
+        cipde9.append(pde9.CiPde9(mJADE, gakernel, nb1, nc1))
+        
+    pool = Pool(processes= 20)
+    parallelResults = []
+    for i in range(replications):
+        parallelResults.append(pool.apply_async(solveObj, args=(cipde9, i)))
     
     for i in range(replications):
-        cipde9[i].solve()
-        pp.saveExpObject(cipde9[i], "D:/Nicolai/MA_Data/experiment0/cipde9_rep_" + str(i) + ".json")
-        print("D:/Nicolai/MA_Data/experiment0/cipde9_rep_" + str(i) + ".json" + " -> saved")
+        obj = parallelResults[i].get()
+        pp.saveExpObject(obj, "../../cipde9_mj_rep_" + str(i) + ".json")
+        print("../../cipde9_mj_rep_" + str(i) + ".json" + " -> saved")
     
-    
+    pool.close()
+    pool.join()
     
     

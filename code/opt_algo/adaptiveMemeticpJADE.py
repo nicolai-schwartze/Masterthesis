@@ -7,12 +7,12 @@ Created on Mon Jun 05 19:12:17 2020
 
 import sys
 sys.path.append("../differential_evolution")
-from pJADE import pJADE
+from pJADEadaptive import pJADEadaptive
 import numpy as np
 import scipy as sc
 import testFunctions as tf
 
-def memeticpJADE(population, function, minError, maxFeval): 
+def memeticpJADEadaptive(population, function, minError, maxFeval): 
     '''
     implementation of an adaptive kernel memetic pJADE: \n
     maxFeval-2*dim of the function evaluation are spend on pJADE
@@ -59,8 +59,10 @@ def memeticpJADE(population, function, minError, maxFeval):
     p = 0.3
     c = 0.5
     
-    popDynamic, FEDynamic, FDynamic, CRDynamic = pJADE(population, p, c, function, minError, maxFeval-2*dim)
-    print("finished JADE")
+    print("starting with dimension: " + str(dim))
+    
+    popDynamic, FEDynamic, FDynamic, CRDynamic = pJADEadaptive(population, p, c, function, minError, maxFeval-2*dim)
+    print("finished JADE with " str(maxFeval-2*dim))
     print("="*45)
     print("start direct search with downhill simplex")
     bestIndex = np.argmin(FEDynamic[-1])
@@ -91,12 +93,12 @@ if __name__ == "__main__":
     import matplotlib.pyplot as plt
     
     population = 100*np.random.rand(4,2)
-    minError = 10**-200
-    maxFeval = 10**3
+    minError = -20
+    maxFeval = 10**2
     H = 100
     p = 0.3
     c = 0.5
-    (popDynamic, FEDynamic, FDynamic, CRDynamic) = memeticpJADE(population, \
+    (popDynamic, FEDynamic, FDynamic, CRDynamic) = memeticpJADEadaptive(population, \
     tf.sphere, minError, maxFeval)
     plt.semilogy(FEDynamic)
     

@@ -8,6 +8,13 @@ import json
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 
+import sys
+import os
+importpath = os.path.dirname(os.path.realpath(__file__)) 
+sys.path.append(importpath)
+
+import bigjson
+
 # save an experiment object to the file path
 def saveExpObject(obj, filename):
     """saves a CiPdeN object as a JSON file to the harddrive
@@ -80,7 +87,40 @@ def loadExpObject(filename):
         
     
 
+# load an large experiment file and ingore the generation data
+# expecially useful for large result files
+def loadExpObjectFast(filename):
+    """loads a CiPdeN object from a JSON file
+        irnores generation data, expect the first and the last
+    
+    Parameters
+    ----------
+    filename : str
+        includes path and filename
 
+    Returns
+    -------
+    dict
+        returns a dict if it worked, 
+        else return None
+
+    """
+    try:
+        with open(filename, 'rb') as f:
+            result = bigjson.load(f)
+            obj_dict = dict()
+            obj_dict["pde"] = result["pde"]
+            obj_dict["kernel_type"] = result["kernel_type"]
+            obj_dict["opt_algo"] = result["opt_algo"]
+            obj_dict["exec_time"] = result["exec_time"]
+            obj_dict["mem_consumption"] = result["mem_consumption"]
+            obj_dict["normL2"] = result["normL2"]
+            obj_dict["sol_kernel"] = np.array(result["sol_kernel"].to_python())
+        return obj_dict
+    except Exception as e:
+        print(str(e))
+        return None
+    
 
 # draw gauss kernel to geogebra
 def drawGSinKernel(parameter, ggb):
@@ -385,6 +425,74 @@ def drawGaussKernel(parameter, ggb):
         return False
     
     
+pde_solution = {"<class 'CiPde0A.CiPde0A'>" : lambda x : 2*np.e**(-1.5*(x[0]**2 + x[1]**2)) + np.e**(-3*((x[0] + 1)**2 + (x[1] + 1)**2)) + np.e**(-3*((x[0] - 1)**2 + (x[1] + 1)**2)) + np.e**(-3*((x[0] + 1)**2 + (x[1] - 1)**2)) + np.e**(-3*((x[0] - 1)**2 + (x[1] - 1)**2)),
+                "<class 'CiPde0B.CiPde0B'>" : lambda x : np.exp(-2  * ((x[0])**2 + (x[1])**2))*np.sin(2  * ((x[0])**2 + (x[1])**2)) + np.exp(-1  * ((x[0])**2 + (x[1])**2))*np.sin(1  * ((x[0])**2 + (x[1])**2)) + np.exp(-0.1* ((x[0])**2 + (x[1])**2))*np.sin(0.1* ((x[0])**2 + (x[1])**2)),
+                "<class 'CiPde1.CiPde1'>" : lambda x : (2**(4*10))*(x[0]**10)*((1-x[0])**10)*(x[1]**10)*((1-x[1])**10),
+                "<class 'CiPde2.CiPde2'>" : lambda x : (x[0] + x[1]**3)*np.e**(-x[0]),
+                "<class 'CiPde3.CiPde3'>" : lambda x : x[0]**2 + x[1]**2 + x[0] + x[1] + 1,
+                "<class 'CiPde4.CiPde4'>" : lambda x : np.sin(np.pi * x[0])*np.sin(np.pi * x[1]),
+                "<class 'CiPde5.CiPde5'>" : lambda x : np.arctan(20*(np.sqrt((x[0] - 0.05)**2 + (x[1] - 0.05)**2) -0.7)),
+                "<class 'CiPde6.CiPde6'>" : lambda x : np.e**(-1000*((x[0]-0.5)**2 + (x[1]-0.5)**2)),
+                "<class 'CiPde7.CiPde7'>" : lambda x : x[0]**0.6 + x[1]*0,
+                "<class 'CiPde8.CiPde8'>" : lambda x : np.sqrt((x[0]-0.5)**2 + (x[1]-0.5)**2),
+                "<class 'CiPde9.CiPde9'>" : lambda x : np.arctan(20*((x[0] + x[1])/(2**(1/2)) -0.8))*x[0]*(1-x[0])*x[1]*(1-x[1]) }
+    
+    
+    
+def calcRSME(solve_dict):
+    
+    if solve_dict["pde"] == "<class 'CiPde0A.CiPde0A'>" or solve_dict["pde"] == "<class 'CiPde0B.CiPde0B'>":
+        nc = []
+        omega = np.arange(-1.6, 2.0, 0.4)
+        for x0 in omega:
+            for x1 in omega:
+                nc.append((x0, x1))
+            
+        # boundary points for 0A and 0B
+        nb = []
+        nby = np.hstack((-2*np.ones(10), np.arange(-2.0, 2.0, 0.4), 2*np.ones(10), np.arange(2.0, -2.0, -0.4)))
+        nbx = np.hstack((np.arange(-2.0, 2.0, 0.4), 2*np.ones(10), np.arange(2.0, -2.0, -0.4), -2*np.ones(10)))
+        for i in range(len(nby)):
+            nb.append((nbx[i], nby[i]))
+    
+    else:
+        nc = []
+        omega = np.arange(0.1, 1.0, 0.1)
+        for x0 in omega:
+            for x1 in omega:
+                nc.append((x0, x1))
+            
+        # boundary points
+        nb = []
+        nby = np.hstack((np.zeros(10), np.arange(0.0, 1.0, 0.1), np.ones(10), np.arange(1.0, 0.0, -0.1)))
+        nbx = np.hstack((np.arange(0.0, 1.0, 0.1), np.ones(10), np.arange(1.0, 0.0, -0.1), np.zeros(10)))
+        for i in range(40):
+            nb.append((nbx[i], nby[i]))
+        
+    if solve_dict["kernel_type"] == "Gauss Kernel: sum_{i}^{N}(w_i*e^(-y_i*((x_0 - c_0_i)^2 + (x_1 - c_1_i)^2)))":
+        importpath = os.path.dirname(os.path.realpath(__file__)) + "/../kernels/"
+        sys.path.append(importpath) 
+        import KernelGauss as gak
+        kernel = gak.KernelGauss()
+
+        
+    else:
+        importpath = os.path.dirname(os.path.realpath(__file__)) + "/../kernels/"
+        sys.path.append(importpath) 
+        import KernelGSin as gsk
+        kernel = gsk.KernelGSin()
+    
+    # partial sum for collocation points
+    part_sum_c = 0.0
+    for c in nc:
+        part_sum_c += (kernel.solution(solve_dict["sol_kernel"], c) - pde_solution[solve_dict["pde"]](c))**2
+        
+    # partial sum for boundary boints
+    part_sum_b = 0.0
+    for b in nb:
+        part_sum_b += (kernel.solution(solve_dict["sol_kernel"], b) - pde_solution[solve_dict["pde"]](b))**2
+        
+    return np.sqrt((part_sum_c + part_sum_b)/(len(nb) + len(nc)))
     
     
     
@@ -468,8 +576,8 @@ if __name__ == "__main__":
     
     # imports needed for test
     import sys
-    sys.path.append("../testbed/pde1")
-    import CiPde1 as pde1
+    sys.path.append("../testbed/pde2")
+    import CiPde2 as pde2
     sys.path.append("../opt_algo")
     import OptAlgoMemeticJADE as oaMemJade
     sys.path.append("../kernels")
@@ -477,7 +585,7 @@ if __name__ == "__main__":
     
     # initialisation 
     initialPop = 1*np.random.rand(40,20)
-    max_iter = 1*10**3
+    max_iter = 1*10**2
     min_err = 10**(-200)
     mJade = oaMemJade.OptAlgoMemeticJADE(initialPop, max_iter, min_err)
     gkernel = gk.KernelGauss()
@@ -497,32 +605,43 @@ if __name__ == "__main__":
         nb.append((nbx[i], nby[i]))
     
     # creating object 
-    cipde1 = pde1.CiPde1(mJade, gkernel, nb, nc)
-    cipde1.solve()
+    cipde2 = pde2.CiPde2(mJade, gkernel, nb, nc)
+    cipde2.solve()
     
-    saveExpObject(cipde1, "./save_test_large.json")
+    saveExpObject(cipde2, "./save_test_large.json")
     
     load_dict = loadExpObject("./save_test_large.json")
     
-    assert cipde1.kernel.kernel_type == load_dict["kernel_type"]
-    assert cipde1.exec_time == load_dict["exec_time"]
-    assert cipde1.mem_consumption == load_dict["mem_consumption"]
-    assert cipde1.normL2() == load_dict["normL2"]
-    assert np.allclose(cipde1.sol_kernel, load_dict["sol_kernel"])
-    assert np.allclose(cipde1.pop_history, load_dict["pop_history"])
-    assert np.allclose(cipde1.fit_history, load_dict["fit_history"])
-    assert np.allclose(cipde1.f_history, load_dict["f_history"])
-    assert np.allclose(cipde1.cr_history, load_dict["cr_history"])
+    assert cipde2.kernel.kernel_type == load_dict["kernel_type"]
+    assert cipde2.exec_time == load_dict["exec_time"]
+    assert cipde2.mem_consumption == load_dict["mem_consumption"]
+    assert cipde2.normL2() == load_dict["normL2"]
+    assert np.allclose(cipde2.sol_kernel, load_dict["sol_kernel"])
+    assert np.allclose(cipde2.pop_history, load_dict["pop_history"])
+    assert np.allclose(cipde2.fit_history, load_dict["fit_history"])
+    assert np.allclose(cipde2.f_history, load_dict["f_history"])
+    assert np.allclose(cipde2.cr_history, load_dict["cr_history"])
     
-    plt.plot(cipde1.fit_history)
+    plt.plot(cipde2.fit_history)
     plt.show()
     plt.plot(load_dict["fit_history"])
     plt.show()
     
+    load_dict = loadExpObjectFast("./save_test_large.json")
+    
+    assert cipde2.kernel.kernel_type == load_dict["kernel_type"]
+    assert cipde2.exec_time == load_dict["exec_time"]
+    assert cipde2.mem_consumption == load_dict["mem_consumption"]
+    assert cipde2.normL2() == load_dict["normL2"]
+    assert np.allclose(cipde2.sol_kernel, load_dict["sol_kernel"])
+    
     
     #-------------------------------------------------------------------------#
     
-    plotApprox3D(gkernel, cipde1.sol_kernel, 0.0, 1.0)
+    plotApprox3D(gkernel, cipde2.sol_kernel, 0.0, 1.0)
+    
+    print("RMSE = " + str(calcRSME(load_dict)))
     
     print("finished test")
+    
     

@@ -56,7 +56,7 @@ Modern solvers include more complex and advanced techniques to further improve t
 	\item \underline{Static Condensation}: \\
 		  Depending on the number of discrete elements, the $\mathbf{A}$ matrix can be very large. Inverting large matrices is very time consuming. Condensation reduces this dimensionality by exploiting the structure of $\mathbf{A}$. 
 	\item \underline{Adaptive Mesh Refinement}: \\
-		  The accuracy of a FEM-approximated solution mainly depends on the granularity of the mesh. Finer meshes produce more accurate solutions, but the computation time takes longer. This trade-off can be overcome by a self-adaptive mesh. NGSolve implements that in an adaptive loop that executes: 
+		  The accuracy of a FEM-approximated solution mainly depends on the granularity of the mesh. Typically, finer meshes tend to produce more accurate solutions, but the computation time takes longer. This trade-off can be overcome by a self-adaptive mesh. NGSolve implements that in an adaptive loop that executes: 
 		  \begin{itemize}
 		  	\item Solve PDE (with coarse mesh)
 		  	\item Estimate Error (for every element)

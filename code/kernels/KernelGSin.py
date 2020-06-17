@@ -168,14 +168,14 @@ if __name__ == "__main__":
     kgs = KernelGSin()
     print(kgs.kernel_type)
     
-    candidate_1 = np.array([0.2,0.15,0,0,0.5,2])
+    candidate_1 = np.array([1,1,0,0,1,0])
     candidate_1_reshaped = candidate_1.reshape((1,6))
     
     # show solution
     print("show solution")
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
-    x = y = np.arange(-5, 5.1, 0.1)
+    x = y = np.arange(-3, 3.1, 0.005)
     X, Y = np.meshgrid(x, y)
     
     zs0 = np.array([kgs.solution(candidate_1_reshaped, \
@@ -187,6 +187,7 @@ if __name__ == "__main__":
     ax.set_xlabel("X0")
     ax.set_ylabel("X1")
     ax.set_zlabel("f(X0,X1)")
+    plt.savefig("gsk.pdf")
     plt.show()
     
     # show derivative with respect to x0

@@ -142,8 +142,8 @@ if __name__ == "__main__":
     kg = KernelGauss()
     print(kg.kernel_type)
     
-    candidate_1 = np.array([1,0.2,0.5,0.5])
-    candidate_1_reshaped = candidate_1.reshape((1,4))
+    candidate_1 = np.array([1,0.01,2,3,-1,20,2,-2])
+    candidate_1_reshaped = candidate_1.reshape((2,4))
     
     # show solution
     print("show solution")
@@ -161,6 +161,7 @@ if __name__ == "__main__":
     ax.set_xlabel("X0")
     ax.set_ylabel("X1")
     ax.set_zlabel("f(X0,X1)")
+    plt.savefig("aliasing_error.pdf")
     plt.show()
     
     # show derivative with respect to x0

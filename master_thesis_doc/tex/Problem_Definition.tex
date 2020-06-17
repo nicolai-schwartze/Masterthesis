@@ -2,41 +2,78 @@
 \begin{document}
 
 \chapter{Problem Definition}
-This chapter describes the broader idea of the \gls{wrm}, which is used to reformulate any differential equation into an optimisation problem, and its application in the field of spectral methods. The fitness function originates from these approaches. Further, the different approximation schemes and numerical solution representation are depicted. The following paragraphes also introduce the mathematical notation used for this work. 
+This chapter describes the broader idea of the \gls{wrm}, which is used to reformulate any differential equation into an optimisation problem, and its application in the field of spectral methods (\cite{shen_spectral_2011}). The fitness function originates from these approaches. Further, the different approximation schemes and numerical solution representation are depicted. The following paragraphes also introduce the mathematical notation used for this work. 
 
 \section{Theoretical Foundation}
 \label{chap:opt_problem}
 
-The most general description of a \gls{pde} is described in equation \ref{eq:general_pde}.
+The most general description of a \gls{pde} is displayed in equation \ref{eq:general_pde}.
 \begin{equation}
 \label{eq:general_pde}
 \begin{split}
-\mathbf{L}u(\mathbf{x} & = f(\mathbf{x})) \\
-\text{subjected to: }\mathbf{B}u(\mathbf{x} & = g(\mathbf{x})) \\
+\mathbf{L}u(\mathbf{x}) & = f(\mathbf{x}) \\
+\text{subjected to: }\mathbf{B}u(\mathbf{x}) & = g(\mathbf{x}) \\
 \end{split}
 \end{equation}
 This is similar to the formulation of the strong form in equantion \ref{eq: strong form}, but not limited to a Dirichlet boundary problem. The matrix $\mathbf{B}$ can include differentiation, effectively allowing i.e. Neumann boundary condition. 
 
-\begin{equation}
-u(\mathbf{x}) \approx u_{N}(\mathbf{x}) = \sum_{k=0}^{N} a_k \phi_k (\mathbf{x})
-\end{equation}
+An approximate solution to this problem is expressed as a finite sum of basis functions $\phi_k(\mathbf{x})$, as denoted in equation \ref{eq:u_apx}. The coefficient $a_k$ are to be determined. In classical approximation schemes, the basis functions are orthogonal, such as trigonometric functions, Lagrange basis ploynomials. 
 
 \begin{equation}
-\mathbf{R}_N(\mathbf{x}) = \mathbf{L}u_N(\mathbf{x}) - f(\mathbf{x})
+\label{eq:u_apx}
+u(\mathbf{x}) \approx u_{apx}(\mathbf{x}) = \sum_{k=0}^{N} a_k \phi_k (\mathbf{x})
 \end{equation}
 
-introduce notation: $u_{apx}(x,y) = approximated solution$, $\vec{u_{apx}} = design variables$, $u_{ext}(x,y) = exact solution$, $F(\vec{u_{apx}}) = fitness of approximated solution$
+The residual of a \gls{pde}, as shown in equation \ref{eq:residual}, is formulated as the difference between the left and the right side of the equation. The residual of a solved \gls{pde} is zero. This is only possible for the $u_{ext}(x,y)$ analytical solution. For a numerical approximation $u_{apx}(x,y)$, the residual should be ''small enough``. 
 
-There is no easy way to approach this optimisation problem. It can not be transformed into a least squares problem, also calculating the gradient is not an option, thus justifying the usage of a heuristic algorithm.  
+\begin{equation}
+\label{eq:residual}
+\mathbf{R}(\mathbf{x}) = \mathbf{L}u_{apx}(\mathbf{x}) - f(\mathbf{x})
+\end{equation}
+
+The \gls{wrm} (\cite{shen_spectral_2011}) tries to minimise this resiual of a numerical candidate solution over the whole domain $\Omega$. Therefore, $R$ at every $\mathbf{x}_i \in \Omega$ is evaluated and added up, resulting in the following integral of equation \ref{eq:wrm}. The residual at every $\mathbf{x}$ can be scaled by a weighting function over the domain as denoted with $W(\mathbf{x})$. The choice of the test function $\psi(\mathbf{x})$ is distinct for different methods. The actual optimum does not change, since the zero-product property holds. The \gls{wrm} builds the basis for many solving strategies, including \gls{fem}. 
+
+\begin{equation}
+\label{eq:wrm}
+WRF = \int_{\Omega} \mathbf{R}(\mathbf{x}) \psi(\mathbf{x}) W(\mathbf{x}) dx
+\end{equation}
+
+This integral must be evaluated numerically. There are many different integration schemes available, but they are typically computational expensive. A less extensive approach is to evaluate the integral argument at different ``collocation points'' and add up the results. This can be seen in equation \ref{eq:wrm_colloc}. Although it is not an integral per se, it does assign a numerical ``score'' to the residual. 
+
+\begin{equation}
+\label{eq:wrm_colloc}
+\sum_{k=0}^{N} \mathbf{R}(\mathbf{x}_k) \psi(\mathbf{x}_k) W(\mathbf{x}_k)
+\end{equation}
+
+To ensure, that negative and positive residuals do not get canceled out, a common choice in heuristic methods from table \ref{tab:results_literature_comparison}, is to choose $\psi(\mathbf{x}_k)$ as the residual itself, effectively squaring it. The resulting ``sum of squared residuals'' forms the basis for nearly all fitness function in the current literature, as represented in equation \ref{eq:sum_squared_residual}.
+
+\begin{equation}
+\label{eq:sum_squared_residual}
+\sum_{k=0}^{N} \mathbf{R}(\mathbf{x}_k)^2 W(\mathbf{x}_k)
+\end{equation}
+
+These methods ar often called ``spectral methods'' (\cite{shen_spectral_2011}). Their main advantage over finite difference methods is that they take the whole domain into account. The derivative of the function at one point is influenced by the function at every other point in the domain. This global approch can lead to a better accuracy. 
 
 \section{Fitness Function}
 \label{chap:fit_func}
-The Fitness function is formulated as ... 
+
+As mentioned above, the basis of the fintess function used in \cite{chaquet_using_2019} is squared weighted residual in equation \ref{eq:sum_squared_residual}. They split the summation over the collocation points into two parts: the points on the boundary ($nb$) and the points on the inner domain ($nc$). Further, they devide the fitness value by the number of points used. This fitness function, as seen in equation \ref{eq:fit_func}, is adopted in this work. 
 
 \begin{equation}
 \label{eq:fit_func}
-F(\vec{u}_{apx}) = \frac{\sum_{i=1}^{n_C} \xi (\mathbf{x}_i) || \mathbf{L}u(\mathbf{x}_i) - f(\mathbf{x}_i)||^2 + \phi \sum_{j=1}^{n_B} || \mathbf{B}u(\mathbf{x}_j) - g(\mathbf{x}_j)||^2}{(n_C + n_B)}  
+F(u_{apx}) = \frac{\sum_{i=1}^{n_C} \xi (\mathbf{x}_i) || \mathbf{L}u(\mathbf{x}_i) - f(\mathbf{x}_i)||^2 + \phi \sum_{j=1}^{n_B} || \mathbf{B}u(\mathbf{x}_j) - g(\mathbf{x}_j)||^2}{(n_C + n_B)}  
 \end{equation}
+
+The fitness funtion has two important properties: 
+\begin{itemize}
+	\item The fitness value of the exact solution must be 0:\\
+	$F(u_{ext}(\mathbf{x})) \equiv 0$ 
+	\item The fintes value of an approximate solution is greater or equal to 0: \\
+	$F(u_{apx}(\mathbf{x})) \geq 0$
+\end{itemize}
+ 
+
+The weighting function is also split into two parts: $\xi$ for the inner collocation points and $\phi$ as penalty factor for the boundary points. The weighting function $\xi$ can be adapted by a parameter $\kappa$. For a $\kappa > 1$, $\xi$ assigns larger values for collocation points closer to the boundary, effectively shifting the relative importance towards the boundary. These weights can be calculated apriori, so no computational effort is added to the fintess function. Again, the weights are directly extracted from \cite{chaquet_using_2019}. 
 
 \begin{equation}
 \label{eq:nc_weight}
@@ -47,24 +84,33 @@ F(\vec{u}_{apx}) = \frac{\sum_{i=1}^{n_C} \xi (\mathbf{x}_i) || \mathbf{L}u(\mat
 \section{Candidate Representation}
 \label{chap:candidate_rep}
 
-radial basis functions with r
+As \cite{chaquet_using_2019} suggest, an approximate solution should be represented as a summation of $N$ scaled and shifted radial basis functions $\phi$, as denoted in equation \ref{eq:u_apx} \todo{cite approximation theorem} \gls{rbf} are functions that only are point symmetric to a centre $c$ and their function value only depend on the radius $r$. 
+
 \begin{equation}
 \label{eq: radius}
 \mathbf{r} = \left|\left|\mathbf{x} - \mathbf{c} \right|\right|
 \end{equation}
 
+This thesis works with mainly two different types of \gls{rbf}. The first one is the classical Gauss \gls{rbf} ($gak$). The second one, further called GSin \gls{rbf} ($gsk$), is more complex and might. A candidate solution is represended as the parameters that shift and deform these \gls{rbf}. 
+
 \subsection{Gauss Kernel}
 \label{chap:gauss_kernel}
+
+The general Guass kernel is the classical choice to approximate functions. It was first introduced in \cite{broomhead_multivariable_1988}. These kernels have been used in many different works, including \cite{chaquet_using_2019}. Equation \ref{eq:gauss_kernel} shows the formulation of such a kerenl. 
 
 \begin{equation}
 \label{eq:gauss_kernel}
 gak(\mathbf{x}) = \omega e^{-\gamma \mathbf{r}^2}
 \end{equation}
 
+An approximate solution to the \gls{pde} in question is be described in equation \ref{eq:uapx_gauss_kernel}. The Gauss kernel has multiple parameters, that changes its shape: 
+
 \begin{equation}
 \label{eq:uapx_gauss_kernel}
 u_{apx}(\mathbf{x}) = \sum_{i=0}^{N} \omega_i e^{-\gamma_i \mathbf{r}_i^2}
 \end{equation}
+
+
 
 \begin{equation}
 \label{eq:uapx_gauss_kernel_x0}
@@ -83,7 +129,7 @@ u_{apx}(\mathbf{x}) = \sum_{i=0}^{N} \omega_i e^{-\gamma_i \mathbf{r}_i^2}
 
 \subsection{GSin Kernel}
 \label{chap:gsin_kernel}
-
+Additional to the Gauss kernel, a ``GSin'' kernel is proposed. \todo{approximation proof possible?}
 \begin{equation}
 \label{eq:gsin_kernel}
 gsk(\mathbf{x}) = \omega e^{-\gamma \mathbf{r}^2} sin(f \mathbf{r}^2 - \varphi)

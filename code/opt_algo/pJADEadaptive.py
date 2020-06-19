@@ -95,7 +95,7 @@ def pJADEadaptive(population, p, c, function, minError, maxFeval):
                                          i, functionValue, p, function)))
         
         for i in range(populationSize):
-            (ind, fun) = parallelResults[i].get()
+            (ind, fun, F, CR) = parallelResults[i].get()
             if(fun < functionValue[i]):
                 # build and remove archive
                 archLength, _ = archive.shape
@@ -123,8 +123,10 @@ def pJADEadaptive(population, p, c, function, minError, maxFeval):
         FEDynamic.append(np.copy(functionValue))
         
         # convergence state detector
-        print(np.min(FEDynamic[-2]) - np.min(FEDynamic[-1]))
-        if np.min(FEDynamic[-2]) - np.min(FEDynamic[-1]) <= minError:
+        # if the function value did not change over the last 10 generation:
+        last10Gen = FEDynamic[-50:]
+        # print(np.min(last10Gen[0]) - np.min(last10Gen[-1]))
+        if np.min(last10Gen[0]) - np.min(last10Gen[-1]) <= minError:
             break
         
     pool.close()

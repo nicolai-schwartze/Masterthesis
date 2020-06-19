@@ -97,4 +97,5 @@ if __name__ == "__main__":
     (popDynamic, FEDynamic, FDynamic, CRDynamic) = memeticJADE(population, \
     tf.sphere, minError, maxFeval)
     plt.semilogy(FEDynamic)
+    plt.plot(FDynamic)
     

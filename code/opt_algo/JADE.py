@@ -255,6 +255,7 @@ if __name__ == "__main__":
     t1 = time.time()
     (popDynamic, FEDynamic, FDynamic, CRDynamic) = JADE(population, p, c, tf.sphere, maxError, maxGen)
     print("time to run JADE: " + str(time.time() - t1))
+    plt.plot(FDynamic)
     
     
     

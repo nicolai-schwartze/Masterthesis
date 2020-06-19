@@ -19,7 +19,7 @@ def parallelPopulation(muF, muCR, population, archive, i, functionValue, p, func
     CR = selectCR(muCR)
     ui = crossoverBIN(np.array([population[i]]), vi, CR)
     
-    return (ui, function(ui))
+    return (ui, function(ui), F, CR)
 
 
 def selectF(muF):

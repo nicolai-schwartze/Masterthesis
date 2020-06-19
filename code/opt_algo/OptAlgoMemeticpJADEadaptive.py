@@ -13,10 +13,10 @@ Created on Tue Apr 21 14:04:44 2020
 """
 
 from IOptAlgoBase import IOptAlgoBase
-from memeticpJADE import memeticpJADE
+from memeticpJADEadaptive import memeticpJADEadaptive
 import testFunctions as tf
 
-class OptAlgoMemeticpJADE(IOptAlgoBase):
+class OptAlgoMemeticpJADEadaptive(IOptAlgoBase):
     """
     Implementation of the IOptAlgoBase interface. 
     It provides a wrapper for the memeticpJADE optimisation algorithm
@@ -72,7 +72,7 @@ class OptAlgoMemeticpJADE(IOptAlgoBase):
         return self._min_err
 
     def opt(self, function):
-        return memeticpJADE(self.init_guess, function, self.min_err, self.max_iter)
+        return memeticpJADEadaptive(self.init_guess, function, self.min_err, self.max_iter)
         
 
 if __name__ == "__main__": 
@@ -82,13 +82,15 @@ if __name__ == "__main__":
     initialPop = 100*np.random.rand(4,2)
     max_iter = 10**3
     min_err = 10**(-200)
-    mpJade = OptAlgoMemeticpJADE(initialPop, max_iter, min_err)
-    print(mpJade.max_iter)
-    print(mpJade.min_err)
-    print(mpJade.init_guess)
+    mpJADEadaptive = OptAlgoMemeticpJADEadaptive(initialPop, max_iter, min_err)
+    print(mpJADEadaptive.max_iter)
+    print(mpJADEadaptive.min_err)
+    print(mpJADEadaptive.init_guess)
     
-    (popDynamic, FEDynamic, FDynamic, CRDynamic) = mpJade.opt(tf.sphere)
+    (popDynamic, FEDynamic, FDynamic, CRDynamic) = mpJADEadaptive.opt(tf.sphere)
     import matplotlib.pyplot as plt
     
     plt.semilogy(FEDynamic)
+    plt.plot(FDynamic)
+    plt.plot(CRDynamic)
     

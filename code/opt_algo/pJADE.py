@@ -95,7 +95,7 @@ def pJADE(population, p, c, function, minError, maxFeval):
                                          i, functionValue, p, function)))
         
         for i in range(populationSize):
-            (ind, fun) = parallelResults[i].get()
+            (ind, fun, F, CR) = parallelResults[i].get()
             if(fun < functionValue[i]):
                 # build and remove archive
                 archLength, _ = archive.shape
@@ -163,7 +163,7 @@ if __name__ == "__main__":
     t1_end = time.time()
     
     t2 = time.time()
-    pJADE(population, p, c, tf.sphere, maxError, maxFE)
+    pop, fe, f, cr = pJADE(population, p, c, tf.sphere, maxError, maxFE)
     t2_end = time.time()
     
     print("time to run JADE: " + str(t1_end - t1))

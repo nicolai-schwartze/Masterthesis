@@ -91,4 +91,6 @@ if __name__ == "__main__":
     import matplotlib.pyplot as plt
     
     plt.semilogy(FEDynamic)
+    plt.plot(FDynamic)
+    plt.plot(CRDynamic)
     

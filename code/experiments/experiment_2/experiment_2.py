@@ -45,8 +45,8 @@ import post_proc as pp
 if __name__ == "__main__":
     
     # experiment parameter
-    replications = 3
-    max_fe = 1*10**4
+    replications = 20
+    max_fe = 1*10**6
     min_err = 0
     gakernel = gk.KernelGauss()
     

@@ -177,15 +177,13 @@ if __name__ == "__main__":
     sys.path.append("../")
     sys.path.append("../../opt_algo")
     sys.path.append("../../kernels")
-    import OptAlgoMemeticJADE as oaMemJade
-    import OptAlgoDownhillSimplex as oaDS
+    import OptAlgoMemeticpJADEadaptive as oaMempJadeadaptive
     import KernelGSin as gsk
     
-    initialPop = 2*np.random.randn(40,18)
-    max_fe = 1*10**4
-    min_err = 10**(-200)
-    mJADE = oaMemJade.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
-    ds = oaDS.OptAlgoDownhillSimplex(initialPop, max_fe, min_err)
+    initialPop = 2*np.random.randn(12,6)
+    max_fe = 1*10**6
+    min_err = 0
+    mpJADE = oaMempJadeadaptive.OptAlgoMemeticpJADEadaptive(initialPop, max_fe, min_err)
     
     gskernel = gsk.KernelGSin()
     
@@ -203,7 +201,7 @@ if __name__ == "__main__":
     for i in range(len(nby)):
         nb.append((nbx[i], nby[i]))
     
-    cipde0B = CiPde0B(ds, gskernel, nb, nc)
+    cipde0B = CiPde0B(mpJADE, gskernel, nb, nc)
     
     print(cipde0B.pde_string)
     

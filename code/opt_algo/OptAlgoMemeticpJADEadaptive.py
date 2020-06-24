@@ -19,7 +19,7 @@ import testFunctions as tf
 class OptAlgoMemeticpJADEadaptive(IOptAlgoBase):
     """
     Implementation of the IOptAlgoBase interface. 
-    It provides a wrapper for the memeticpJADE optimisation algorithm
+    It provides a wrapper for the memeticpJADEadaptive optimisation algorithm
     
     Attributes
     ----------
@@ -79,8 +79,8 @@ if __name__ == "__main__":
     
     import numpy as np
     
-    initialPop = 100*np.random.rand(4,2)
-    max_iter = 10**3
+    initialPop = 100*np.random.rand(12,6)
+    max_iter = 10**4
     min_err = 10**(-200)
     mpJADEadaptive = OptAlgoMemeticpJADEadaptive(initialPop, max_iter, min_err)
     print(mpJADEadaptive.max_iter)
@@ -90,7 +90,18 @@ if __name__ == "__main__":
     (popDynamic, FEDynamic, FDynamic, CRDynamic) = mpJADEadaptive.opt(tf.sphere)
     import matplotlib.pyplot as plt
     
-    plt.semilogy(FEDynamic)
+    goaldim = 0
+    for i in FEDynamic:
+        if i.shape[0] > goaldim:
+            goaldim = i.shape[0]
+    plotFEList = []
+    for i in FEDynamic:
+        currentdim = i.shape[0]
+        plotFEList.append(np.lib.pad(i, (0,goaldim-currentdim), 'constant', constant_values=(0)))
+        
+    plt.semilogy(plotFEList)
     plt.plot(FDynamic)
     plt.plot(CRDynamic)
+    
+    print(FEDynamic[-1])
     

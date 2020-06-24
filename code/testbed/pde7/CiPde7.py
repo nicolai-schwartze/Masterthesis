@@ -149,13 +149,13 @@ if __name__ == "__main__":
     sys.path.append("../")
     sys.path.append("../../opt_algo")
     sys.path.append("../../kernels")
-    import OptAlgoMemeticJADE as oaMemJade
+    import OptAlgoMemeticpJADEadaptive as oaMempJadeadaptive
     import KernelGauss as gk
     
-    initialPop = 1*np.random.rand(40,20)
-    max_fe = 5*10**3
-    min_err = 10**(-200)
-    mJade = oaMemJade.OptAlgoMemeticJADE(initialPop, max_fe, min_err)
+    initialPop = np.random.randn(8,4)
+    max_fe = 1*10**6
+    min_err = 0
+    mpJade = oaMempJadeadaptive.OptAlgoMemeticpJADEadaptive(initialPop, max_fe, min_err)
     
     gkernel = gk.KernelGauss()
     
@@ -173,7 +173,7 @@ if __name__ == "__main__":
     for i in range(40):
         nb.append((nbx[i], nby[i]))
     
-    cipde7 = CiPde7(mJade, gkernel, nb, nc)
+    cipde7 = CiPde7(mpJade, gkernel, nb, nc)
     
     print(cipde7.pde_string)
     

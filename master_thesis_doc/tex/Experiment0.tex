@@ -3,8 +3,9 @@
 \chapter {Experiment 0: Serial Memetic JADE}
 \label{chap:experimet_0}
 
+This chapter describes the results obtained by the first and most basic implementation. 
+
 with $10^6$ function evaluation: \\
-is the JADE actually helpful - is it possible to create the same results with a DS alone? \\
 hyphotosis test in the difference of L2 norm reached \\
 statistically relevant vs. practically relevant -> show 3D plot of what the difference in L2 norm looks like (= effect size) \\
 this servers as an experimental prove, that the objective function is multimodal and DS runs into premature convergence \\
@@ -65,6 +66,35 @@ Table \ref{tab:results_literature_comparison} shows a compariosn on the common t
 	}
 	\unterschrift{This table compares the results obtained with the serial memetic JADE to the numerical results obtained by similar work in literature. The same metric must be used, thus the RMSE as defined in equation \ref{eq:rmse_chaquet} is calculated.}{}{}
 	\label{tab:results_literature_comparison}
+\end{table}
+
+
+\begin{table}[h]
+	\centering
+	\noindent\adjustbox{max width=\linewidth}{
+		\begin{tabular}{|c|c|c|c|c|c|}
+			
+			\hline
+			\rowcolor[HTML]{\farbeTabA}
+			
+			\#FE & \multicolumn{2}{|c|}{$10^4$} & \multicolumn{2}{|c|}{$10^6$} & \\ \hline
+			stat & mean & median & mean & median & Wilcoxon Test \\ \hline \hline
+			\gls{pde} 0A & 1.9415 $\pm$ 0.3321 & 1.8844 & 0.6596 $\pm$ 0.5510 & 0.9285 & sig. better \\ \hline
+			\gls{pde} 0B & 0.7137 $\pm$ 0.1979 & 0.6354 & 0.2027 $\pm$ 0.1302 & 0.1516 & sig. better \\ \hline
+			\gls{pde}  1 & 0.1874 $\pm$ 0.0408 & 0.1938 & 0.0149 $\pm$ 0.0049 & 0.0151 & sig. better \\ \hline
+			\gls{pde}  2 & 0.0890 $\pm$ 0.0334 & 0.0760 & 0.0257 $\pm$ 0.0140 & 0.0224 & sig. better \\ \hline
+			\gls{pde}  3 & 0.2409 $\pm$ 0.1051 & 0.2309 & 0.0328 $\pm$ 0.0169 & 0.0285 & sig. better \\ \hline
+			\gls{pde}  4 & 0.1102 $\pm$ 0.0367 & 0.0985 & 0.0378 $\pm$ 0.0083 & 0.0352 & sig. better \\ \hline
+			\gls{pde}  5 & 0.6645 $\pm$ 0.1930 & 0.6263 & 1.1968 $\pm$ 0.0286 & 1.2056 & sig. worse \\ \hline
+			\gls{pde}  6 & 1.9660 $\pm$ 1.3845 & 1.6540 & 0.4135 $\pm$ 1.2133 & 0.0018 & sig. better \\ \hline
+			\gls{pde}  7 & 0.0457 $\pm$ 0.0137 & 0.0452 & 0.0221 $\pm$ 0.0019 & 0.0223 & sig. better \\ \hline
+			\gls{pde}  8 & 0.2186 $\pm$ 0.0045 & 0.2191 & 0.2170 $\pm$ 0.0019 & 0.2175 & unsig. better \\ \hline
+			\gls{pde}  9 & 0.0525 $\pm$ 0.0147 & 0.0516 & 0.0451 $\pm$ 0.0119 & 0.0459 & unsig. better \\ \hline
+			
+		\end{tabular}
+	}
+	\unterschrift{}{}{}
+	\label{tab:compare_10^6_10^4}
 \end{table}
 
 

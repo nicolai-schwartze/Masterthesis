@@ -12,12 +12,15 @@ from multiprocessing import Pool
 import pJADEFunctions as pF
 import testFunctions as tf
 
-def pJADEadaptive(population, p, c, function, minError, maxFeval):
+def pJADEadaptive(population, p, c, delayTime, function, minError, maxFeval):
     '''
     implementation of pJADE based on: \n
     JADE: Adaptive Differential Evolution with Optional External Archiv \n
     by Zhang and Sanderson
     runs the function evaluation of the population parallel
+    terminates if the function value does not change more than "minError" 
+    for more the "delaTime" generations
+    tradeoff with delayTime: F and CR adaption vs FE Budget and possible restart
     
     Parameters
     ----------
@@ -124,10 +127,11 @@ def pJADEadaptive(population, p, c, function, minError, maxFeval):
         
         # convergence state detector
         # if the function value did not change over the last 10 generation:
-        last10Gen = FEDynamic[-50:]
-        # print(np.min(last10Gen[0]) - np.min(last10Gen[-1]))
-        if np.min(last10Gen[0]) - np.min(last10Gen[-1]) <= minError:
-            break
+        if len(FEDynamic) > delayTime:
+            lastGen = FEDynamic[-delayTime:]
+            # print(np.min(last10Gen[0]) - np.min(last10Gen[-1]))
+            if np.min(lastGen[0]) - np.min(lastGen[-1]) <= minError:
+                break
         
     pool.close()
     pool.join()
@@ -170,7 +174,7 @@ if __name__ == "__main__":
     t1_end = time.time()
     
     t2 = time.time()
-    pJADEadaptive(population, p, c, tf.sphere, maxError, maxFE)
+    pJADEadaptive(population, p, c, 20, tf.sphere, maxError, maxFE)
     t2_end = time.time()
     
     print("time to run JADE: " + str(t1_end - t1))

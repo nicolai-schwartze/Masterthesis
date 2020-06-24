@@ -93,8 +93,8 @@ if __name__ == "__main__":
     
     for i in range(replications):
         cipde0A[i].solve()
-        pp.saveExpObject(cipde0A[i], "D:/Nicolai/MA_Data/experiment1/cipde0a_rep_" + str(i) + ".json")
-        print("D:/Nicolai/MA_Data/experiment1/cipde0a_rep_" + str(i) + ".json" + " -> saved")
+        pp.saveExpObject(cipde0A[i], "D:/Nicolai/MA_Data/time_experiment_1/cipde0a_rep_" + str(i) + ".json")
+        print("D:/Nicolai/MA_Data/time_experiment_1/cipde0a_rep_" + str(i) + ".json" + " -> saved")
     
     ##########################
     #   testbed problem 0B   #
@@ -107,8 +107,8 @@ if __name__ == "__main__":
         
     for i in range(replications):
         cipde0B[i].solve()
-        pp.saveExpObject(cipde0B[i], "D:/Nicolai/MA_Data/experiment1/cipde0b_rep_" + str(i) + ".json")
-        print("D:/Nicolai/MA_Data/experiment1/cipde0b_rep_" + str(i) + ".json" + " -> saved")
+        pp.saveExpObject(cipde0B[i], "D:/Nicolai/MA_Data/time_experiment_1/cipde0b_rep_" + str(i) + ".json")
+        print("D:/Nicolai/MA_Data/time_experiment_1/cipde0b_rep_" + str(i) + ".json" + " -> saved")
         
     ##########################
     #   testbed problem 1    #
@@ -121,8 +121,8 @@ if __name__ == "__main__":
     
     for i in range(replications):
         cipde1[i].solve()
-        pp.saveExpObject(cipde1[i], "D:/Nicolai/MA_Data/experiment1/cipde1_rep_" + str(i) + ".json")
-        print("D:/Nicolai/MA_Data/experiment1/cipde1_rep_" + str(i) + ".json" + " -> saved")
+        pp.saveExpObject(cipde1[i], "D:/Nicolai/MA_Data/time_experiment_1/cipde1_rep_" + str(i) + ".json")
+        print("D:/Nicolai/MA_Data/time_experiment_1/cipde1_rep_" + str(i) + ".json" + " -> saved")
         
     ##########################
     #   testbed problem 2    #
@@ -135,8 +135,8 @@ if __name__ == "__main__":
         
     for i in range(replications):
         cipde2[i].solve()
-        pp.saveExpObject(cipde2[i], "D:/Nicolai/MA_Data/experiment1/cipde2_rep_" + str(i) + ".json")
-        print("D:/Nicolai/MA_Data/experiment1/cipde2_rep_" + str(i) + ".json" + " -> saved")
+        pp.saveExpObject(cipde2[i], "D:/Nicolai/MA_Data/time_experiment_1/cipde2_rep_" + str(i) + ".json")
+        print("D:/Nicolai/MA_Data/time_experiment_1/cipde2_rep_" + str(i) + ".json" + " -> saved")
     
     ##########################
     #   testbed problem 3    #
@@ -149,8 +149,8 @@ if __name__ == "__main__":
         
     for i in range(replications):
         cipde3[i].solve()
-        pp.saveExpObject(cipde3[i], "D:/Nicolai/MA_Data/experiment1/cipde3_rep_" + str(i) + ".json")
-        print("D:/Nicolai/MA_Data/experiment1/cipde3_rep_" + str(i) + ".json" + " -> saved")
+        pp.saveExpObject(cipde3[i], "D:/Nicolai/MA_Data/time_experiment_1/cipde3_rep_" + str(i) + ".json")
+        print("D:/Nicolai/MA_Data/time_experiment_1/cipde3_rep_" + str(i) + ".json" + " -> saved")
         
     ##########################
     #   testbed problem 4    #
@@ -163,8 +163,8 @@ if __name__ == "__main__":
         
     for i in range(replications):
         cipde4[i].solve()
-        pp.saveExpObject(cipde4[i], "D:/Nicolai/MA_Data/experiment1/cipde4_rep_" + str(i) + ".json")
-        print("D:/Nicolai/MA_Data/experiment1/cipde4_rep_" + str(i) + ".json" + " -> saved")
+        pp.saveExpObject(cipde4[i], "D:/Nicolai/MA_Data/time_experiment_1/cipde4_rep_" + str(i) + ".json")
+        print("D:/Nicolai/MA_Data/time_experiment_1/cipde4_rep_" + str(i) + ".json" + " -> saved")
         
     ##########################
     #   testbed problem 5    #
@@ -177,8 +177,8 @@ if __name__ == "__main__":
         
     for i in range(replications):
         cipde5[i].solve()
-        pp.saveExpObject(cipde5[i], "D:/Nicolai/MA_Data/experiment1/cipde5_rep_" + str(i) + ".json")
-        print("D:/Nicolai/MA_Data/experiment1/cipde5_rep_" + str(i) + ".json" + " -> saved")
+        pp.saveExpObject(cipde5[i], "D:/Nicolai/MA_Data/time_experiment_1/cipde5_rep_" + str(i) + ".json")
+        print("D:/Nicolai/MA_Data/time_experiment_1/cipde5_rep_" + str(i) + ".json" + " -> saved")
         
     ##########################
     #   testbed problem 6    #
@@ -191,8 +191,8 @@ if __name__ == "__main__":
         
     for i in range(replications):
         cipde6[i].solve()
-        pp.saveExpObject(cipde6[i], "D:/Nicolai/MA_Data/experiment1/cipde6_rep_" + str(i) + ".json")
-        print("D:/Nicolai/MA_Data/experiment1/cipde6_rep_" + str(i) + ".json" + " -> saved")
+        pp.saveExpObject(cipde6[i], "D:/Nicolai/MA_Data/time_experiment_1/cipde6_rep_" + str(i) + ".json")
+        print("D:/Nicolai/MA_Data/time_experiment_1/cipde6_rep_" + str(i) + ".json" + " -> saved")
         
     ##########################
     #   testbed problem 7    #
@@ -205,8 +205,8 @@ if __name__ == "__main__":
         
     for i in range(replications):
         cipde7[i].solve()
-        pp.saveExpObject(cipde7[i], "D:/Nicolai/MA_Data/experiment1/cipde7_rep_" + str(i) + ".json")
-        print("D:/Nicolai/MA_Data/experiment1/cipde7_rep_" + str(i) + ".json" + " -> saved")
+        pp.saveExpObject(cipde7[i], "D:/Nicolai/MA_Data/time_experiment_1/cipde7_rep_" + str(i) + ".json")
+        print("D:/Nicolai/MA_Data/time_experiment_1/cipde7_rep_" + str(i) + ".json" + " -> saved")
         
     ##########################
     #   testbed problem 8    #
@@ -219,8 +219,8 @@ if __name__ == "__main__":
         
     for i in range(replications):
         cipde8[i].solve()
-        pp.saveExpObject(cipde8[i], "D:/Nicolai/MA_Data/experiment1/cipde8_rep_" + str(i) + ".json")
-        print("D:/Nicolai/MA_Data/experiment1/cipde8_rep_" + str(i) + ".json" + " -> saved")
+        pp.saveExpObject(cipde8[i], "D:/Nicolai/MA_Data/time_experiment_1/cipde8_rep_" + str(i) + ".json")
+        print("D:/Nicolai/MA_Data/time_experiment_1/cipde8_rep_" + str(i) + ".json" + " -> saved")
         
     ##########################
     #   testbed problem 9    #
@@ -233,8 +233,8 @@ if __name__ == "__main__":
         
     for i in range(replications):
         cipde9[i].solve()
-        pp.saveExpObject(cipde9[i], "D:/Nicolai/MA_Data/experiment1/cipde9_rep_" + str(i) + ".json")
-        print("D:/Nicolai/MA_Data/experiment1/cipde9_rep_" + str(i) + ".json" + " -> saved")
+        pp.saveExpObject(cipde9[i], "D:/Nicolai/MA_Data/time_experiment_1/cipde9_rep_" + str(i) + ".json")
+        print("D:/Nicolai/MA_Data/time_experiment_1/cipde9_rep_" + str(i) + ".json" + " -> saved")
         
         
         

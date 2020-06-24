@@ -15,6 +15,8 @@ sys.path.append(importpath)
 
 import bigjson
 
+from scipy.stats import wilcoxon
+
 # save an experiment object to the file path
 def saveExpObject(obj, filename):
     """saves a CiPdeN object as a JSON file to the harddrive
@@ -428,7 +430,7 @@ def drawGaussKernel(parameter, ggb):
 pde_solution = {"<class 'CiPde0A.CiPde0A'>" : lambda x : 2*np.e**(-1.5*(x[0]**2 + x[1]**2)) + np.e**(-3*((x[0] + 1)**2 + (x[1] + 1)**2)) + np.e**(-3*((x[0] - 1)**2 + (x[1] + 1)**2)) + np.e**(-3*((x[0] + 1)**2 + (x[1] - 1)**2)) + np.e**(-3*((x[0] - 1)**2 + (x[1] - 1)**2)),
                 "<class 'CiPde0B.CiPde0B'>" : lambda x : np.exp(-2  * ((x[0])**2 + (x[1])**2))*np.sin(2  * ((x[0])**2 + (x[1])**2)) + np.exp(-1  * ((x[0])**2 + (x[1])**2))*np.sin(1  * ((x[0])**2 + (x[1])**2)) + np.exp(-0.1* ((x[0])**2 + (x[1])**2))*np.sin(0.1* ((x[0])**2 + (x[1])**2)),
                 "<class 'CiPde1.CiPde1'>" : lambda x : (2**(4*10))*(x[0]**10)*((1-x[0])**10)*(x[1]**10)*((1-x[1])**10),
-                "<class 'CiPde2.CiPde2'>" : lambda x : (x[0] + x[1]**3)*np.e**(-x[0]),
+                "<class '__main__.CiPde2.CiPde2'>" : lambda x : (x[0] + x[1]**3)*np.e**(-x[0]),
                 "<class 'CiPde3.CiPde3'>" : lambda x : x[0]**2 + x[1]**2 + x[0] + x[1] + 1,
                 "<class 'CiPde4.CiPde4'>" : lambda x : np.sin(np.pi * x[0])*np.sin(np.pi * x[1]),
                 "<class 'CiPde5.CiPde5'>" : lambda x : np.arctan(20*(np.sqrt((x[0] - 0.05)**2 + (x[1] - 0.05)**2) -0.7)),
@@ -439,8 +441,25 @@ pde_solution = {"<class 'CiPde0A.CiPde0A'>" : lambda x : 2*np.e**(-1.5*(x[0]**2 
     
     
     
-def calcRSME(solve_dict):
-    
+def calcRMSE(solve_dict):
+    """calculates the RMSE of a loaded dictionary
+       it is fully compativle with the testbed, other PDEs might not be 
+       recognised
+       
+       .. math:: 
+               RMSE^2 \cdot (nc + nb) = \sum_{x_c}^{nc} (u_{apx}(x_c) - u_{ext}(x_c))^2 + \sum_{x_b}^{nb} (u_{apx}(x_b) - u_{ext}(x_b))^2 
+       
+       Parameters
+       ----------
+       solve_dict: dict
+                   loaded dictionary from file either with loadExpObj or 
+                   loadExpObjFast
+                   
+       Returns
+       -------
+       float
+            returns the RSME value
+    """
     if solve_dict["pde"] == "<class 'CiPde0A.CiPde0A'>" or solve_dict["pde"] == "<class 'CiPde0B.CiPde0B'>":
         nc = []
         omega = np.arange(-1.6, 2.0, 0.4)
@@ -535,7 +554,67 @@ def plotApprox3D(kernel, parameter, lD, uD):
     plt.show()
     return None
     
+
+def statsWilcoxon(a, b, alpha=0.05):
+    """calculates the wilcoxon test between the two lists of data
+       at a significance level of alpha = 0.05
+       and returns a string describing if mean(a) < mean(b) and median(a) < median(b)
     
+    Parameters
+    ----------
+    a : list
+        list of values ought to be smaller
+    b : list
+        list of values ought to be larger
+    alpha: float
+        significance level
+    
+    Returns
+    -------
+    string
+        unsig./sig. better/worse
+    
+    """
+    stat, p = wilcoxon(a, b)
+    result = ""
+    
+    if p > alpha:
+        result = "unsig. "
+    else:
+        result = "sig. "
+        
+    if (np.mean(a) < np.mean(b)) and (np.median(a) < np.median(b)):
+        result += "better"
+    elif (np.mean(a) < np.mean(b)) != (np.median(a) < np.median(b)):
+        result += "undecided"
+    else:
+        result += "worse"
+        
+    return result
+
+
+def plotFEDynamic(FEDynamic):
+    """prints the FE Dynamic to a semilogy plot 
+       for an adaptive popuation
+       necessary to compensate the different dimension of the array
+       
+    Parameters
+    ----------
+    FEDynamic: list
+               list where each element is the FE of the population at every gen
+    """
+    goaldim = 0
+    for i in FEDynamic:
+        if i.shape[0] > goaldim:
+            goaldim = i.shape[0]
+    plotFEList = []
+    for i in FEDynamic:
+        currentdim = i.shape[0]
+        plotFEList.append(np.lib.pad(i, (0,goaldim-currentdim), 'constant', constant_values=(0)))
+        
+    plt.semilogy(plotFEList)
+    plt.show()
+    return None
     
     
 # --------------------------------------------------------------------------- #

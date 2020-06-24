@@ -1,9 +1,18 @@
 \documentclass[./\jobname.tex]{subfiles}
 \begin{document}
-\chapter {Experiment 2: GSin Kernel}
+\chapter {Experiment 2: Adaptive Number of Kernels}
 \label{chap:experimet_2}
 
 \section{Hypotheses}
+Two ideas to perform adaption: 
+\begin{itemize}
+	\item half adaptive: increase dimension when better, decrease only once when worse
+	\item fully adaptive: increase and decrease whenever a better or worse
+\end{itemize}
+
+How often does a reduction and restart step find a better solution? 
+
+sensitivity with the parameter ``minerror'', increase minerror and observe L2 norm reached only on pde 2 and 3
 
 \section{Experiment Setup}
 

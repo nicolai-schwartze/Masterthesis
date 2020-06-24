@@ -38,33 +38,48 @@ The testbed is a collection of multiple different 2-dimensional scalar \gls{pde}
 \definecolor{opt_algo_colour}{RGB}{204,0,0}
 \definecolor{kernels_colour}{RGB}{0,127,255}
 \definecolor{post_proc_colour}{RGB}{198,41,255}
+\definecolor{key-color}{RGB}{100,0,255}
+
+\lstset{language=Python, emph={None, bool, dict, float, string}, emphstyle={\color{key-color}} }
+
+\newcommand{\inlinecode}[1]{\colorbox{light-gray}{\lstinline[basicstyle=\ttfamily\color{black}]|#1|}}
 
 To simplify the preparation, execution and evaluation of the experiments, a comprehensive software architecture is defined. The \gls{uml} class diagram can be seen in the appendix \ref{chap:software_architecture}. The architecture is organised in 4 main segments. 
 
 \textcolor{opt_algo_colour}{\large \underline{\textbf{optimisation algorithm in red}}} \\
-The \colorbox{light-gray}{\lstinline[basicstyle=\ttfamily\color{black}]|IOptAlgoBase|} interface must be implemented by every \colorbox{light-gray}{\lstinline[basicstyle=\ttfamily\color{black}]|OptAlgo|} class to ensure the compatibility with \colorbox{light-gray}{\lstinline[basicstyle=\ttfamily\color{black}]|CiPdeBase|} class of the testbed. A nice side-effect is that it reduces the number of user-defined parameters. An optimisation algorithm of this class must only take an initial guess (e.g. the starting population) as well as two stopping criteria: the maximum number of function evaluation or a minimum error to reach. Also a fitness function (i.e. the function to be optimised) must be provided. Four lists of the same length are returned: the optimum-guess, the function value, the crossover probability and the scale factor per each generation. The actual implementation of the algorithm is not predefined. 
+The \inlinecode{IOptAlgoBase} interface must be implemented by every \inlinecode{OptAlgo} class to ensure the compatibility with \inlinecode{CiPdeBase} class of the testbed. A nice side-effect is that it reduces the number of user-defined parameters. An optimisation algorithm of this class must only take an initial guess (e.g. the starting population) as well as two stopping criteria: the maximum number of function evaluation or a minimum error to reach. Also a fitness function (i.e. the function to be optimised) must be provided. Four lists of the same length are returned: the optimum-guess, the function value, the crossover probability and the scale factor per each generation. The actual implementation of the algorithm is not predefined. 
 
 \textcolor{kernels_colour}{\large \underline{\textbf{kernels in blue}}} \\
-As described in chapter \ref{chap:candidate_rep}, a candidate solution is defined as a sum of \gls{rbf}. In order to test different candidate representations, different classes must be implemented. Again, to ensure compatibility with the \colorbox{light-gray}{\lstinline[basicstyle=\ttfamily\color{black}]|CiPdeBase|} class, all representations must implement the \colorbox{light-gray}{\lstinline[basicstyle=\ttfamily\color{black}]|IKernelBase|} interface. This assures that all classes have a method that can calculate the solution as well as first and second order derivatives. Here, only two kernels are imlemented.
+As described in chapter \ref{chap:candidate_rep}, a candidate solution is defined as a sum of \gls{rbf}. In order to test different candidate representations, different classes must be implemented. Again, to ensure compatibility with the \inlinecode{CiPdeBase} class, all representations must implement the \inlinecode{IKernelBase} interface. This assures that all classes have a method that can calculate the solution as well as first and second order derivatives. Here, only two kernels are imlemented. A typical Gauss kernel as described in chapter \ref{chap:gauss_kernel} and a so called GSin kernel shown in chapter \ref{chap:gsin_kernel}. 
 
 \textcolor{testbed_colour}{\large \underline{\textbf{testbed in orange}}} \\
-The testbed holds the 11 differential equations used in all experiments. The testbed is abstraced in such a way that an experiment is as simple as creating an \gls{pde} object and calling its solve method. All testbed classes must implement the \colorbox{light-gray}{\lstinline[basicstyle=\ttfamily\color{black}]|ITestbenchBase|} interface. This ensures the minimal functionality of every subsequent class. Currently two classes implement this interface, the \colorbox{light-gray}{\lstinline[basicstyle=\ttfamily\color{black}]|FemPdeBase|} and the \colorbox{light-gray}{\lstinline[basicstyle=\ttfamily\color{black}]|CiPdeBase|}. These are the base classes that provide the specific attributes and methods needed for the \gls{fem} solver and the \gls{ci} solver. The actual \gls{pde} problems are implemented in the classes \colorbox{light-gray}{\lstinline[basicstyle=\ttfamily\color{black}]|FemPde0|} or \colorbox{light-gray}{\lstinline[basicstyle=\ttfamily\color{black}]|CiPde0|} which inherit from the \colorbox{light-gray}{\lstinline[basicstyle=\ttfamily\color{black}]|FemPdeBase|} and the \colorbox{light-gray}{\lstinline[basicstyle=\ttfamily\color{black}]|CiPdeBase|}, respectively. The number in their name is representative for all different testbench problems and every \gls{pde} has its own class. Since all \gls{pde} classes have the same methods and attributes and only differ in their implementation and name, they do not have to be displayed separately. Therefore, they are symbolised together by a ``stacked notation'' used in the class diagram. Some methods in these classes must be overridden and adapted to the current \gls{pde} problem, which is indicated by the $\land$ character.
+The testbed holds the 11 differential equations used in all experiments. The testbed is abstraced in such a way that an experiment is as simple as creating an \gls{pde} object and calling its solve method. All testbed classes must implement the \inlinecode{ITestbenchBase} interface. This ensures the minimal functionality of every subsequent class. Currently two classes implement this interface, the \inlinecode{FemPdeBase} and the \inlinecode{CiPdeBase}. These are the base classes that provide the specific attributes and methods needed for the \gls{fem} solver and the \gls{ci} solver. The actual \gls{pde} problems are implemented in the classes \inlinecode{FemPde0} or \inlinecode{CiPde0} which inherit from the \inlinecode{FemPdeBase} and the \inlinecode{CiPdeBase}, respectively. The number in their name is representative for all different testbench problems and every \gls{pde} has its own class. Since all \gls{pde} classes have the same methods and attributes and only differ in their implementation and name, they do not have to be displayed separately. Therefore, they are symbolised together by a ``stacked notation'' used in the class diagram. Some methods in these classes must be overridden and adapted to the current \gls{pde} problem, which is indicated by the $\land$ character.
 
 \textcolor{post_proc_colour}{\large \underline{\textbf{post processing in purple}}} \\
-Although the post processing block is not actually a class, it is still represented in this diagram. This module provides funtions that take \colorbox{light-gray}{\lstinline[basicstyle=\ttfamily\color{black}]|FemPdeN|} or \colorbox{light-gray}{\lstinline[basicstyle=\ttfamily\color{black}]|CiPdeN|} objects and performs actions with them. \todo{update implemented function description}
+Although the post processing block is not actually a class, it is still represented in this diagram. This module provides funtions that take \inlinecode{FemPdeN} or \inlinecode{CiPdeN} objects and performs actions with them. \todo{update implemented function description and class diagram in appendix}
 
 \begin{itemize}
-	\item \colorbox{light-gray}{\lstinline[basicstyle=\ttfamily\color{black}]|bool saveExpObj(obj, filename)|} \\
-	Save an \colorbox{light-gray}{\lstinline[basicstyle=\ttfamily\color{black}]|CiPdeN|} object as a \gls{json} file. The filename parameter can include a path, but it must end with .json. The results: execution time, memory usage, solution quality and all intergenerational data of the optimisation algoritm are stored in the file. 
-	\item \colorbox{light-gray}{\lstinline[basicstyle=\ttfamily\color{black}]|dict loadExpObject(filename)|} \\
-	Loads the \gls{json} file located at the specified filename, which again can include a path. A dictionary with the saved \colorbox{light-gray}{\lstinline[basicstyle=\ttfamily\color{black}]|CiPdeN|} parameters is returned. 
-	\item \colorbox{light-gray}{\lstinline[basicstyle=\ttfamily\color{black}]|bool drawGaussKernel(parameter, ggb)|} \\
+	\item 
+	\inlinecode{bool saveExpObj(obj, filename)} \\
+	Save an \inlinecode{CiPdeN} object as a \gls{json} file. The filename parameter can include a path, but it must end with .json. The results: execution time, memory usage, solution quality and all intergenerational data of the optimisation algoritm are stored in the file. 
+	\item \inlinecode{dict loadExpObject(filename)} \\
+	Loads the \gls{json} file located at the specified filename, which again can include a path. A dictionary with the saved \inlinecode{CiPdeN} parameters is returned. 
+	\item 
+	\inlinecode{dict loadExpObjectFast(filename)} \\
+	When solving a \gls{pde} with more function evaluation, the result file can become very large (>400Mb @ $10^6$ \#FE). For evaluating such large files, this function can be used. It does not load the generation data (meaning population, function value, F and CR). Since the standard json interpreter in python loads files to be serialized, a new interpreter is needed. To that extent, \textit{bigjson} from \cite{heino_henubigjson_2020} is used. This package accesses only those parts of a json file, that are actually needed.
+	\item \inlinecode{bool drawGaussKernel(parameter, ggb)} \\
 	Draws a solution approximated by Gauss kernels and with the specified parameters to a GeoGebra file. If the filename provided in the \textit{ggb} argument does not exist, the function searches for a template and prints to a copy of that file. 
-	\item \colorbox{light-gray}{\lstinline[basicstyle=\ttfamily\color{black}]|bool drawGSinKernel(parameter, ggb)|} \\
+	\item \inlinecode{bool drawGSinKernel(parameter, ggb)} \\
 	This is similar to the method drawGaussKernel method - but it takes parameters for a GSin kernel. 
 	\item 
-	\colorbox{light-gray}{\lstinline[basicstyle=\ttfamily\color{black}]|None plotApprox3D(kernel, parameter, lD, uD)|} \\
+	\inlinecode{float calcRSME(solve_dict)} \\
+	To compare the obtained results with previous work, the \gls{rmse} quality metric (as described in the chapter \ref{chap:metric_quality}) must be computed. This is done from a single dictionary, as obtained by the functions \inlinecode{loadExpObject} or \inlinecode{loadExpObjectFast}.
+	\item 
+	\inlinecode{None plotApprox3D(kernel, parameter, lD, uD)} \\
 	The approximate solution of a \gls{pde} can be plotted over the with this function. Only square sized domains can be plotte, as specified by the lower and the upper domain parameters \textit{lD} and \textit{uD}. 
+	\item 
+	\inlinecode{string statsWilcoxon(a, b, alpha=0.05)} \\
+	This function is a wrapper for the \inlinecode{scipy.stats.wilcoxon} (\cite{scipy_scipystatswilcoxon_2020}). A string is returned, that describes if the mean/median of a is significantly smaller than the mean/median of b. The default significance level is set to 0.05. 
 \end{itemize}
 
 \section{Metric} 
@@ -73,13 +88,13 @@ In order to scientifically compare the results produced by the different solvers
 
 \subsection{Solving Time}
 \label{chap:metric_time}
-The solving time is measured within the \colorbox{light-gray}{\lstinline[basicstyle=\ttfamily\color{black}]|solve()|} method of either class. The time module of the \cite{python_standard_library_time_2020} is used to interact with the system clock. The resolution, that the time module can access, depends on the system it is running on. Specifically, on the machine used in all further experiments, \colorbox{light-gray}{\lstinline[basicstyle=\ttfamily\color{black}]|time.time()|} returns a 24 byte float that represents the time passed since 1st of January 1970. Usually, consecutive calls of this function return increasing values - changing the system time could interfere with the correctness of this value.\\ 
+The solving time is measured within the \inlinecode{solve()} method of either class. The time module of the \cite{python_standard_library_time_2020} is used to interact with the system clock. The resolution, that the time module can access, depends on the system it is running on. Specifically, on the machine used in all further experiments, \inlinecode{time.time()} returns a 24 byte float that represents the time passed since 1st of January 1970. Usually, consecutive calls of this function return increasing values - changing the system time could interfere with the correctness of this value.\\ 
 
-As the execution time of a program depends on many other factors, such as the current system load, the CPU temperature and the process scheduler, it is necessary to view it as a random variant. Thus, multiple replications have to be done before trying to interprete the results. These replications are not done within the \colorbox{light-gray}{\lstinline[basicstyle=\ttfamily\color{black}]|solve()|} function and must be applied during the experiment. To reduce the random effects and prevent possible outlier, the Python garbage collector is switched off during the time measurement. For a step-by-step description, the pseudocode is displayed in the appendix \ref{chap:solve_function}. 
+As the execution time of a program depends on many other factors, such as the current system load, the CPU temperature and the process scheduler, it is necessary to view it as a random variant. Thus, multiple replications have to be done before trying to interprete the results. These replications are not done within the \inlinecode{solve()} function and must be applied during the experiment. To reduce the random effects and prevent possible outlier, the Python garbage collector is switched off during the time measurement. For a step-by-step description, the pseudocode is displayed in the appendix \ref{chap:solve_function}. 
 
 \subsection{Memory Usage}
 \label{chap:metric_mem}
-Similar to the solving time measurement, the memory usage is determined within the \colorbox{light-gray}{\lstinline[basicstyle=\ttfamily\color{black}]|solve()|} method. The \textit{psutil} module (\cite{rodola_psutil_2020}) provides the functionality to read the amount of memory attached to a process at a given time. The function call \colorbox{light-gray}{\lstinline[basicstyle=\ttfamily\color{black}]|process.memory_info()|} returns an object with multiple attributes about the current state of the process. Of special interest is the \gls{vms} field. This includes the \gls{rss}, the memory that is currently held within the main memory, and the memory that is currently swapped out to the harddrive.
+Similar to the solving time measurement, the memory usage is determined within the \inlinecode{solve()} method. The \textit{psutil} module (\cite{rodola_psutil_2020}) provides the functionality to read the amount of memory attached to a process at a given time. The function call \inlinecode{process.memory_info()} returns an object with multiple attributes about the current state of the process. Of special interest is the \gls{vms} field. This includes the \gls{rss}, the memory that is currently held within the main memory, and the memory that is currently swapped out to the harddrive.
 
 Without assuming anything about the inner workings of the process, the memory usage is also a random variant. Thus, similar to the time measurement, replications have to be performed. The same pseudocode as for the time measurement (appendix \ref{chap:solve_function}) also applies here. To remove outliers, it is helpfule to create and solve one testbed object before recording the experiment. This sets up the necessary references and which are then not mingled into the actual solving process. This holds true for both, the \gls{fem} and the \gls{ci} solver.  
 
@@ -97,7 +112,18 @@ Thus, \cite{chaquet_using_2019} define a new quality measurement based on the \g
 \label{eq:rmse_chaquet}
 RMSE^2 = \frac{\sum_{i=1, \mathbf{x}_i \in C}^{n_C} \left|\left| \mathbf{u}(\mathbf{x}_i) - \mathbf{u_{ext}}(\mathbf{x}_i) \right|\right|^2 + \sum_{j=1, \mathbf{x}_j \in B}^{n_B} \left|\left| \mathbf{u}(\mathbf{x}_j) - \mathbf{u_{ext}}(\mathbf{x}_j) \right|\right|^2}{m(n_C + n_B)}
 \end{equation}
-This quality criterion has three inherent issues. At first, it firmly depends on the number of collocation points used. In an algorithm that uses self-adaptive collocation points, this measurement would be rendered useless. Further, the quality is only measured on the collocation points and not in between. However, a good solution fits not only these discrete points, but the whole domain. Finally, the \gls{fem} method doesn't use collocation points, so this quality measurement could not be calculated. A good quality measurement tool only uses the numerical and analytical solution, independently of the solving method. 
+This quality criterion has three inherent issues. At first, it firmly depends on the number of collocation points used. In an algorithm that uses self-adaptive collocation points, this measurement would be rendered useless. Further, the quality is only measured on the collocation points and not in between. However, a good solution fits not only these discrete points, but the whole domain. This is called an aliasing error. An approximation can fit the points, without correctly representing the space between them. This is shown in the following figure \ref{fig:aliasing error}.
+
+\begin{figure}[H]
+	\centering
+	\noindent\adjustbox{max width=\linewidth}{
+		\includegraphics[width=\textwidth]{../img/pdf/aliasing_error.pdf}
+	}
+	\unterschrift{aliasing error: sharp inaccuracies in between collocation points}{}{}
+	\label{fig:aliasing error}
+\end{figure}
+
+Finally, the \gls{fem} method doesn't use collocation points, so this quality measurement could not be calculated. A good quality measurement tool only uses the numerical and analytical solution, independently of the solving method. 
 
 This leads to the quality measurement formulation used in this thesis: the L2 norm defined for functions as denoted in equation \ref{eq:quality_measurement}. This actually measures the distance between the analytical solution and the numerical approximation.  
 \begin{equation}

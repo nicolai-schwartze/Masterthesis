@@ -2,7 +2,7 @@
 \begin{document}
 
 \chapter{Problem Definition}
-This chapter describes the broader idea of the \gls{wrm}, which is used to reformulate any differential equation into an optimisation problem, and its application in the field of spectral methods (\cite{shen_spectral_2011}). The fitness function originates from these approaches. Further, the different approximation schemes and numerical solution representation are depicted. The following paragraphs also introduce the mathematical notation used for this work. 
+This chapter describes the broader idea of the \gls{wrm}, which is used to reformulate any differential equation into an optimisation problem and its application in the field of spectral methods (\cite{shen_spectral_2011}). The fitness function originates from these approaches. Further, the different approximation schemes and numerical solution representation are depicted. The following paragraphs also introduce the mathematical notation used for this work. 
 
 \section{Theoretical Foundation}
 \label{chap:opt_problem}
@@ -15,7 +15,7 @@ The most general description of a \gls{pde} is displayed in equation \ref{eq:gen
 \text{subjected to: }\mathbf{B}u(\mathbf{x}) & = g(\mathbf{x}) \\
 \end{split}
 \end{equation}
-This is similar to the formulation of the strong form in equantion \ref{eq: strong form}, but not limited to a Dirichlet boundary problem. The matrix $\mathbf{B}$ can include differentiation, effectively allowing i.e. Neumann boundary condition. 
+This is similar to the formulation of the strong form in equation \ref{eq: strong form}, but not limited to a Dirichlet boundary problem. The matrix $\mathbf{B}$ can include differentiation, effectively allowing i.e. Neumann boundary condition. 
 
 An approximate solution to this problem is expressed as a finite sum of basis functions $\phi_k(\mathbf{x})$, as denoted in equation \ref{eq:u_apx}. The coefficients $a_k$ are to be determined. In classical approximation schemes, the basis functions are orthogonal, such as trigonometric functions or Lagrange basis polynomials. 
 
@@ -31,7 +31,7 @@ The residual of a \gls{pde}, as shown in equation \ref{eq:residual}, is formulat
 \mathbf{R}(\mathbf{x}) = \mathbf{L}u_{apx}(\mathbf{x}) - f(\mathbf{x})
 \end{equation}
 
-The \gls{wrm} (\cite{shen_spectral_2011}) tries to minimise this resiual of a numerical candidate solution over the whole domain $\Omega$. Therefore, $R$ at every $\mathbf{x}_i \in \Omega$ is evaluated and added up, resulting in the following integral of equation \ref{eq:wrm}. The residual at every $\mathbf{x}$ can be scaled by a weighting function over the domain as denoted with $W(\mathbf{x})$. The choice of the test function $\psi(\mathbf{x})$ is distinct for different methods. The actual optimum does not change, since the zero-product property holds. The \gls{wrm} builds the basis for many solving strategies, including \gls{fem}. 
+The \gls{wrm} (\cite{shen_spectral_2011}) tries to minimise this residual of a numerical candidate solution over the whole domain $\Omega$. Therefore, $R$ at every $\mathbf{x}_i \in \Omega$ is evaluated and added up, resulting in the following integral of equation \ref{eq:wrm}. The residual at every $\mathbf{x}$ can be scaled by a weighting function over the domain as denoted with $W(\mathbf{x})$. The choice of the test function $\psi(\mathbf{x})$ is distinct for different methods. The actual optimum does not change, since the zero-product property holds. The \gls{wrm} builds the basis for many solving strategies, including \gls{fem}. 
 
 \begin{equation}
 \label{eq:wrm}
@@ -45,19 +45,19 @@ This integral must be evaluated numerically. There are many different integratio
 \sum_{k=0}^{N} \mathbf{R}(\mathbf{x}_k) \psi(\mathbf{x}_k) W(\mathbf{x}_k)
 \end{equation}
 
-To ensure, that negative and positive residuals do not get canceled out, a common choice in heuristic methods from table \ref{tab:results_literature_comparison}, is to choose $\psi(\mathbf{x}_k)$ as the residual itself, effectively squaring it. The resulting ``sum of squared residuals'' forms the basis for nearly all fitness function in the current literature, as represented in equation \ref{eq:sum_squared_residual}.
+To ensure that negative and positive residuals do not cancle each other out, a common choice in heuristic methods from table \ref{tab:results_literature_comparison} is to choose $\psi(\mathbf{x}_k)$ as the residual itself, effectively squaring it. The resulting ``sum of squared residuals'' forms the basis for nearly all fitness functions in the current literature, as represented in equation \ref{eq:sum_squared_residual}.
 
 \begin{equation}
 \label{eq:sum_squared_residual}
 \sum_{k=0}^{N} \mathbf{R}(\mathbf{x}_k)^2 W(\mathbf{x}_k)
 \end{equation}
 
-These methods are often called ``spectral methods'' (\cite{shen_spectral_2011}). Their main advantage over finite difference methods is, that they take the whole domain into account. The derivative of the function at one point is influenced by the function at every other point in the domain. This global approch can lead to a better accuracy. 
+These methods are often called ``spectral methods'' (\cite{shen_spectral_2011}). Their main advantage over finite difference methods is that they take the whole domain into account. The derivative of the function at one point is influenced by the function at every other point in the domain. This global approch can lead to a better accuracy. 
 
 \section{Fitness Function}
 \label{chap:fit_func}
 
-As mentioned above, the basis of the fintess function used in \cite{chaquet_using_2019} is the squared weighted residual in equation \ref{eq:sum_squared_residual}. They split the summation over the collocation points into two parts: the points on the boundary ($nb$) and the points on the inner domain ($nc$). Further, they devide the fitness value by the number of points used. This fitness function, as seen in equation \ref{eq:fit_func}, is adopted in this work. 
+As mentioned above, the basis of the fitness function used in \cite{chaquet_using_2019} is the squared weighted residual in equation \ref{eq:sum_squared_residual}. They split the summation over the collocation points into two parts: the points on the boundary ($nb$) and the points on the inner domain ($nc$). Further, they devide the fitness value by the number of points used. This fitness function, as seen in equation \ref{eq:fit_func}, is adopted in this work. 
 
 \begin{equation}
 \label{eq:fit_func}
@@ -84,19 +84,19 @@ The weighting function is also split into two parts: $\xi$ for the inner colloca
 \section{Candidate Representation}
 \label{chap:candidate_rep}
 
-As \cite{chaquet_using_2019} suggest, an approximate solution should be represented as a summation of $N$ scaled and shifted radial basis functions $\phi$, as denoted in equation \ref{eq:u_apx} \todo{cite approximation theorem} \gls{rbf} are functions that only are point symmetric to a centre $c$ and their function value only depend on the radius $r$. 
+As \cite{chaquet_using_2019} suggest, an approximate solution should be represented as a summation of $N$ scaled and shifted radial basis functions $\phi$, as denoted in equation \ref{eq:u_apx} \todo{cite approximation theorem} \gls{rbf} are functions that are point symmetric to a centre $c$ and their function value only depends on the radius $r$. 
 
 \begin{equation}
 \label{eq: radius}
 \mathbf{r} = \left|\left|\mathbf{x} - \mathbf{c} \right|\right|
 \end{equation}
 
-This thesis mainly works with two different types of \gls{rbf}. The first one is the classical Gauss \gls{rbf} ($gak$). The second one, further called GSin \gls{rbf} ($gsk$), is more complex. A candidate solution is represended as the parameters that shift and deform these \gls{rbf}. 
+This thesis mainly works with two different types of \gls{rbf}. The first one is the classical Gauss \gls{rbf} ($gak$). The second one, further called GSin \gls{rbf} ($gsk$), is more complex. A candidate solution is represented as the parameters that shift and deform these \gls{rbf}. 
 
 \subsection{Gauss Kernel}
 \label{chap:gauss_kernel}
 
-The general Gauss kernel is the classical choice to approximate functions. It was first introduced in \cite{broomhead_multivariable_1988}. These kernels have been used in many different works, including \cite{chaquet_using_2019}. \todo{cite approximation proof} Equation \ref{eq:gauss_kernel} shows the formulation of such a kernel. One kernel has 4 parameters, that change its shape and location. $\omega$ is a scaling factor for each and $\gamma$ describes how sharp the e-function is. Depending on the space the solution is defined in, the number of $\mathbf{c}$ could change - one for each dimension. However, in this work only $\mathbf{R}^2$ is of interest. In figure \ref{fig:gauss_kernel_3d_plot} a single standard Gauss kernel is plotted. 
+In general, a \gls{gak} is the classical choice to approximate functions. It was first introduced in \cite{broomhead_multivariable_1988}. These kernels have been used in many different works, including \cite{chaquet_using_2019}. \todo{cite approximation proof} Equation \ref{eq:gauss_kernel} shows the formulation of such a kernel. One kernel has 4 parameters, that change its shape and location. $\omega$ is a scaling factor for each and $\gamma$ describes how sharp the e-function is. Depending on the space the solution is defined in, the number of $\mathbf{c}$ could change - one for each dimension. However, in this work only $\mathbf{R}^2$ is of interest. In figure \ref{fig:gauss_kernel_3d_plot} a single standard \gls{gak} is plotted. 
 
 \begin{equation}
 \label{eq:gauss_kernel}
@@ -112,14 +112,14 @@ gak(\mathbf{x}) = \omega e^{-\gamma \mathbf{r}^2}
 	\label{fig:gauss_kernel_3d_plot}
 \end{figure}
 
-An approximate solution to the \gls{pde} in question is be described as the superposition of $N$ kernels as shown in equation \ref{eq:uapx_gauss_kernel}. 
+An approximate solution to the \gls{pde} in question is described as the superposition of $N$ kernels as shown in equation \ref{eq:uapx_gauss_kernel}. 
 
 \begin{equation}
 \label{eq:uapx_gauss_kernel}
 u_{apx}(\mathbf{x}) = \sum_{i=0}^{N} \omega_i e^{-\gamma_i \mathbf{r}_i^2}
 \end{equation}
 
-A solution is encoded as a vector of these $4\cdot N$ parameters stacked together. This is shown in eqution \ref{eq:gauss_parameter_vector}. 
+A solution is encoded as a vector of these $4\cdot N$ parameters stacked together. This is shown in equation \ref{eq:gauss_parameter_vector}. 
 
 \begin{equation}
 \label{eq:gauss_parameter_vector}
@@ -146,21 +146,21 @@ To evaluate the residual of a \gls{pde}, the derivatives must be known. To that 
 
 \subsection{GSin Kernel}
 \label{chap:gsin_kernel}
-Additional to the Gauss kernel, a ``GSin'' kernel is proposed. \todo{approximation proof possible?}In essence, this is a multiplication of a Gauss kernel with a sine function, as seen in equation \ref{eq:gsin_kernel}. It can be thought of a sine function, where its influence declines with the radius $r$. Both ``sub-functions'' are centered at the same $\mathbf{c}$. 
+Additional to the Gauss kernel, a ``GSin'' kernel, further also abbreviated as \gls{gsk}, is proposed. \todo{approximation proof possible?}In essence, this is a multiplication of a \gls{gak} with a sine function, as seen in equation \ref{eq:gsin_kernel}. It can be thought of a sine function, where its influence declines with the radius $r$. Both ``sub-functions'' are centered at the same $\mathbf{c}$. As shown in chapter \ref{chap:gsin_approximation_theorem}, the universal approximation theorem for the GSin kernel holds true. 
 The plot in figure \ref{fig:gsin_kernel_3d_plot} shows how the first half period is much larger than the second half. With the sine, two new parameters are introduced: $f$ for the frequency of the sine wave and $\varphi$ represents the phase shift. 
 \begin{equation}
 \label{eq:gsin_kernel}
 gsk(\mathbf{x}) = \omega e^{-\gamma \mathbf{r}^2} sin(f \mathbf{r}^2 - \varphi)
 \end{equation}
 
-It is important to notice that, with the correct parameter choice, both traits - the sine and the e-function - can be retrieved. When $\gamma=0$ the e-function evaluates to 1 and leaves the sine on its own. By setting $f=0$ and $\varphi=\frac{\pi}{2}$, the sine vanishes and the e-function part is obtained. Thus, with this kernel, it should be possible to approximate the \gls{pde}s 0A and 0B from the testbed arbitrarily close. 
+It is important to notice that, with the correct parameter choice, both traits - the sine and the e-function - can be retrieved. When $\gamma=0$ the e-function evaluates to 1 and leaves the sine on its own. By setting $f=0$ and $\varphi=\frac{\pi}{2}$, the sine vanishes and the e-function part is obtained. Thus, with this kernel it should be possible to approximate the \gls{pde}s 0A and 0B from the testbed arbitrarily close. 
 
 \begin{figure}[H]
 	\centering
 	\noindent\adjustbox{max width=\linewidth}{
 		\includegraphics[width=\textwidth]{../../code/kernels/gsk.pdf}
 	}
-	\unterschrift{3D plot of a single GSin kernel with the parametes $\omega = 1$, $\gamma = 1$, $c_0 = 0$, $c_1 = 0$, $f = 1$, $\varphi = 0$}{}{}
+	\unterschrift{3D plot of a single GSin kernel with the parameters $\omega = 1$, $\gamma = 1$, $c_0 = 0$, $c_1 = 0$, $f = 1$, $\varphi = 0$}{}{}
 	\label{fig:gsin_kernel_3d_plot}
 \end{figure}
 
@@ -178,7 +178,7 @@ Equation \ref{eq:gsin_parameter_vector} shows the solution representation in sta
 \vec{u_{apx}} = \left[\underbrace{\omega_0, \gamma_0, c_{00}, c_{01}, f_0, \varphi_0}_{\text{kernel 0}}, \cdots \underbrace{\omega_i, \gamma_i, c_{i0}, c_{i1}, f_i, \varphi_i}_{\text{kernel i}}, \cdots \underbrace{\omega_N, \gamma_N, c_{N0}, c_{N1}, f_N, \varphi_N}_{\text{kernel N}} \right]^T
 \end{equation}
 
-Again, the derivatieves of the solution are needed, which are shown in the equations \ref{eq:uapx_gsin_kernel_x0} through \ref{eq:uapx_gsin_kernel_x0_x1}. 
+Again, the derivatives of the solution are needed, which are shown in the equations \ref{eq:uapx_gsin_kernel_x0} through \ref{eq:uapx_gsin_kernel_x0_x1}. 
 
 \begin{equation}
 \label{eq:uapx_gsin_kernel_x0}

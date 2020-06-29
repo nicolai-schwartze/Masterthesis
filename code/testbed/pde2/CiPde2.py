@@ -150,13 +150,13 @@ if __name__ == "__main__":
     sys.path.append("../")
     sys.path.append("../../opt_algo")
     sys.path.append("../../kernels")
-    import OptAlgoMemeticpJADEadaptive as oaMempJadeadaptive
+    import OptAlgoMemeticpJADE as oaMempJade
     import KernelGauss as gk
     
-    initialPop = np.random.randn(8,4)
+    initialPop = np.random.randn(50,16)
     max_fe = 1*10**6
-    min_err = 1*10**-20
-    mpJade = oaMempJadeadaptive.OptAlgoMemeticpJADEadaptive(initialPop, max_fe, min_err)
+    min_err = 0
+    mpJade = oaMempJade.OptAlgoMemeticpJADE(initialPop, max_fe, min_err)
     
     gkernel = gk.KernelGauss()
     

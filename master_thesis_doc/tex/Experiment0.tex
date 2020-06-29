@@ -5,25 +5,10 @@
 
 This chapter describes the results obtained by the most basic adaption of JADE for solving \gls{pde}s. The algorithm used here, builds on the concepts described in \cite{chaquet_using_2019}. Aside from substituting some parameters, the only main difference is the usage of JADE instead of a \gls{cma_es}. 
 
-with $10^6$ function evaluation: \\
-hyphotosis test in the difference of L2 norm reached \\
-statistically relevant vs. practically relevant -> show 3D plot of what the difference in L2 norm looks like (= effect size) \\
-this servers as an experimental prove, that the objective function is multimodal and DS runs into premature convergence \\
-
-show convergence on PDE0A \\
-Compare to Chaquet Results PDE2 and PDE3\\
-
-with $10^4$ function evaluation: \\
-box plot of time and memory usage -> compare to FEM \\
-L2 norm table reached \\
-how does time/memory scale with number of FE? -> O(n)\\
-memory not needed: only for evaluation -> could be smaller \\
-what can be done about time? -> transition to next chapter: parallel
-what are simpler and more complex testbed pdes? \\
-
 \section{Hypotheses}
+A memetic algorithm was first mentioned by \cite{moscato_evolution_2000}. In essence, it is a hybridisation of a population-based evolutionary algorithm and a deterministic direct or local search. The pseudocode \ref{algo: memeticJADE} below shows the implementation of such a memetic JADE. At first, JADE performs the global search and places its population around the optimum. Than the \gls{ds} exploits this area. The budget of \gls{nfe} is split into two parts: JADE takes nearly all \gls{nfe} and leaves $2\cdot dim$ \gls{nfe} for the \gls{ds}. 
 
-\begin{algorithm}[H]
+\begin{algorithm}[h]
 	\SetAlgoNoLine
 	\DontPrintSemicolon
 	\SetKwFunction{FmJADE}{memeticJADE}
@@ -35,18 +20,21 @@ what are simpler and more complex testbed pdes? \\
 		$pop$, $FE$, $F$, $CR$ $\gets JADE($$\mathbf{X}$, $p$, $c$, $funct$, $minErr$, $maxFE - 2 dim$ $)$\;
 		$bestIndex = argmin(FE)$\;
 		$bestSol = pop[bestIndex]$\;
-		$pop$, $FE$ $ = downhill\text{ }simplex($$funct$, $bestSol$, $minErr$, $2 dim)$
+		$pop$, $FE$ $ = downhill\text{ }simplex($$funct$, $bestSol$, $minErr$, $2 dim)$\;
 		\Return $pop$, $FE$, $F$, $CR$
 	}
 	\unterschrift{memeticJADE Pseudocode}{}{}
 	\label{algo: memeticJADE}
 \end{algorithm}
 
+This experiment provides first insight into the performance of the proposed algorithm. It tries to answer the question, if JADE is a suitable surrogate algorithm for a \gls{cma_es}. Further, the memory usage and solving time is compared to the \gls{fem} results obtained in chapter \ref{chap:fem_baseline_results}. 
+
 \section{Experiment Setup}
+The standard parameters from table \ref{tab:ci_parameter} are taken. The memetic JADE is limited to either $10^4$ \gls{nfe} or $10^6$ \gls{nfe}. The experiment is done on two different machines. The first try with $10^4$ \gls{nfe} is run on the same machine as the \gls{fem} experiment. This allows for a fair memory and solving time comparison. This comparison can not be performed with the data obtained by using $10^6$ \gls{nfe}. Further, 5 \gls{gak} are used which results in a dimension of 20 parameters. Thus, the population consists of 40 individuals. 
 
 \section{Result}
 Table \ref{tab:results_literature_comparison} shows a compariosn on the common testbed functions \gls{pde} 2 and \gls{pde} 3 with numerical results obtained in other research papers. It is important to notice, that the parameters, used to obtain the results, might not coinside. \cite{tsoulos_solving_2006} also use these two \gls{pde}, but their paper did not provide any usable error metric. 
-\begin{table}[h]
+\begin{table}[H]
 	\centering
 	\noindent\adjustbox{max width=\linewidth}{
 		\begin{tabular}{|c|c|c|c|}
@@ -55,12 +43,11 @@ Table \ref{tab:results_literature_comparison} shows a compariosn on the common t
 			\rowcolor[HTML]{\farbeTabA}
 			
 			Paper & parameter & RMSE \gls{pde} 2 & RMSE \gls{pde} 3 \\ \hline
-			\cite{chaquet_using_2019} & \multilinecell{4 kernel \\ max \#FE=$10^6$ \\ 50 replications } & $(1.75 \pm 1.14) 10^{-4}$ & $(1.09 \pm 0.846) 10^{-5}$  \\ \hline
-			\cite{chaquet_solving_2012} & \multilinecell{10 harmonics \\ max \#FE = $G \cdot \lambda$ = $1.2 \cdot 10^6$ \\ 10 replications} & $(6.37 \pm 0.733) 10^{-3}$ & $(5.90 \pm 0.799)10^{-3}$ \\ \hline
+			\cite{chaquet_using_2019} & \multilinecell{4 kernel \\ max \gls{nfe}=$10^6$ \\ 50 replications } & $(1.75 \pm 1.14) 10^{-4}$ & $(1.09 \pm 0.846) 10^{-5}$  \\ \hline
+			\cite{chaquet_solving_2012} & \multilinecell{10 harmonics \\ max \gls{nfe} = $G \cdot \lambda$ = $1.2 \cdot 10^6$ \\ 10 replications} & $(6.37 \pm 0.733) 10^{-3}$ & $(5.90 \pm 0.799)10^{-3}$ \\ \hline
 			\cite{sobester_genetic_2008}& \multilinecell{50 max tree lenght \\ 12 generations \\ 20 replications} & $(6.9 \pm 8.3)10^{-4}$ & - \\ \hline
-			\cite{panagant_solving_2014}& \multilinecell{unknowns: N/A \\ \#FE=$5\cdot 10^5$ \\ replications: N/A} & $7.256 10^{-4}$ & $9.489 10^{-6}$ \\ \hline
-			serial memetic JADE & \multilinecell{5 kernel \\ max \#FE = $10^6$ \\ 20 replications} & & \\ \hline
-			
+			\cite{panagant_solving_2014}& \multilinecell{unknowns: N/A \\ \gls{nfe}=$5\cdot 10^5$ \\ replications: N/A} & $7.256 10^{-4}$ & $9.489 10^{-6}$ \\ \hline
+			serial memetic JADE & \multilinecell{5 kernel \\ max \gls{nfe} = $10^6$ \\ 20 replications} & $(2.9798 \pm 1.5541)10^{-2}$ & $(3.8225 \pm 1.9438)10^{-2}$ \\ \hline
 			
 		\end{tabular}
 	}
@@ -68,6 +55,7 @@ Table \ref{tab:results_literature_comparison} shows a compariosn on the common t
 	\label{tab:results_literature_comparison}
 \end{table}
 
+The following table \ref{tab:serial_jade_compare_10^6_10^4} lists the smalles L2 norm reached after $10^4$ \gls{nfe} and $10^6$ \gls{nfe}, respectively. A standard Wilcoxon test, as described in \ref{chap:software_architecutre}: post processing, is performed. Remarkable is that on \gls{pde} 5, more \gls{nfe} result in a significantly worse solution.  
 
 \begin{table}[h]
 	\centering
@@ -77,7 +65,7 @@ Table \ref{tab:results_literature_comparison} shows a compariosn on the common t
 			\hline
 			\rowcolor[HTML]{\farbeTabA}
 			
-			\#FE & \multicolumn{2}{|c|}{$10^4$} & \multicolumn{2}{|c|}{$10^6$} & \\ \hline
+			\gls{nfe} & \multicolumn{2}{|c|}{$10^4$} & \multicolumn{2}{|c|}{$10^6$} & \\ \hline
 			stat & mean & median & mean & median & Wilcoxon Test \\ \hline \hline
 			\gls{pde} 0A & 1.9415 $\pm$ 0.3321 & 1.8844 & 0.6596 $\pm$ 0.5510 & 0.9285 & sig. better \\ \hline
 			\gls{pde} 0B & 0.7137 $\pm$ 0.1979 & 0.6354 & 0.2027 $\pm$ 0.1302 & 0.1516 & sig. better \\ \hline
@@ -93,13 +81,88 @@ Table \ref{tab:results_literature_comparison} shows a compariosn on the common t
 			
 		\end{tabular}
 	}
-	\unterschrift{}{}{}
-	\label{tab:compare_10^6_10^4}
+	\unterschrift{L2 norm reached with serial JADE at $10^4$ \gls{nfe} and $10^6$ \gls{nfe}}{}{}
+	\label{tab:serial_jade_compare_10^6_10^4}
 \end{table}
 
+The following two images \ref{fig:serial_jade_time_boxplot} and \ref{fig:serial_jade_memory_boxplot} show the time and memory usage for solving the testbed with $10^4$ \gls{nfe}. The images highlight the varying complexity of the testbed-\gls{pde}s and their fitness function. Although these results are not obtained for $10^6$ \gls{nfe}, they provide insight on how the solver behaves with more \gls{nfe}.  
+
+\begin{figure}[h]
+	\centering
+	\noindent\adjustbox{max width=0.66\linewidth}{
+		\includegraphics[width=\textwidth]{../../code/experiments/experiment_0/time_boxplot_ci_exp0.pdf}
+	}
+	\unterschrift{Solving time at $10^4$ \gls{nfe}.}{}{}
+	\label{fig:serial_jade_time_boxplot}
+\end{figure}
+
+
+\begin{figure}[h]
+	\centering
+	\noindent\adjustbox{max width=0.66\linewidth}{
+		\includegraphics[width=\textwidth]{../../code/experiments/experiment_0/mem_boxplot_ci_exp0.pdf}
+	}
+	\unterschrift{Memory usage with $10^4$ \gls{nfe}.}{}{}
+	\label{fig:serial_jade_memory_boxplot}
+\end{figure}
 
 \section{Interpretation}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%
+%      Literature       %
+%%%%%%%%%%%%%%%%%%%%%%%%%
+The \gls{rmse} reached on the \gls{pde} 2 and 3, are clearly not as good as the results obtained in privious work, especially the results presented in \cite{chaquet_using_2019}. There might be three reasons for that: 
+\begin{itemize}
+	\item As stated in the privious table \ref{tab:ci_parameter}, the panelty and weighting factor on the collocation points are different. Further, more kernels are used, resulting in a greater search dimension while simultaniously using a smaller population size. The combination of these parameters might influence the qualitiy of the solution to the worse. 
+	\item Compared to \cite{chaquet_using_2019}, the \gls{nfe}-budget for the local \gls{ds} search is smaller, thus the exploitation might not be as progressed.
+	\item JADE might simply be not as well suited for the problem as a \gls{cma_es}. 
+\end{itemize}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
+%        time/mem       %
+%%%%%%%%%%%%%%%%%%%%%%%%%
+The results from table \ref{tab:serial_jade_compare_10^6_10^4} show, that the \gls{ci} solver can not nearly compete with the results obtained by the \gls{fem} solver from table \ref{tab:fem_sol_quality}. 
+However, more interesting is the comparison of time and memory usage. 
+In the current implementation, the population, the correspondig function values, the F and the CR history are recorded at every generation. This is not necessary for the performance of the algorithm, but helpful for evaluating the results. Therefore, the memory usage scales with $\mathcal{O}(\gls{nfe})$. In later implementation, this could be disregarded to further reduce the memory consumption. Every \gls{pde} takes about the same amount of memory to solve, somewhere between 1.5 and 2.2 Mbyte. 
+The \gls{ci} solver takes somewhere between 100 and 150 seconds (figure \ref{fig:serial_jade_time_boxplot}) to perform $10^4$ \gls{nfe}, depending on the \gls{pde} problem. This is always longer than the \gls{fem} solver, with the expception of \gls{pde} 3. More importantly, the \gls{ci} solver uses less memory, on all problems(figure \ref{fig:serial_jade_time_boxplot}). An interesting observation is the distribution of the solving time within the testbed. The more commands a fitness function needs, the longer is its solving time. However, this does not necessarily correspond with the quality of the solutions. For example, \gls{pde} 0B takes the longest to evaluate, but reaches a fairly good quality. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
+%         PDE5          %
+%%%%%%%%%%%%%%%%%%%%%%%%%
+A fascinating property of \gls{pde}5 is observed: more function evaluation (from $10^4$ to $10^6$) result in a significantly worse solution quality. This is confirmed by a Wilcoxon test, as seen in the table \ref{tab:serial_jade_compare_10^6_10^4}. The corresponding histograms are depicted in figure \ref{fig:serial_jade_pde5_histogram}. 
+A comparison of the best solution after $10^4$ \gls{nfe} and the best solution after $10^6$ \gls{nfe} is shown in the figure \ref{fig:serial_jade_pde5_sol_comparison}. This phenomenon can be explained by the structural difference between the fitness function and the L2 norm. The fitness of a candidate solution can only decrease or stay the same, thanks to the greedy selection used in JADE (line 15 in the pseudocode \ref{algo: jade}). Because the L2 norm is not the property that gets optimised, the quality of an individual at every generation is not necessarily monotonically decreasing. 
+This indicates, that a fundamental different strategy might be needed to obtain better results. 
+
+Currently, evaluating a \gls{pde} takes way to long to be practically relevant. To reduce the time consumption and speed up all further experiments, a parallel JADE is implemented, as described in the next chapter.  
+
+\begin{figure}[h]
+	\centering
+	\begin{subfigure}[b]{0.5\linewidth}
+		\centering
+		\includegraphics[width=1\textwidth]{../../code/experiments/experiment_0/pde5_best_sol_10_4.pdf}
+		\caption{\gls{pde} 5 solution with $10^4$ \gls{nfe} with a L2 norm of $0.4283$}
+		\label{fig:pde5_sol_10_4}
+	\end{subfigure}% 
+	%
+	\begin{subfigure}[b]{0.5\linewidth}
+		\centering
+		\includegraphics[width=1\textwidth]{../../code/experiments/experiment_0/pde5_best_sol_10_6.pdf}
+		\caption{\gls{pde} 5 solution with $10^6$ \gls{nfe} with a L2 norm of $1.1095$}
+		\label{fig:pde5_sol_10_6}
+	\end{subfigure}%
+	\unterschrift{comparison of the achieved solution on \gls{pde} 5}{}{}%
+	\label{fig:serial_jade_pde5_sol_comparison}
+\end{figure}
+
+\begin{figure}[h]
+	\centering
+	\noindent\adjustbox{max width=0.9\linewidth}{
+		\includegraphics[width=\textwidth]{../../code/experiments/experiment_0/pde5_4_6_histogram.pdf}
+	}
+	\unterschrift{Histogram of the quality reached on \gls{pde} 5 }{}{}
+	\label{fig:serial_jade_pde5_histogram}
+\end{figure}
 
 
 \end{document}

@@ -430,7 +430,7 @@ def drawGaussKernel(parameter, ggb):
 pde_solution = {"<class 'CiPde0A.CiPde0A'>" : lambda x : 2*np.e**(-1.5*(x[0]**2 + x[1]**2)) + np.e**(-3*((x[0] + 1)**2 + (x[1] + 1)**2)) + np.e**(-3*((x[0] - 1)**2 + (x[1] + 1)**2)) + np.e**(-3*((x[0] + 1)**2 + (x[1] - 1)**2)) + np.e**(-3*((x[0] - 1)**2 + (x[1] - 1)**2)),
                 "<class 'CiPde0B.CiPde0B'>" : lambda x : np.exp(-2  * ((x[0])**2 + (x[1])**2))*np.sin(2  * ((x[0])**2 + (x[1])**2)) + np.exp(-1  * ((x[0])**2 + (x[1])**2))*np.sin(1  * ((x[0])**2 + (x[1])**2)) + np.exp(-0.1* ((x[0])**2 + (x[1])**2))*np.sin(0.1* ((x[0])**2 + (x[1])**2)),
                 "<class 'CiPde1.CiPde1'>" : lambda x : (2**(4*10))*(x[0]**10)*((1-x[0])**10)*(x[1]**10)*((1-x[1])**10),
-                "<class '__main__.CiPde2.CiPde2'>" : lambda x : (x[0] + x[1]**3)*np.e**(-x[0]),
+                "<class 'Cipde2.CiPde2'>" : lambda x : (x[0] + x[1]**3)*np.e**(-x[0]),
                 "<class 'CiPde3.CiPde3'>" : lambda x : x[0]**2 + x[1]**2 + x[0] + x[1] + 1,
                 "<class 'CiPde4.CiPde4'>" : lambda x : np.sin(np.pi * x[0])*np.sin(np.pi * x[1]),
                 "<class 'CiPde5.CiPde5'>" : lambda x : np.arctan(20*(np.sqrt((x[0] - 0.05)**2 + (x[1] - 0.05)**2) -0.7)),
@@ -515,7 +515,7 @@ def calcRMSE(solve_dict):
     
     
     
-def plotApprox3D(kernel, parameter, lD, uD):
+def plotApprox3D(kernel, parameter, lD, uD, name=None):
     """Draws a 2-dimensional Gaussian kernel function of the form
     
     Parameters
@@ -528,6 +528,8 @@ def plotApprox3D(kernel, parameter, lD, uD):
         lower boundary of the squared domain
     uD: float
         upper boundary of the squared domain
+    name: string
+          saves the figure as this file
 
     Examples
     --------
@@ -551,6 +553,10 @@ def plotApprox3D(kernel, parameter, lD, uD):
     ax.set_xlabel("X0")
     ax.set_ylabel("X1")
     ax.set_zlabel("f(X0,X1)")
+    plt.tight_layout()
+    if type(name) == type(""):
+        plt.savefig(name,bbox_inches='tight')
+        
     plt.show()
     return None
     
@@ -593,7 +599,7 @@ def statsWilcoxon(a, b, alpha=0.05):
     return result
 
 
-def plotFEDynamic(FEDynamic):
+def plotFEDynamic(FEDynamic, name=None):
     """prints the FE Dynamic to a semilogy plot 
        for an adaptive popuation
        necessary to compensate the different dimension of the array
@@ -602,6 +608,8 @@ def plotFEDynamic(FEDynamic):
     ----------
     FEDynamic: list
                list where each element is the FE of the population at every gen
+    name: string
+          saves the figure as this file
     """
     goaldim = 0
     for i in FEDynamic:
@@ -612,7 +620,11 @@ def plotFEDynamic(FEDynamic):
         currentdim = i.shape[0]
         plotFEList.append(np.lib.pad(i, (0,goaldim-currentdim), 'constant', constant_values=(0)))
         
+    plt.tight_layout()
     plt.semilogy(plotFEList)
+    if type(name) == type(""):
+        plt.savefig(name,bbox_inches='tight')
+        
     plt.show()
     return None
     

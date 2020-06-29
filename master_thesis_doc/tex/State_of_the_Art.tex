@@ -9,14 +9,14 @@ This chapter provides an overview of the current state of the art in solving \gl
 Currently the finite element method is the go-to approach to solve partial differential equations. The domain $\Omega$ on which the \gls{pde} is posed, is discretised into multiple smaller elements - as the name suggests. Thus, \gls{fem} counts to the category of meshed methods. The underlying solution function $u(\mathbf{x})$ to the PDE is then approximated by so called ``basis-functions'' $\Phi(\mathbf{x})$ limited to these finite elements. This thesis uses the open-source Netgen/NGSolve \gls{fem} package (\cite{schoberl_ngsolvengsolve_2020}). 
 
 The general steps taken to solve a PDE with an FEM solver are: 
-\begin{itemize}
-	\item \underline{Setup} \\
+\begin{enumerate}
+	\item \underline{Step: Setup} \\
 		  At first a Hilbertspace $V$ is needed. The principal idea is to find a bilinear form $a: V x V \rightarrow \mathbf{R}$ and a linear functional $F: V \rightarrow \mathbf{R}$ so that for 
 		  \begin{equation}
 			  u \in V \text{   } a(u,v) = F(v) \text{   } \forall v \in V
 		  \end{equation}
 		  This can be achieved by reformulating the strong form into the weak form as seen in equation \ref{eq: weak form}. There, the left-hand side represents the $a(u,v)$ and the \gls{rhs} is $F(v)$. In this case $u$ is often called the trial-function and $v$ is named the test-function. 
-	\item \underline{Strong Form} \\
+	\item \underline{Step: Strong Form} \\
 		  This is the standard formulation of the \gls{pde} with a Dirichlet boundary condition: \\
 		  \begin{equation}
 		  \label{eq: strong form}
@@ -26,7 +26,7 @@ The general steps taken to solve a PDE with an FEM solver are:
 				u(\mathbf{x})|_{\partial \Omega} = g(\mathbf{x})
 			  \end{split}
 		  \end{equation}
-	\item \underline{Weak Form} \\
+	\item \underline{Step: Weak Form} \\
 		  This is equivalent to the strong form but written in an integral formulation. \\
 		  \begin{equation}
 		  \label{eq: weak form}
@@ -36,11 +36,11 @@ The general steps taken to solve a PDE with an FEM solver are:
 			  \end{split}
 		  \end{equation}
 		  In this equation, the $A$, $b$ and $c$ correspond to the constant factors of the derivatives in strong form. The derivatives are hidden in the differential operator $\mathbf{L}$.
-	\item \underline{Discretisation} of $\Omega$ \\
+	\item \underline{Step: Discretisation} of $\Omega$ \\
 		  Create a mesh of finite elements that span the whole domain. Usually these are triangles. Thus, this step is sometimes called ``triangulation''.
-	\item \underline{Basis functions} \\
+	\item \underline{Step: Basis functions} \\
 		  Choose a basis function $\Phi(\mathbf{x})$ that can be used to approximate the solution $u(\mathbf{x}) \approx u_{h}(\mathbf{x}) = \sum_{i = 1}^{N} u_i \Phi(\mathbf{x})$. A common choice are Lagrange or Chebyshev polynomials. 
-	\item \underline{Solution} \\
+	\item \underline{Step: Solution} \\
 		  Solve the resulting linear system of equations to determine the factors $u_i$. In the simple case where only second order derivatives are used in the strong from, the resulting linear system looks like this: 
 		  \begin{equation}
 		  \begin{split}
@@ -48,7 +48,7 @@ The general steps taken to solve a PDE with an FEM solver are:
 		  & \underbrace{\sum_{i=1}^{N} u_i a(\Phi_i, \Phi_j)}_{\mathbf{A u}} = \underbrace{\mathbf{L}(\Phi_j)}_{\mathbf{b}}
 		  \end{split}
 		  \end{equation}
-\end{itemize}
+\end{enumerate}
 
 Modern solvers include more complex and advanced techniques to further improve the solution error and the computation time. Some of the most important concepts that are also available in NGSolve are listed here. 
 

@@ -5,7 +5,6 @@ Created on Mon Jun 29 15:19:18 2020
 @author: Nicolai
 """
 
-
 import sys
 sys.path.append("../../testbed/pde0A/")
 import CiPde0A as pde0A

@@ -158,14 +158,14 @@ if __name__ == "__main__":
     sys.path.append("../../opt_algo")
     sys.path.append("../../kernels")
     import OptAlgoMemeticpJADEadaptive as oaMempJadeadaptive
-    import KernelGauss as gk
+    import KernelGSin as gsk
     
-    initialPop = np.random.randn(8,4)
+    initialPop = np.random.randn(12,6)
     max_fe = 1*10**6
     min_err = 0
     mpJADE = oaMempJadeadaptive.OptAlgoMemeticpJADEadaptive(initialPop, max_fe, min_err)
     
-    gkernel = gk.KernelGauss()
+    gskernel = gsk.KernelGSin()
     
     # collocation points
     nc = []
@@ -181,7 +181,7 @@ if __name__ == "__main__":
     for i in range(40):
         nb.append((nbx[i], nby[i]))
     
-    cipde5 = CiPde5(mpJADE, gkernel, nb, nc)
+    cipde5 = CiPde5(mpJADE, gskernel, nb, nc)
     
     print(cipde5.pde_string)
     

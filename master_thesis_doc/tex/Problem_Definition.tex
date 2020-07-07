@@ -45,19 +45,19 @@ This integral must be evaluated numerically. There are many different integratio
 \sum_{k=0}^{N} \mathbf{R}(\mathbf{x}_k) \psi(\mathbf{x}_k) W(\mathbf{x}_k)
 \end{equation}
 
-To ensure that negative and positive residuals do not cancle each other out, a common choice in heuristic methods from table \ref{tab:results_literature_comparison} is to choose $\psi(\mathbf{x}_k)$ as the residual itself, effectively squaring it. The resulting ``sum of squared residuals'' forms the basis for nearly all fitness functions in the current literature, as represented in equation \ref{eq:sum_squared_residual}.
+To ensure that negative and positive residuals do not cancel each other out, a common choice in heuristic methods from table \ref{tab:results_literature_comparison} is to choose $\psi(\mathbf{x}_k)$ as the residual itself, effectively squaring it. The resulting ``sum of squared residuals'' forms the basis for nearly all fitness functions in the current literature, as represented in equation \ref{eq:sum_squared_residual}.
 
 \begin{equation}
 \label{eq:sum_squared_residual}
 \sum_{k=0}^{N} \mathbf{R}(\mathbf{x}_k)^2 W(\mathbf{x}_k)
 \end{equation}
 
-These methods are often called ``spectral methods'' (\cite{shen_spectral_2011}). Their main advantage over finite difference methods is that they take the whole domain into account. The derivative of the function at one point is influenced by the function at every other point in the domain. This global approch can lead to a better accuracy. 
+These methods are often called ``spectral methods'' (\cite{shen_spectral_2011}). Their main advantage over finite difference methods is that they take the whole domain into account. The derivative of the function at one point is influenced by the function at every other point in the domain. This global approach can lead to a better accuracy. 
 
 \section{Fitness Function}
 \label{chap:fit_func}
 
-As mentioned above, the basis of the fitness function used in \cite{chaquet_using_2019} is the squared weighted residual in equation \ref{eq:sum_squared_residual}. They split the summation over the collocation points into two parts: the points on the boundary ($nb$) and the points on the inner domain ($nc$). Further, they devide the fitness value by the number of points used. This fitness function, as seen in equation \ref{eq:fit_func}, is adopted in this work. 
+As mentioned above, the basis of the fitness function used in \cite{chaquet_using_2019} is the squared weighted residual in equation \ref{eq:sum_squared_residual}. They split the summation over the collocation points into two parts: the points on the boundary ($nb$) and the points on the inner domain ($nc$). Further, they divide the fitness value by the number of points used. This fitness function, as seen in equation \ref{eq:fit_func}, is adopted in this work. 
 
 \begin{equation}
 \label{eq:fit_func}
@@ -73,7 +73,7 @@ The fitness function has two important properties:
 \end{itemize}
  
 
-The weighting function is also split into two parts: $\xi$ for the inner collocation points and $\phi$ as penalty factor for the boundary points. The weighting function $\xi$ can be adapted by a parameter $\kappa$. For a $\kappa > 1$, $\xi$ assigns larger values for collocation points closer to the boundary, effectively shifting the relative importance towards the boundary. These weights can be calculated apriori, so no computational effort is added to the fitness function. Again, the weights are directly extracted from \cite{chaquet_using_2019}. 
+The weighting function is also split into two parts: $\xi$ for the inner collocation points and $\phi$ as penalty factor for the boundary points. The weighting function $\xi$ can be adapted by a parameter $\kappa$. For a $\kappa > 1$, $\xi$ assigns larger values for collocation points closer to the boundary, effectively shifting the relative importance towards the boundary. These weights can be calculated a priori, so no computational effort is added to the fitness function. Again, the weights are directly extracted from \cite{chaquet_using_2019}. 
 
 \begin{equation}
 \label{eq:nc_weight}
@@ -108,7 +108,7 @@ gak(\mathbf{x}) = \omega e^{-\gamma \mathbf{r}^2}
 	\noindent\adjustbox{max width=\linewidth}{
 		\includegraphics[width=\textwidth]{../../code/kernels/gak.pdf}
 	}
-	\unterschrift{3D plot of a single Gauss kernel with the parametes $\omega = 1$, $\gamma = 1$, $c_0 = 0$ and $c_1 = 0$}{}{}
+	\unterschrift{3D plot of a single Gauss kernel with the parameters $\omega = 1$, $\gamma = 1$, $c_0 = 0$ and $c_1 = 0$}{}{}
 	\label{fig:gauss_kernel_3d_plot}
 \end{figure}
 
@@ -146,7 +146,7 @@ To evaluate the residual of a \gls{pde}, the derivatives must be known. To that 
 
 \subsection{GSin Kernel}
 \label{chap:gsin_kernel}
-Additional to the Gauss kernel, a ``GSin'' kernel, further also abbreviated as \gls{gsk}, is proposed. \todo{approximation proof possible?}In essence, this is a multiplication of a \gls{gak} with a sine function, as seen in equation \ref{eq:gsin_kernel}. It can be thought of a sine function, where its influence declines with the radius $r$. Both ``sub-functions'' are centered at the same $\mathbf{c}$. As shown in chapter \ref{chap:gsin_approximation_theorem}, the universal approximation theorem for the GSin kernel holds true. 
+Additional to the Gauss kernel, a ``GSin'' kernel, further also abbreviated as \gls{gsk}, is proposed. \todo{approximation proof possible?}In essence, this is a multiplication of a \gls{gak} with a sine function, as seen in equation \ref{eq:gsin_kernel}. It can be thought of a sine function, where its influence declines with the radius $r$. Both ``sub-functions'' are centred at the same $\mathbf{c}$. As shown in chapter \ref{chap:gsin_approximation_theorem}, the universal approximation theorem for the GSin kernel holds true. 
 The plot in figure \ref{fig:gsin_kernel_3d_plot} shows how the first half period is much larger than the second half. With the sine, two new parameters are introduced: $f$ for the frequency of the sine wave and $\varphi$ represents the phase shift. 
 \begin{equation}
 \label{eq:gsin_kernel}

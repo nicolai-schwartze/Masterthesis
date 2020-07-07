@@ -54,7 +54,6 @@ def memeticpJADE(population, function, minError, maxFeval):
         JADE(population, sphere, minError, maxGen)
     
     '''
-    print("change this bullshit")
     psize, dim = population.shape
     p = 0.3
     c = 0.5

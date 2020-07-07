@@ -751,4 +751,67 @@ u_{ext}(x,y) = tan^{-1}\left(20\left(\frac{(x + y)}{\sqrt{2}} -0.8\right)\right)
 
 
 
+
+\chapter{paJADE}
+\label{chap:pseudocode_pajade}
+
+\begin{algorithm}[H]
+	\SetAlgoNoLine
+	\DontPrintSemicolon
+	\SetKwFunction{FpaJADE}{paJADE}
+	\SetKwFor{PFor}{for}{do parallel}{end}
+	\SetKwProg{Fn}{Function}{:}{}
+	\Fn{\FpaJADE{$\mathbf{X}_{g=0}$, $p$, $c$, $dT$, $function$, $minError$, $maxFE$}}{
+		$fValue_{g=0} \gets function(\mathbf{x}_{g=0})$\;
+		$\mu_{CR} \gets 0.5$\;
+		$\mu_{F}  \gets 0.5$\;
+		$A        \gets \emptyset$\;
+		\While {$fe \leq maxFE$}{
+			$g \gets g+1$\;
+			$S_F \gets \emptyset$\;
+			$S_{CR} \gets \emptyset$\; 
+			$pResults \gets \emptyset$\;
+			\PFor {$i = 1$ to $NP$} {
+				$F_i  \gets randc_i(\mu_{F},0.1)$\;
+				$v_i \gets mutationCurrentToPBest1(\mathbf{x}_{i,g}, A, fValue_g, F_i, p)$\;
+				
+				$CR_i \gets randn_i(\mu_{CR},0.1)$\;
+				$u_i  \gets crossoverBIN(\mathbf{x}_{i,g}, v_i, CR_i)$\;
+				$(u_i, function(u_i)) \rightarrow pResults$
+			}
+			\For {$i = 1$ to $NP$} {	
+				\If {$function(\mathbf{x}_{i,g}) \geq pResults_{i,f,g}$} {
+					$\mathbf{x}_{i,g+1} \gets \mathbf{x}_{i,g}$\;
+				}
+				\Else
+				{
+					$\mathbf{x}_{i,g+1} \gets pResults_{i,u,g}$\;
+					$fValue_{i,g+1} \gets pResults_{i,f,g}$\;
+					$\mathbf{x}_{i,g} \rightarrow \mathbf{A}$\;
+					$CR_i \rightarrow S_{CR}$\;
+					$F_i \rightarrow S_F$\;
+				}
+			}
+			\tcp{resize $A$ to size of $\mathbf{x}_g$}
+			\If{$|A| > NP$} {
+				$A \gets A \setminus A_{rand_i}$
+			}
+			$fe \gets fe + size(\mathbf{X})$\;
+			$\mu_{CR} \gets (1-c) \cdot \mu_{CR} + c \cdot arithmeticMean(S_{CR})$\;
+			$\mu_{F} \gets (1-c) \cdot \mu_{F} + c \cdot lehmerMean(S_{F})$\;
+			
+			\tcp{state detector}
+			\If {$min(function(\mathbf{X}_{g-dT}) - function(\mathbf{X}_g)) < minError$} {
+				break\;
+			}
+		}	
+	}
+	\unterschrift{paJADE Pseudocode}{}{}
+	\label{algo: pajade}
+\end{algorithm}
+
+
+
+
+
 \end{document}

@@ -430,7 +430,7 @@ def drawGaussKernel(parameter, ggb):
 pde_solution = {"<class 'CiPde0A.CiPde0A'>" : lambda x : 2*np.e**(-1.5*(x[0]**2 + x[1]**2)) + np.e**(-3*((x[0] + 1)**2 + (x[1] + 1)**2)) + np.e**(-3*((x[0] - 1)**2 + (x[1] + 1)**2)) + np.e**(-3*((x[0] + 1)**2 + (x[1] - 1)**2)) + np.e**(-3*((x[0] - 1)**2 + (x[1] - 1)**2)),
                 "<class 'CiPde0B.CiPde0B'>" : lambda x : np.exp(-2  * ((x[0])**2 + (x[1])**2))*np.sin(2  * ((x[0])**2 + (x[1])**2)) + np.exp(-1  * ((x[0])**2 + (x[1])**2))*np.sin(1  * ((x[0])**2 + (x[1])**2)) + np.exp(-0.1* ((x[0])**2 + (x[1])**2))*np.sin(0.1* ((x[0])**2 + (x[1])**2)),
                 "<class 'CiPde1.CiPde1'>" : lambda x : (2**(4*10))*(x[0]**10)*((1-x[0])**10)*(x[1]**10)*((1-x[1])**10),
-                "<class 'Cipde2.CiPde2'>" : lambda x : (x[0] + x[1]**3)*np.e**(-x[0]),
+                "<class 'CiPde2.CiPde2'>" : lambda x : (x[0] + x[1]**3)*np.e**(-x[0]),
                 "<class 'CiPde3.CiPde3'>" : lambda x : x[0]**2 + x[1]**2 + x[0] + x[1] + 1,
                 "<class 'CiPde4.CiPde4'>" : lambda x : np.sin(np.pi * x[0])*np.sin(np.pi * x[1]),
                 "<class 'CiPde5.CiPde5'>" : lambda x : np.arctan(20*(np.sqrt((x[0] - 0.05)**2 + (x[1] - 0.05)**2) -0.7)),
@@ -514,9 +514,67 @@ def calcRMSE(solve_dict):
     return np.sqrt((part_sum_c + part_sum_b)/(len(nb) + len(nc)))
     
     
+
+
+
+def plotABSError3D(kernel, parameter, pdeName, lD, uD, name=None):
+    """Draws a 2-dimensional absolut error plot 
+       on the squared domain from lD to uD
+    
+    Parameters
+    ----------
+    kernel : IKernelBase
+        object that implements the IKernelBase interface
+    parameter : numpy array
+        parameter associated with the solution
+    pdeName : string
+        name of the pde class used as key to the 
+        analytic solution
+    lD: float
+        lower boundary of the squared domain
+    uD: float
+        upper boundary of the squared domain
+    name: string
+          saves the figure as this file
+
+    Examples
+    --------
+    >>> import KernelGauss as gk
+    >>> gkernel = gk.KernelGauss()
+    >>> param = np.array([[1,4,0.5,0.5]])
+    >>> plotApprox3D(gkernel, param, 0.0, 1.0)
+    
+    """
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    x = y = np.arange(lD, uD+0.01, 0.01)
+    X, Y = np.meshgrid(x, y)
+    
+    zs0 = np.array([np.abs(kernel.solution(parameter, np.array([x,y])) \
+                    - pde_solution[pdeName](np.array([x,y])))
+                    for x,y in zip(np.ravel(X), np.ravel(Y))])
+    
+    Z = zs0.reshape(X.shape)
+    ax.plot_surface(X, Y, Z, cmap=cm.gnuplot)
+    
+    ax.set_xlabel("X0")
+    ax.set_ylabel("X1")
+    ax.set_zlabel("abs(error)")
+    plt.tight_layout()
+    if type(name) == type(""):
+        plt.savefig(name,bbox_inches='tight')
+        
+    plt.show()
+    return None
+
+
+
+
+
     
 def plotApprox3D(kernel, parameter, lD, uD, name=None):
-    """Draws a 2-dimensional Gaussian kernel function of the form
+    """Draws a 2-dimensional kernel summation function of the form
+       in between the squared domain from lD to uD
     
     Parameters
     ----------
@@ -731,7 +789,7 @@ if __name__ == "__main__":
     
     plotApprox3D(gkernel, cipde2.sol_kernel, 0.0, 1.0)
     
-    print("RMSE = " + str(calcRSME(load_dict)))
+    print("RMSE = " + str(calcRMSE(load_dict)))
     
     print("finished test")
     

@@ -274,10 +274,30 @@
 %
 \setlength{\extrarowheight}{3pt} % table space in front of line
 \patchcmd{\bibsetup}{\interlinepenalty=5000}{\interlinepenalty=10000}{}{}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%             self-defined            %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 %
 % for circlearrowleft 
 %
 \usepackage{amssymb} 
+
+%
+% for inline code
+% 
+\definecolor{light-gray}{gray}{0.9}
+
+\definecolor{testbed_colour}{RGB}{255,153,51}
+\definecolor{opt_algo_colour}{RGB}{204,0,0}
+\definecolor{kernels_colour}{RGB}{0,127,255}
+\definecolor{post_proc_colour}{RGB}{198,41,255}
+\definecolor{key-color}{RGB}{100,0,255}
+
+\lstset{language=Python, emph={None, bool, dict, float, string}, emphstyle={\color{key-color}} }
+
+\newcommand{\inlinecode}[1]{\colorbox{light-gray}{\lstinline[basicstyle=\ttfamily\color{black}]|#1|}}
 
 
 

@@ -76,7 +76,7 @@ The research community interested in computational intelligence solvers for diff
 
 In general, all of these papers from the table use the \gls{wrm}, or some variant of that concept, to transform their differential equation into an optimisation problem. This serves as the fitness function and is necessary to evaluate a possible candidate solution and perform the evolutionary selection. The WRM method is further described in chapter \ref{chap:opt_problem}.
 
-In their paper \cite{chaquet_using_2019} describe an algorithm that approximates a solution with a linear combination of gaussian \gls{rbf} as kernels:
+In their paper \cite{chaquet_using_2019} describe an algorithm that approximates a solution with a linear combination of Gaussian \gls{rbf} as kernels:
 \begin{equation}
 	u(\mathbf{x})_{apx} = \sum_{i=1}^{N} \omega_i e^{\gamma_i (\left||\mathbf{x} - \mathbf{c}_i\right||^2)}
 \end{equation}
@@ -89,7 +89,7 @@ F(\vec{u}_{apx}) = \frac{\sum_{i=1}^{n_C} \xi (\mathbf{x}_i) || \mathbf{L}u(\mat
 The limit of the sum $n_C$ denotes the number of inner collocation points $\mathbf{x}_i$ within the boundary $\Omega$, whereas $n_B$ is the number of discrete points $\mathbf{x}_j$ on the boundary $\partial \Omega$. The first term represents the differential equation itself where $\mathbf{L}$ is a differential operator and $\mathbf{f}(\mathbf{x})$ is the inhomogeneous part. Similar, the second term stands for the boundary condition, where $\mathbf{B}$ is the differential operator and $\mathbf{g}(\mathbf{x})$ is the value on the boundary. The multipliers $\xi$ and $\phi$ are weighting factors for either the inner or the boundary term. The whole term is normalised with the number of collocation points. 
 The parameter of the kernels are determined via a \gls{cma_es} (\cite{hansen_cma_2006}). To further improve the solution, the evolutionary algorithm is coupled with a \gls{ds} method (\cite{nelder_simplex_1965}) to carry out the local search. The authors can show empirically that the local search significantly improves the performance by testing the algorithm on a set of 32 differential equations. 
 
-\cite{babaei_general_2013} takes a different approach. They approximate a solution using a partial fourier series. The main advantage of this candidate representation is, that it is backed up with a solid foundation of convergence theory. The optimal parameters for the candidates are found using a \gls{pso} algorithm (\cite{kennedy_particle_1995}). The fitness function consists of two parts, one for the inner area (equation \ref{eq:inner_WRF}) and one for the boundary (equation \ref{eq:boundary_penalty}). These are added together resulting in $F(u(\mathbf{x})_{apx}) = WRF + PFV$.
+\cite{babaei_general_2013} takes a different approach. They approximate a solution using a partial Fourier series. The main advantage of this candidate representation is, that it is backed up with a solid foundation of convergence theory. The optimal parameters for the candidates are found using a \gls{pso} algorithm (\cite{kennedy_particle_1995}). The fitness function consists of two parts, one for the inner area (equation \ref{eq:inner_WRF}) and one for the boundary (equation \ref{eq:boundary_penalty}). These are added together resulting in $F(u(\mathbf{x})_{apx}) = WRF + PFV$.
 \begin{equation}
 \label{eq:inner_WRF}
 WRF = \int_{\Omega} |\mathbf{W}(\mathbf{x)}| |\mathbf{R}(\mathbf{x})| dx
@@ -117,7 +117,7 @@ After the \gls{gp} procedure, a linear combination of radial basis functions $u(
 
 \cite{sadollah_metaheuristic_2017} compares three different optimisation algorithms to approximate differential equations: \gls{pso}, \gls{hs} (\cite{geem_new_2001}) and \gls{wca} (\cite{eskandar_water_2012}). The objective function for all algorithms is the same. They use the formulation in equation \ref{eq:inner_WRF}, where the weighting function is the same as the residual $|\mathbf{W}(\mathbf{x})| = |\mathbf{R}(\mathbf{x})| \implies WRF = \int_{\Omega} |\mathbf{R}(\mathbf{x})|^2 dx$. The integral is again approximated using a numerical integration scheme. They find that the \gls{pso} is slightly better at producing low error solutions, however the \gls{wca} is better at satisfying the boundary condition. 
 
-\cite{fateh_differential_2019} use a simple variant of \gls{de} (\cite{storn_differential_1997}) where the candidates are extended to matrices. They take discrete function value points within the domain to appximate a solution of elliptic partial differential equations. This is a radical brute force approach that results in a massive search space dimension. Yet the main advantage is, that the solution is not limited to a decomposition of kernel functions and thus even non-smooth functions can be approximated. Since this approach does not produce an analytical solution, the boundary condition can be easily incorporated into the fitness function by simply taking the sum of squared residuals at every grid point, as seen in equation \ref{eq:fit_fateh}.
+\cite{fateh_differential_2019} use a simple variant of \gls{de} (\cite{storn_differential_1997}) where the candidates are extended to matrices. They take discrete function value points within the domain to approximate a solution of elliptic partial differential equations. This is a radical brute force approach that results in a massive search space dimension. Yet the main advantage is, that the solution is not limited to a decomposition of kernel functions and thus even non-smooth functions can be approximated. Since this approach does not produce an analytical solution, the boundary condition can be easily incorporated into the fitness function by simply taking the sum of squared residuals at every grid point, as seen in equation \ref{eq:fit_fateh}.
 \begin{equation}
 \label{eq:fit_fateh}
 F(u(\mathbf{x})_{apx}) = \sqrt{\sum_{i=0}^{n} R(\mathbf{x}_i)^2}
@@ -172,7 +172,7 @@ F(u(\mathbf{x})_{apx}) = \sqrt{\sum_{i=0}^{n} R(\mathbf{x}_i)^2}
 			
 		\end{tabular}
 	}
-	\unterschrift{Literature research on the general topic of stochastic slover and their application. The papers are sorted by relevance to the present work. }{}{}
+	\unterschrift{Literature research on the general topic of stochastic solver and their application. The papers are sorted by relevance to the present work. }{}{}
 	\label{tab:literature_research}
 \end{table}
 
@@ -186,7 +186,7 @@ The main \gls{de} framework consists of three necessary steps, that continuously
 	\item \underline{mutation}: \\
 		  mutation strength parameter F;\\
 		  uses the information from within the population to create a trial vector $v_i$;\\
-		  this is done by scaling the difference between some vectors in the population - hence the name \textit{differential} evolution; the \textit{/current-to-pbest/1} mutation operator can be seen in equation \ref{eq:mut_rand_1}; $x_i$ is the current individual, $x_{best}^p$ is one random vector of the p\% top vectors, $x_{r1}$ is a random vector of the population while $\tilde{x}_{r2}$ is randomly choosen from the population and the archive;
+		  this is done by scaling the difference between some vectors in the population - hence the name \textit{differential} evolution; the \textit{/current-to-pbest/1} mutation operator can be seen in equation \ref{eq:mut_rand_1}; $x_i$ is the current individual, $x_{best}^p$ is one random vector of the p\% top vectors, $x_{r1}$ is a random vector of the population while $\tilde{x}_{r2}$ is randomly chosen from the population and the archive;
 		  \begin{equation}
 		  \label{eq:mut_rand_1}
 		  v_i = x_{i} + F_i(x_{best}^p - x_{i}) + F_i(x_{r1} - \tilde{x}_{r2})

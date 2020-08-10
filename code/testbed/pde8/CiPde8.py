@@ -150,13 +150,13 @@ if __name__ == "__main__":
     sys.path.append("../")
     sys.path.append("../../opt_algo")
     sys.path.append("../../kernels")
-    import OptAlgoMemeticpJADEadaptive as oaMempJadeadaptive
+    import OptAlgoMemeticpJADE as oaMempJade
     import KernelGauss as gk
     
-    initialPop = np.random.rand(8,4)
-    max_fe = 10**6
+    initialPop = np.random.rand(40,20)
+    max_fe = 10**3
     min_err = 0
-    mpJade = oaMempJadeadaptive.OptAlgoMemeticpJADEadaptive(initialPop, max_fe, min_err)
+    mpJade = oaMempJade.OptAlgoMemeticpJADE(initialPop, max_fe, min_err)
     
     gkernel = gk.KernelGauss()
     
@@ -166,7 +166,11 @@ if __name__ == "__main__":
     for x0 in omega:
         for x1 in omega:
             nc.append((x0, x1))
-        
+            
+    
+    # change collocation point not evaluate at singularity
+    # nc[40] = (0.501, 0.501)
+    
     # boundary points
     nb = []
     nby = np.hstack((np.zeros(10), np.arange(0.0, 1.0, 0.1), np.ones(10), np.arange(1.0, 0.0, -0.1)))

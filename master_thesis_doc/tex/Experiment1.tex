@@ -3,10 +3,10 @@
 \chapter {Experiment 1: Parallel Population JADE}
 \label{chap:experimet_1}
 
-With the serial algorithm from the chapter above, evaluating a \gls{pde} takes way to long to be practically relevant (beyond $14.5 \cdot 10^3$ seconds at $10^6$ \gls{nfe}). To reduce the solving time and speed up all further experiments, a parallel JADE is implemented. This chapter describes the benefits and drawbacks the new algorithm.  
+With the serial algorithm from the chapter above, evaluating a \gls{pde} takes way to long to be practically relevant (beyond $14.5 \cdot 10^3$ seconds at $10^6$ \gls{nfe}). To reduce the solving time and speed up all further experiments, a parallel JADE is implemented. This chapter describes the benefits and drawbacks of the new algorithm.  
 
 \section{Hypotheses}
-The actual parallel JADE algorithm is shown in the appendix \ref{chap:pseudocode_pjade}. The pseudocode \ref{algo: pjade} is not much different from the JADE algorithm \ref{algo: jade}. The main differences are laid out in the lines 11 to 17. In essence, the mutation, the crossover, the parameter adaption and the fitness evaluation are done in parallel for each individual in the population. The parallelism is based on the python module multiprocessing (\cite{python_standard_library_multiprocessing_2020}), in particular the \inlinecode{multiprocessing.Pool.apply\_async(func, *args)} method. This method takes a function, in this case an adapted version of the for-loop from line 11 to 17, and automatically maps it to a number of preallocated processes. After this is done for every individual in the population, the processes are synchronised and the results get returned to the main process. Therein lies the actual difference to the serial JADE. In the parallel algorithm new individuals are only available after each generation, whereas with the serial algorithm, the individuals are constantly updated, already before the next generation starts. This means, that in the parallel algorithm, information is withheld until the next generation - the same information can spread faster in the serial algorithm.  
+The actual parallel JADE algorithm is shown in appendix \ref{chap:pseudocode_pjade}. The pseudocode \ref{algo: pjade} is very similar to the JADE algorithm \ref{algo: jade}. The main differences are laid out in the lines 11 to 17. The mutation, the crossover, the parameter adaption and the fitness evaluation are done in parallel for each individual in the population. The parallelism is based on the python module multiprocessing (\cite{python_standard_library_multiprocessing_2020}), in particular the \inlinecode{multiprocessing.Pool.apply\_async(func, *args)} method. This method takes a function, in this case an adapted version of the for-loop from line 11 to 17, and automatically maps it to a number of preallocated processes. After this is done for every individual in the population, the processes are synchronised and the results get returned to the main process. Therein lies the actual difference to the serial JADE. In the parallel algorithm new individuals are only available after each generation, whereas with the serial algorithm, the individuals are constantly updated before the next generation starts. This means that in the parallel algorithm information is withheld until the next generation - the same information can spread faster in the serial algorithm.  
 
 For the sake of completeness, the memetic parallel JADE pseudocode is shown in the algorithm \ref{algo: memeticpJADE} below. The only difference compared to the simple memetic JADE \ref{algo: memeticJADE} is the usage of the pJADE in line 5. 
 
@@ -25,27 +25,27 @@ For the sake of completeness, the memetic parallel JADE pseudocode is shown in t
 		$pop$, $FE$ $ = downhill\text{ }simplex($$funct$, $bestSol$, $minErr$, $2 dim)$\;
 		\Return $pop$, $FE$, $F$, $CR$
 	}
-	\unterschrift{memetic parallel JADE Pseudocode}{}{}
+	\unterschrift{Pseudocode of memetic parallel JADE}{}{}
 	\label{algo: memeticpJADE}
 \end{algorithm}
 
-This chapter tries to answer the question, if the explained distinctions actually influences the results, to the better or the worse. Further, the time-benefits of this strategy are examined and assessed.
+This chapter tries to answer the question if the explained distinctions actually influence the results, to the better or the worse. Further, the time-benefits of this strategy are examined and assessed.
 
 \section{Experiment Setup}
-Similar to the experiment 0 before, the standard parameters from table \ref{tab:ci_parameter} are used. Again, two different machines with either $10^4$ \gls{nfe} ($\rightarrow$ machine 1) or $10^6$ \gls{nfe} ($\rightarrow$ machine 2) were used, where the time comparison is only allowed on machine 1. Also, 5 \gls{gak} are used, meaning the problem dimension is 20 and the population size is 40. 
+Similar to the experiment 0 before, the standard parameters from table \ref{tab:ci_parameter} are used. Again, two different machines with either $10^4$ \gls{nfe} ($\rightarrow$ machine 1) or $10^6$ \gls{nfe} ($\rightarrow$ machine 2) are used, whereby the time comparison is only allowed on machine 1. Also, 5 \gls{gak} are used, meaning the problem dimension is 20 and the population size is 40. The standard Wilcoxon test (explained in appendix \ref{chap:apendix_post_proc}) is used to proof statistical significance. 
 
 Additionally, a new parameter is introduced: the number of allocated parallel processes. It is recommended to set this parameter to the number of available processors, but this also depends on the general workload of the machine. When using too many processes, the system might be overwhelmed, effectively slowing down the task and resulting in an even longer solving time. On machine 1, 5 processes are implemented, while machine 2 is capable of handling 30 processes. With other machines, it might be possible to introduce even more processes, potentially increasing the speed-up even further. 
 
-\section{Result}
+\section{Results}
 
-The two images \ref{fig:parallel_jade_time_boxplot} and \ref{fig:parallel_jade_memory_boxplot} display a boxplot of the time- and memory consumption respectively. To ensure comparability with the results obtained for the serial JADE, these images represent the results at $10^4$ \gls{nfe} on machine 1. 
+The two images \ref{fig:parallel_jade_time_boxplot} and \ref{fig:parallel_jade_memory_boxplot} display a boxplot of the time- and memory consumption. To ensure comparability with the results obtained for the serial JADE, these images represent the results at $10^4$ \gls{nfe} on machine 1. 
 
 \begin{figure}[H]
 	\centering
 	\noindent\adjustbox{max width=0.66\linewidth}{
 		\includegraphics[width=\textwidth]{../../code/experiments/experiment_1/time_boxplot_ci_exp1.pdf}
 	}
-	\unterschrift{Solving time of the parallel memetic JADE algorithm at $10^4$ \gls{nfe}}{}{}
+	\unterschrift{Relative solving time results of parallel memetic JADE after $10^4$ \gls{nfe}.}{}{}
 	\label{fig:parallel_jade_time_boxplot}
 \end{figure}
 
@@ -55,13 +55,13 @@ The two images \ref{fig:parallel_jade_time_boxplot} and \ref{fig:parallel_jade_m
 	\noindent\adjustbox{max width=0.66\linewidth}{
 		\includegraphics[width=\textwidth]{../../code/experiments/experiment_1/mem_boxplot_ci_exp1.pdf}
 	}
-	\unterschrift{Memory consumption of the parallel memetic JADE at $10^4$ \gls{nfe}}{}{}
+	\unterschrift{Relative memory usage results of parallel memetic JADE after $10^4$ \gls{nfe}.}{}{}
 	\label{fig:parallel_jade_memory_boxplot}
 \end{figure}
 
 
 
-Table \ref{tab:compare_parallel_serial_jade_10^6} shows the mean and the median L2 norm reached on the testbed by both the serial and the parallel algorithm. This is completed with a Wilcoxon test, to identify the difference in the performance. The term ``undecided'' in this context means, that the mean and the median paint different pictures: one of those values is smaller while the other one is larger. Most notably, on \gls{pde} 4, the parallel JADE performs significantly worse than the serial JADE. 
+Table \ref{tab:compare_parallel_serial_jade_10^6} shows the mean and the median L2 norm reached on the testbed by both the serial and the parallel algorithm. This is completed with a Wilcoxon test, to identify the difference in the performance. The term ``undecided'' in this context means that the mean and the median paint different pictures: one of those values is smaller while the other one is larger. Most notably, on \gls{pde} 4 the parallel JADE performs significantly worse than the serial JADE. 
 
 \begin{table}[H]
 	\centering
@@ -71,7 +71,7 @@ Table \ref{tab:compare_parallel_serial_jade_10^6} shows the mean and the median 
 			\hline
 			\rowcolor[HTML]{\farbeTabA}
 			
-			algorithm & \multicolumn{2}{|c|}{serial JADE} & \multicolumn{2}{|c|}{parallel JADE} & \\ \hline
+			Algorithm & \multicolumn{2}{|c|}{serial JADE} & \multicolumn{2}{|c|}{parallel JADE} & \\ \hline
 			stat & mean & median & mean & median & Wilcoxon Test \\ \hline \hline
 			\gls{pde} 0A & 0.6596 $\pm$ 0.5510 & 0.9285 & 0.6939 $\pm$ 0.6635 & 0.9243 & unsig. undecided \\ \hline
 			\gls{pde} 0B & 0.2027 $\pm$ 0.1302 & 0.1516 & 0.2809 $\pm$ 0.3071 & 0.2035 & unsig. worse \\ \hline
@@ -80,14 +80,14 @@ Table \ref{tab:compare_parallel_serial_jade_10^6} shows the mean and the median 
 			\gls{pde} 3 & 0.0328 $\pm$ 0.0169 & 0.0285 & 0.0371 $\pm$ 0.0206 & 0.0295 & unsig. worse \\ \hline
 			\gls{pde} 4 & 0.0378 $\pm$ 0.0083 & 0.0352 & 0.0505 $\pm$ 0.0121 & 0.0481 & sig. worse \\ \hline
 			\gls{pde} 5 & 1.1968 $\pm$ 0.0286 & 1.2056 & 1.2030 $\pm$ 0.0465 & 1.2053 & unsig. undecided \\ \hline
-			\gls{pde} 6 & 0.4135 $\pm$ 1.2133 & 0.0018 & 0.5814 $\pm$ 1.3550 & 0.0000 & unsig. undecided \\ \hline
+			\gls{pde} 6 & 0.4135 $\pm$ 1.2133 & 0.0018 & 0.5814 $\pm$ 1.3550 & 1.266E-17 & unsig. undecided \\ \hline
 			\gls{pde} 7 & 0.0221 $\pm$ 0.0019 & 0.0223 & 0.0228 $\pm$ 0.0025 & 0.0226 & unsig. worse \\ \hline
 			\gls{pde} 8 & 0.2170 $\pm$ 0.0019 & 0.2175 & 0.2167 $\pm$ 0.0017 & 0.2169 & unsig. better \\ \hline
 			\gls{pde} 9 & 0.0451 $\pm$ 0.0119 & 0.0459 & 0.0426 $\pm$ 0.0115 & 0.0463 & unsig. undecided \\ \hline
 			
 		\end{tabular}
 	}
-	\unterschrift{This tabular compares the results obtained by the parallel and the serial JADE. All results are obtained at $10^6$ \gls{nfe}. The serial data is the same as already presented in table \ref{tab:serial_jade_compare_10^6_10^4}. }{}{}
+	\unterschrift{This table compares the results obtained by the parallel and the serial JADE. All results are obtained at $10^6$ \gls{nfe}. The serial data is the same as already presented in table \ref{tab:serial_jade_compare_10^6_10^4}. }{}{}
 	\label{tab:compare_parallel_serial_jade_10^6}
 \end{table}
 
@@ -95,15 +95,15 @@ Table \ref{tab:compare_parallel_serial_jade_10^6} shows the mean and the median 
 
 \section{Discussion}
 
-The results from above are examine in this chapter. The time and memory consumption as well as the significant worse results on \gls{pde} 4 are discussed. 
+The results from above are analysed in this chapter. The time and memory consumption as well as the speed-up for every testbed function is discussed. Further, the significant worse results on \gls{pde} 4 are investigated. Finally, the usage of the parallel JADE in all further experiments is justified. 
 
-\subsection{Memory Utilization}
-As the boxplot \ref{fig:parallel_jade_memory_boxplot} shows, the memory consumption is roughly at the same level, somewhere between 1.65 and 2.2 Mbyte. Only a few outliers are added, while others are removed. This is expected, since memory-wise no integral changes have been done in the implementation.  
+\subsection{Memory Usage}
+As the boxplot \ref{fig:parallel_jade_memory_boxplot} shows, the memory consumption is roughly at the same level, somewhere between 1.5 to 4.0 percent of \gls{fem} solver. The memory usage is very similar to the serial experiment. This is expected, since memory-wise no integral changes have been performed.  
 
 \subsection{Solving Time}
-The main purpose of the parallelisation is to cut down the solving time and accelerate all further experiments. To that extent, the population is evaluated in parallel. As the solving time boxplot in figure \ref{fig:parallel_jade_time_boxplot} shows, this goal was achieved. The solving time ranks now between 36 and 52 seconds at $10^4$ \gls{nfe}. This is unquestionably faster than the solving time of the serial algorithm. Yet, these times can not compete with the solving time achieved by the \gls{fem} package NGSolve. 
+The main purpose of the parallelisation is to cut down the solving time and accelerate all further experiments. To that extent, the population is evaluated in parallel. As the solving time boxplot in figure \ref{fig:parallel_jade_time_boxplot} shows, this goal was achieved. The execution time after $10^4$ \gls{nfe} now ranks between the 8 and 15-fold of the \gls{fem} solver. This is unquestionably faster than the solving time of the serial algorithm. Remarkable is that on \gls{pde} 3, the \gls{ci} solver is even faster than NGSolve and takes only about $0.56 \cdot 65.2 \text{ s} \approx 36.5 \text{ s}$. Of course, to compete with the solution quality, more \gls{nfe} are needed, which increases the execution time. 
 
-The image \ref{fig:serial_to_parallel_speedup} shows the calculated mean \gls{sp} over 20 replications, that is accomplish by substituting the serial JADE with the parallel version. The 95\% confidence interval is shown in yellow. 
+Image \ref{fig:serial_to_parallel_speedup} shows the calculated mean \gls{sp} over 20 replications, that is accomplished by substituting the serial JADE with the parallel version. The 95\% confidence interval is shown in yellow. 
 
 \begin{figure}[H]
 	\centering
@@ -114,27 +114,27 @@ The image \ref{fig:serial_to_parallel_speedup} shows the calculated mean \gls{sp
 	\label{fig:serial_to_parallel_speedup}
 \end{figure}
 
-As the plot \ref{fig:serial_to_parallel_speedup} also shows, speed-up varies by testbed function. This can be directly linked to the ``size'' of the fitness function, especially the \gls{rhs} of the \gls{pde}. The longer the fitness function is to evaluate, the greater is the speed-up that can be achieved ($time(fit \text{ } evaln) \uparrow \rightarrow sp \uparrow$). The same correlation is true for the size of the population: the larger a population is, the better is the speed-up ($pop \text{ } size \uparrow \rightarrow sp \uparrow$). Larger fitness functions are needed in on the testbed \gls{pde}s 0A, 0B, 1, 5, and 9. Looking at the definition of these equations in the appendix \ref{chap:testbed}, it is notable that the \gls{rhs} are constructed of more terms compared to the other equations. 
+The plot \ref{fig:serial_to_parallel_speedup} shows that the speed-up varies by testbed function. This can be directly linked to the ``size'' of the fitness function, especially the \gls{rhs} of the \gls{pde}. The longer the fitness function takes to evaluate, the greater is the speed-up that can be achieved ($time(fit \text{ } evaln) \uparrow \rightarrow sp \uparrow$). One would expect the same correlation for the size of the population: the larger a population, the better is the speed-up ($pop \text{ } size \uparrow \rightarrow sp \uparrow$). Larger fitness functions are needed by the testbed \gls{pde}s 0A, 0B, 1, 5, and 9. Looking at the definition of these equations in appendix \ref{chap:testbed}, it is notable that the \gls{rhs} are constructed of more terms compared to the other equations. 
 
-\subsection{\gls{pde} 4}
+\subsection{PDE 4}
 
-The table \ref{tab:compare_parallel_serial_jade_10^6} shows, that the L2 norm achieved on \gls{pde} 4 is significantly worse when using the parallel JADE. This is not expected and hinders the justification of substituting the serial JADE with the parallel version. It is of interest to confirm the hypothesis and allow the usage of the parallel JADE in all further experiments. 
+Table \ref{tab:compare_parallel_serial_jade_10^6} shows that the L2 norm achieved on \gls{pde} 4 is significantly worse when the parallel JADE is used. This is not expected and hinders the justification of substituting the serial JADE with the parallel version. It is of interest to confirm the hypothesis and allow the usage of the parallel JADE in all further experiments. 
 
-The absolute error (calculated by $E_{abs} = \left| u_{apx}(x_0, x_1) - u_{ext}(x_0, x_1) \right|$) of the worst solution generated either by the serial or the parallel algorithm can be seen in the plot from figure \ref{fig:serial_parallel_pde4_error_comparison}. The plot suggests, that the underlying structure of the error is similar in both cases. Although, the L2 norm, the function value and the \gls{rmse} are lower with the serial JADE, the absolute error values from the plot are similar. Only on the boundary $x_1 = 0, x_0 \in [0,1]$, the serial JADE generates visually smaller error. 
+The absolute error (calculated by $E_{abs} = \left| u_{apx}(x_0, x_1) - u_{ext}(x_0, x_1) \right|$) of the worst solution generated either by the serial or the parallel algorithm can be seen in the plot from figure \ref{fig:serial_parallel_pde4_error_comparison}. The plot suggests that the underlying structure of the error is similar in both cases. Although, the L2 norm, the fitness value and the \gls{rmse} are lower with the serial JADE, the absolute error values from the plot are similar. Only on the boundary $x_1 = 0, x_0 \in [0,1]$, the serial JADE generates a visually smaller error. 
 
 \begin{figure}[H]
 	\centering
 	\begin{subfigure}[b]{0.5\linewidth}
 		\centering
 		\includegraphics[width=1\textwidth]{../../code/experiments/experiment_1/abs_error_pde4_serial.pdf}
-		\caption{Absolute error, serial JADE \\ L2 norm: 0.06085492512786148 \\ FE value: 0.4632201522148409 \\ RMSE: 0.07521621060905691}
+		\caption{Absolute error, serial JADE \\ L2 norm: 0.0608 \\ FE value: 0.4632 \\ RMSE: 0.0752}
 		\label{fig:serial_JADE_pde4_abs_error}
 	\end{subfigure}% 
 	%
 	\begin{subfigure}[b]{0.5\linewidth}
 		\centering
 		\includegraphics[width=1\textwidth]{../../code/experiments/experiment_1/abs_error_pde4_parallel.pdf}
-		\caption{Absolute error, parallel JADE \\ L2 norm: 0.0732660037376775 \\ FE value: 0.6976349252814954 \\ RMSE: 0.08948976068654439}
+		\caption{Absolute error, parallel JADE \\ L2 norm: 0.0733 \\ FE value: 0.6976 \\ RMSE: 0.0895}
 		\label{fig:parallel_JADE_pde4_abs_error}
 	\end{subfigure}%
 	\unterschrift{Comparison of the absolute error of the worst solution on \gls{pde} 4 by a parallel and a serial memetic JADE at $10^6$ \gls{nfe}}{}{}%
@@ -142,7 +142,7 @@ The absolute error (calculated by $E_{abs} = \left| u_{apx}(x_0, x_1) - u_{ext}(
 \end{figure}
 
 
-In order to make the results easier to interpret, the histogram from figure \ref{fig:pde4_ex0_ex1_histogram}, shows the L2 norm data from the table \ref{tab:compare_parallel_serial_jade_10^6}. The best solution of both algorithms are at a similar quality level. The parallel sample introduces more results with a worse quality. The absolute numerical range of the quality is visualised in the boxplot \ref{fig:pde4_ex0_ex1_boxplot}. The Wilcoxon test asserts, that the two shown distributions are significantly different. While this can be confirmed visually, it can also be seen that the differences are only marginal. 
+In order to make the results easier to interpret, the histogram from figure \ref{fig:pde4_ex0_ex1_histogram} shows the L2 norm data from table \ref{tab:compare_parallel_serial_jade_10^6}. The best solutions of both algorithms are at a similar quality level. The parallel sample introduces more results with a worse quality. The absolute numerical range of the quality is visualised in the boxplot \ref{fig:pde4_ex0_ex1_boxplot}. The Wilcoxon test asserts that the two shown distributions are significantly different. While this can be confirmed visually, it can also be seen that the differences are only marginal. 
 
 
 \begin{figure}[H]
@@ -163,7 +163,7 @@ In order to make the results easier to interpret, the histogram from figure \ref
 	\label{fig:pde4_ex0_ex1_boxplot}
 \end{figure}
 
-There is no definite certainty, but it is possible that the obtained data includes several unfortunate outliers. Increasing the number of independent replications could provide further clues to that matter. Considering, that quality-wise the parallel JADE makes no significant difference on 10 of 11 tested \gls{pde}s, and the compelling speed-up on all test problems, the parallel JADE is kept for the further experiments. At the very worst, the algorithm is faster by a factor of 2.5 and results in a minor decrease of the solution quality. This trade-off is acceptable.
+Increasing the number of independent replications could provide further clues to that matter. Considering that quality-wise the parallel JADE makes no significant difference on 10 of 11 tested \gls{pde}s and the compelling speed-up on all test problems, the parallel JADE is applied in all further experiments. At the very worst, the algorithm is faster by a factor of 2.5 and results in a minor decrease of the solution quality. This trade-off is acceptable.
 
 
 \end{document}

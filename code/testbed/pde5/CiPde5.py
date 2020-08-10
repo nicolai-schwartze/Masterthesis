@@ -161,7 +161,7 @@ if __name__ == "__main__":
     import KernelGSin as gsk
     
     initialPop = np.random.randn(12,6)
-    max_fe = 1*10**6
+    max_fe = 1*10**3
     min_err = 0
     mpJADE = oaMempJadeadaptive.OptAlgoMemeticpJADEadaptive(initialPop, max_fe, min_err)
     

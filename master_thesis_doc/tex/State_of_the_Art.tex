@@ -1,4 +1,4 @@
-\documentclass[./\jobname.tex,hidelinks]{subfiles}
+\documentclass[./\jobname.tex]{subfiles}
 \begin{document}
 
 \chapter{State of the Art}
@@ -10,43 +10,43 @@ Currently the finite element method is the go-to approach to solve partial diffe
 
 The general steps taken to solve a PDE with an FEM solver are: 
 \begin{enumerate}
-	\item \underline{Step: Setup} \\
-		  At first a Hilbertspace $V$ is needed. The principal idea is to find a bilinear form $a: V x V \rightarrow \mathbf{R}$ and a linear functional $F: V \rightarrow \mathbf{R}$ so that for 
-		  \begin{equation}
-			  u \in V \text{   } a(u,v) = F(v) \text{   } \forall v \in V
-		  \end{equation}
-		  This can be achieved by reformulating the strong form into the weak form as seen in equation \ref{eq: weak form}. There, the left-hand side represents the $a(u,v)$ and the \gls{rhs} is $F(v)$. In this case $u$ is often called the trial-function and $v$ is named the test-function. 
 	\item \underline{Step: Strong Form} \\
-		  This is the standard formulation of the \gls{pde} with a Dirichlet boundary condition: \\
+		  This is the standard formulation of the linear \gls{pde}. $\mathbf{L}$ and $\mathbf{B}$ are linear differential operators that include the derivatives. \\
 		  \begin{equation}
 		  \label{eq: strong form}
 			  \begin{split}
-			  	u, f, g: \Omega \rightarrow \mathbf{R} \\
+			  	\mathbf{x} \in \mathbb{R}^2 \\
+			  	u(\mathbf{x}), f(\mathbf{x}), g(\mathbf{x}): \Omega \rightarrow \mathbb{R} \\
 				\mathbf{L} u(\mathbf{x}) = f(\mathbf{x}) \text{ on $\Omega$} \\
-				u(\mathbf{x})|_{\partial \Omega} = g(\mathbf{x})
+				\mathbf{B} u(\mathbf{x}) = g(\mathbf{x}) \text{ on $\partial \Omega$}
 			  \end{split}
 		  \end{equation}
+		  Further, only Dirichlet boundary conditions are considered, thus the boundary operator is always the identity matrix $\mathbf{B} = \mathbb{I}$. Therefore, the linear operator on the boundary $\mathbf{B}$ can be disregarded, resulting in  \\
+		  \begin{equation}
+		  	u(\mathbf{x})|_{\partial \Omega} = g(\mathbf{x}) .
+		  \end{equation}
+		  
 	\item \underline{Step: Weak Form} \\
-		  This is equivalent to the strong form but written in an integral formulation. \\
+		  The next step is to reformulate the strong form into a usable weak form. This is equivalent to the strong form but written in an integral notation. In this equation, the $A$, $b$ and $c$ correspond to the constant factors of the derivatives in strong form. For the sake of completeness, this is kept abstract. In the \gls{pde}s considered in this work, $A = \mathbb{I}$ and $b=\mathbf{0}$, $c = 0$. Currently, the so-called test-function $v(\mathbf{x})$ is an arbitrary function, but it has to be 0 on the boundary $v(\mathbf{x})|_{\Omega} = 0$. The choice of the test-function correspond to different \gls{fem} types. \cite[p. 6f]{shen_spectral_2011}\\
 		  \begin{equation}
 		  \label{eq: weak form}
 			  \begin{split}
-			      \int_{\Omega} - (\nabla^T A \nabla) u(\mathbf{x}) v(\mathbf{x}) dV - \int_{\Omega} b^T \nabla u(\mathbf{x}) v(\mathbf{x}) dV \\
-			      + \int_{\Omega} c u(\mathbf{x}) v(\mathbf{x}) dV = \int_{\Omega} f(\mathbf{x}) v(\mathbf{x}) dV
+			      \underbrace{\int_{\Omega} - (\nabla^T A \nabla) u(\mathbf{x}) v(\mathbf{x}) dV - \int_{\Omega} b^T \nabla u(\mathbf{x}) v(\mathbf{x}) dV + \int_{\Omega} c u(\mathbf{x}) v(\mathbf{x}) dV}_{a(u,v)} \\ = \underbrace{\int_{\Omega} f(\mathbf{x}) v(\mathbf{x}) dV}_{F(v)}
 			  \end{split}
-		  \end{equation}
-		  In this equation, the $A$, $b$ and $c$ correspond to the constant factors of the derivatives in strong form. The derivatives are hidden in the differential operator $\mathbf{L}$.
+		  \end{equation} 
 	\item \underline{Step: Discretisation} of $\Omega$ \\
 		  Create a mesh of finite elements that span the whole domain. Usually these are triangles. Thus, this step is sometimes called ``triangulation''.
 	\item \underline{Step: Basis functions} \\
-		  Choose a basis function $\Phi(\mathbf{x})$ that can be used to approximate the solution $u(\mathbf{x}) \approx u_{h}(\mathbf{x}) = \sum_{i = 1}^{N} u_i \Phi(\mathbf{x})$. A common choice are Lagrange or Chebyshev polynomials. 
+		  Choose a basis function $\Phi(\mathbf{x})$ that can be used to approximate the solution $u(\mathbf{x}) \approx u_{h}(\mathbf{x}) = \sum_{i = 1}^{N} u_i \Phi(\mathbf{x})_i$. A common choice are Lagrange or Chebyshev polynomials. In the Galerkin type \gls{fem}, the test-function $v(\mathbf{x})$ is the same as the trail-function, thus $v(\mathbf{x}) = \sum_{j = 1}^{N} v_j \Phi(\mathbf{x})_j$. The choice of the basis function $\Phi(\mathbf{x})$ largely influences the computational effort.  $\Phi(\mathbf{x})$ should have a small support, to produce a thinly populated matrix $A$ in the linear system of equations \eqref{eq:linear_system_of_equations} below.
 	\item \underline{Step: Solution} \\
-		  Solve the resulting linear system of equations to determine the factors $u_i$. In the simple case where only second order derivatives are used in the strong from, the resulting linear system looks like this: 
+		  In the weak form, as seen in equation \eqref{eq: weak form}, $a(u,v)$ is a continuous bilinear form and $F(v)$ is a continuous linear functional. Substituting $u$ and $v$ with their corresponding approximation from \mbox{step 4} results in 
 		  \begin{equation}
-		  \begin{split}
-		  \sum_{j=1}^{N} v_j & \sum_{i=1}^{N} u_i a(\Phi_i, \Phi_j) = \sum_{j=1}^{N} v_j \mathbf{L}(\Phi_j) \\
-		  & \underbrace{\sum_{i=1}^{N} u_i a(\Phi_i, \Phi_j)}_{\mathbf{A u}} = \underbrace{\mathbf{L}(\Phi_j)}_{\mathbf{b}}
-		  \end{split}
+		  \sum_{j=1}^{N} v_j \sum_{i=1}^{N} u_i a(\Phi_i, \Phi_j) = \sum_{j=1}^{N} v_j F(\Phi_j).
+		  \end{equation} 
+		  Dividing by the $v_j$ values on both sides results in a linear system of equations, where the constant factors $u_i$ need to be determined.  
+		  \begin{equation}
+		  \label{eq:linear_system_of_equations}
+		  \underbrace{\sum_{i=1}^{N} u_i a(\Phi_i, \Phi_j)}_{\mathbf{A u}} = \underbrace{F(\Phi_j)}_{\mathbf{b}} \text{ for $j=1,...N$}
 		  \end{equation}
 \end{enumerate}
 
@@ -54,89 +54,109 @@ Modern solvers include more complex and advanced techniques to further improve t
 
 \begin{itemize}
 	\item \underline{Static Condensation}: \\
-		  Depending on the number of discrete elements, the $\mathbf{A}$ matrix can be very large. Inverting large matrices is very time consuming. Condensation reduces this dimensionality by exploiting the structure of $\mathbf{A}$. 
-	\item \underline{Adaptive Mesh Refinement}: \\
-		  The accuracy of a FEM-approximated solution mainly depends on the granularity of the mesh. Typically, finer meshes tend to produce more accurate solutions, but the computation time takes longer. This trade-off can be overcome by a self-adaptive mesh. NGSolve implements that in an adaptive loop that executes: 
-		  \begin{itemize}
-		  	\item Solve PDE (with coarse mesh)
-		  	\item Estimate Error (for every element)
-		  	\item Mark Elements (that have the greatest error)
-		  	\item Refine Elements (that were previously marked)
-		  	\item $\mathbf{\circlearrowleft}$  until degrees of freedom exceed a specified $N$
-		  \end{itemize}
+		  Depending on the number of discrete elements, the $\mathbf{A}$ matrix can be very large. Inverting large matrices is very time consuming. Static condensation, also called Guyan reduction (\cite{guyan_reduction_1965}), reduces this dimensionality by exploiting the structure of $\mathbf{A}$. 
 	\item \underline{Preconditioner}: \\
 		  Instead of solving the $\mathbf{A}^{-1}$ exactly, this can also be approximated by a matrix that is similar to $\mathbf{A}^{-1}$. The actual inverse can be iteratively approximated. NGSolve implements multiple different preconditioners and it even allows to create your own method. 
+	\item \underline{Adaptive Mesh Refinement}: \\
+		The accuracy of a FEM-approximated solution mainly depends on the density of the mesh. Typically, finer meshes tend to produce more accurate solutions, but the computation time takes longer. This trade-off can be overcome by a self-adaptive mesh. NGSolve implements that in an adaptive loop that executes: 
+		\begin{itemize}
+			\item Solve PDE (with coarse mesh)
+			\item Estimate Error (for every element)
+			\item Mark Elements (that have the greatest error)
+			\item Refine Elements (that were previously marked)
+			\item $\mathbf{\circlearrowleft}$  until degrees of freedom exceed a specified $N$
+		\end{itemize}
 \end{itemize}
 
 
 \section{Computational Intelligence Methods} 
 \label{chap:literature_overview}
 
-The research community interested in computational intelligence solvers for differential equations has been steadily growing over the past 20 years. This chapter summarises the most important works done in the general field of development and application of such statistical numerical solvers. The following table \ref{tab:literature_research} gives a brief overview of these papers and sorts them by relevance. 
+The research community interested in computational intelligence solvers for differential equations has been steadily growing over the past 20 years. This chapter summarises the most important works done in the general field of development and application of such statistical numerical solvers. The following table \ref{tab:literature_research} gives a brief overview of these papers and sorts them historically. 
 
-In general, all of these papers from the table use the \gls{wrm}, or some variant of that concept, to transform their differential equation into an optimisation problem. This serves as the fitness function and is necessary to evaluate a possible candidate solution and perform the evolutionary selection. The WRM method is further described in chapter \ref{chap:opt_problem}.
+In general, all of these papers from the table use the \gls{wrm}, or some variant of that concept, to transform their differential equation into an optimisation problem. This serves as the fitness function and is necessary to evaluate a possible candidate solution and perform the evolutionary selection. The fitness function is the function to be optimised. It is also called objective function and these terms are used interchangeably. In short, the residual $R$ is defined through the differential equation itself and can be calculated by $R(u(\mathbf{x})) = \mathbf{L}u(\mathbf{x}) - f(\mathbf{x})$. The residual can be thought of as a functional that substitutes $u(\mathbf{x})$ with an approximate solution $u_{apx}(\mathbf{x})$ and returns a numerical score. The \gls{wrm} method is further described in chapter \ref{chap:opt_problem}.
+
+\cite{howard_genetic_2001} is one of the first advances in this field. They approximate a subset of the convection-diffusion equations with \gls{gp} (\cite{koza_genetic_1992}). Their main idea is to use a polynomial of variable length as the candidate solution that is forced to satisfy the boundary condition. Their fitness value, as seen in equation \eqref{eq:howard_fitness_2001}, is calculated by squaring the residual $R$ and integrating it over the domain. Since the polynomials are known, and the problems are restricted to a specific differential equation, the integral can be evaluated analytically. 
+
+\begin{equation}
+\label{eq:howard_fitness_2001}
+	F(u_{apx}(\mathbf{x})) = -\int_{\Omega} R(u_{apx}(\mathbf{x}))^2 dx
+\end{equation}
+
+\cite{kirstukas_hybrid_2005} proposes a three-step procedure. The first step is time consuming and employs \gls{gp} techniques to find basis functions that span the solution space. The second step is faster and uses a Gram–Schmidt algorithm to compute the basis function multipliers to develop a complete solution for a given set of boundary conditions. Using linear solver methods, a set of coefficients is found that produces a single function that both satisfies the differential equation and the boundary or initial conditions at distinct points over the domain. These points are further called collocation points. 
+
+\cite{tsoulos_solving_2006} use \gls{ge} (\cite{ryan_grammatical_1998}) to find solutions to various differential equations. In contrary to \gls{gp}, \gls{ge} uses vectors instead of trees to represent the candidate string. The solution is evaluated as an analytical string, constructed of the functions $sin$, $cos$, $exp$ and $log$, as well as all digits and all four basic arithmetic operations. Because the \gls{ge} step could result in virtually any function, the fitness integral from equation \eqref{eq:howard_fitness_2001} can not be calculated analytically. Thus, the integral is approximated by evaluating the residual at collocation points within the domain. This is seen in equation \eqref{eq:fit_func_tsoulos}. The algorithm was tested on multiple problems of \gls{ode}, system of ODEs and \gls{pde}. Only the results for ODEs were promising.
+
+\begin{equation}
+\label{eq:fit_func_tsoulos}
+F(u_{apx}(\mathbf{x})) = \sum_{i=1}^{n_C} ||R(u_{apx}(\mathbf{x}_i))||^2
+\end{equation} 
+
+\cite{mastorakis_unstable_2006} couples a \gls{ga} (\cite{holland_outline_1962}) with a \gls{ds} method (\cite{nelder_simplex_1965}) for the local solution refinement. The candidates are represented as polynomials of the order 5 where the coefficients are optimised. The boundary condition is directly incorporated into the candidate, thus simplifying the objective function to equation \eqref{eq:fit_func_tsoulos}. The focus here lays on unstable ODEs, that can not be solved with finite difference methods. 
+
+\cite{sobester_genetic_2008} tried a radical different approach to incorporate the boundary condition into the solution. They found, that using \gls{gp} for the inner domain is only effective if the algorithm does not have to consider the boundary. They split the solution $u_{apx}(\mathbf{x})$ into two parts where $u_{GP}(\mathbf{x})$ represents the solution for the inner domain and $u_{RBF}(\mathbf{x})$ ensures the boundary condition 
+\begin{equation}
+\label{eq:solution_sobester}
+u(\mathbf{x})_{apx} = u(\mathbf{x})_{GP} + u(\mathbf{x})_{RBF}.
+\end{equation}
+At first, the \gls{gp} step produced a trial solution according to the objective function \eqref{eq:fit_func_tsoulos}. After the \gls{gp} procedure, a linear combination of radial basis functions $u(\mathbf{x})_{RBF} = \sum_{j=1}^{n_B} \alpha_j \Phi (||\mathbf{x}-\mathbf{x}_{j}||)$ is specifically tailored to $u(\mathbf{x})_{GP}$, that ensures the boundary condition at all $\mathbf{x}_{j}$ points on $\partial \Omega$. Finding the parameters $\alpha_j$ can be formulated as a least squares problem. 
+
+\cite{howard_genetic_2011} use a \gls{gp} scheme to find the solution to a specific set of simplified convection-diffusion equations. They represent a candidate as discrete function value points over the domain. The function between these points is interpolated. The fitness function is similar to equation \eqref{eq:fit_func_tsoulos} with the exception that the $n_C$ points are not predetermined. These points are sampled randomly in the domain, thus allowing the algorithm to approximate the solution aside from fixed base points. 
+
+\cite{chaquet_solving_2012} use a simple self-adaptive \gls{es} (as developed by \cite{schwefel_evolutionsstrategien_1977} and \cite{rechenberg_evolutionsstrategien_1978}) to evolve the coefficients of a partial Fourier series. The fitness function is expressed in equation \eqref{eq:fit_func_chaquet}. This is similar to the fitness function \ref{eq:fit_func_tsoulos}, but it extends the definition of the boundary to also include Neumann conditions by introducing the linear differential operator $\mathbf{B}$. The limit $n_C$ denotes the number of inner collocation points $\mathbf{x}_i$ within the domain $\Omega$, whereas $n_B$ is the number of discrete points $\mathbf{x}_j$ on the boundary $\partial \Omega$. Further, a penalty factor $\phi$ shifts the focus of the fitness to the boundary. Additionally, this objective function can also represent systems of differential equations, where the number of equations is denoted by $m$. To reduce the search dimension (represented by the number of harmonics), they developed a scheme that only optimises one harmonic at a time and freezes the other coefficients. This scheme is based on the often observed principle that lower frequencies are more important in reconstructing a signal than higher ones. Albeit this concept might not be valid for all possible functions, it worked on all differential equations of their testbed. 
+
+\begin{equation}
+\label{eq:fit_func_chaquet_2012}
+F(u_{apx}(\mathbf{x})) = \frac{\sum_{i=1}^{n_C} || \mathbf{L}u_{apx}(\mathbf{x}_i) - f(\mathbf{x}_i)||^2 + \phi \sum_{j=1}^{n_B} || \mathbf{B}u_{apx}(\mathbf{x}_j) - g(\mathbf{x}_j)||^2}{m (n_C + n_B)}  
+\end{equation}
+
+\cite{babaei_general_2013} takes a similar approach. They approximate a solution using a partial Fourier series. The optimal parameters for the candidates are found using a \gls{pso} algorithm (\cite{kennedy_particle_1995}). The fitness function consists of two parts, one for the inner area (equation \eqref{eq:inner_WRF}) and one for the boundary (equation \eqref{eq:boundary_penalty}). These are added together resulting in equation \eqref{eq:inner_and_boundary_fitness}.
+
+The weighted residual integral WRF is exactly the formulation of the \gls{wrm} from chapter \ref{chap:opt_problem}. $W$ is an arbitrary weighting function. The absolute values of $W$ and $R$ ensure that only positive values count towards the fitness. Instead of using a sum over collocation points, the integral is evaluated using a numerical integration scheme.
+
+\begin{equation}
+\label{eq:inner_WRF}
+WRF(u_{apx}(\mathbf{x})) = \int_{\Omega} |W(\mathbf{x)}| |R(u_{apx}(\mathbf{x}))| dx
+\end{equation} 
+
+The boundary condition is incorporated by summing up its normed violations at distinct points $\mathbf{x}_i$. $K_j$ are penality multipliers that shift the focus to different points of the boundary. The concept of this penalty function originates from \cite{rajeev_s_discrete_1992}.
+
+\begin{equation}
+\label{eq:boundary_penalty}
+PFV(u_{apx}(\mathbf{x})) = WRF(u_{apx}(\mathbf{x})) \cdot \sum_{j=1}^{n_B} K_j \left(\frac{u_{apx}(\mathbf{x}_i)}{g(\mathbf{x}_i)} - 1\right)
+\end{equation}
+
+\begin{equation}
+\label{eq:inner_and_boundary_fitness}
+F(u_{apx}(\mathbf{x})) = WRF(u_{apx}(\mathbf{x})) + PFV(u_{apx}(\mathbf{x}))
+\end{equation}
+
+\cite{panagant_solving_2014} use polynomials as a candidate representation. They do not specify the order or the type of the polynomial. Five different simple versions of \gls{de} (\cite{storn_differential_1997}) are tested. Further, they introduce a so called DE-New that increases the population size after every generation. Their proposition is that greater population sizes are better at finding good solutions. 
+
+\cite{sadollah_metaheuristic_2017} compares three different optimisation algorithms to approximate differential equations: \gls{pso}, \gls{hs} (\cite{geem_new_2001}) and \gls{wca} (\cite{eskandar_water_2012}). They use the formulation in equation \eqref{eq:inner_WRF}, where the weighting function is the same as the residual $|W(\mathbf{x})| = |R(u_{apx}(\mathbf{x}))| \implies WRF = \int_{\Omega} |R(u_{apx}(\mathbf{x}))|^2 dx$. The integral is again approximated using a numerical integration scheme. They find that the \gls{pso} is slightly better at producing low error solutions, however \gls{wca} is better at satisfying the boundary condition. 
 
 In their paper \cite{chaquet_using_2019} describe an algorithm that approximates a solution with a linear combination of Gaussian \gls{rbf} as kernels:
 \begin{equation}
-	u(\mathbf{x})_{apx} = \sum_{i=1}^{N} \omega_i e^{\gamma_i (\left||\mathbf{x} - \mathbf{c}_i\right||^2)}
+u(\mathbf{x})_{apx} = \sum_{i=1}^{N} \omega_i e^{\gamma_i (\left||\mathbf{x} - \mathbf{c}_i\right||^2)}
 \end{equation}
-The approximated function $u(\mathbf{x})_{approx}$ can be fully determined by a finite number of parameters: $\omega_i, \gamma_i, c0_i, \text{ and } c1_i$. These are stacked together into a vector $\vec{u}_{apx}$ and called the decision variables which are optimised by the algorithm. 
-The objective function can be seen in equation \ref{eq:fit_func_chaquet}. 
+The approximated function $u(\mathbf{x})_{apx}$ can be fully determined by a finite number of parameters: $\omega_i, \gamma_i, \mathbf{c}_i$. These are stacked together into a vector $param_{uapx}$ and called the decision variables which are optimised by the algorithm. 
+The objective function can be seen in equation \eqref{eq:fit_func_chaquet}. This is an update of the objective function in \ref{eq:fit_func_chaquet_2012} where the inner collocation points also get scaled by a weighting function $\xi(\mathbf{x}_i)$.
 \begin{equation}
 \label{eq:fit_func_chaquet}
-F(\vec{u}_{apx}) = \frac{\sum_{i=1}^{n_C} \xi (\mathbf{x}_i) || \mathbf{L}u(\mathbf{x}_i) - f(\mathbf{x}_i)||^2 + \phi \sum_{j=1}^{n_B} || \mathbf{B}u(\mathbf{x}_j) - g(\mathbf{x}_j)||^2}{m (n_C + n_B)}  
+F(u_{apx}(\mathbf{x})) = \frac{\sum_{i=1}^{n_C} \xi (\mathbf{x}_i) || \mathbf{L}u_{apx}(\mathbf{x}_i) - f(\mathbf{x}_i)||^2 + \phi \sum_{j=1}^{n_B} || \mathbf{B}u_{apx}(\mathbf{x}_j) - g(\mathbf{x}_j)||^2}{m (n_C + n_B)}  
 \end{equation}
-The limit of the sum $n_C$ denotes the number of inner collocation points $\mathbf{x}_i$ within the boundary $\Omega$, whereas $n_B$ is the number of discrete points $\mathbf{x}_j$ on the boundary $\partial \Omega$. The first term represents the differential equation itself where $\mathbf{L}$ is a differential operator and $\mathbf{f}(\mathbf{x})$ is the inhomogeneous part. Similar, the second term stands for the boundary condition, where $\mathbf{B}$ is the differential operator and $\mathbf{g}(\mathbf{x})$ is the value on the boundary. The multipliers $\xi$ and $\phi$ are weighting factors for either the inner or the boundary term. The whole term is normalised with the number of collocation points. 
-The parameter of the kernels are determined via a \gls{cma_es} (\cite{hansen_cma_2006}). To further improve the solution, the evolutionary algorithm is coupled with a \gls{ds} method (\cite{nelder_simplex_1965}) to carry out the local search. The authors can show empirically that the local search significantly improves the performance by testing the algorithm on a set of 32 differential equations. 
+The multipliers $\xi(\mathbf{x}_i)$ and $\phi$ are weighting factors for either the inner or the boundary term. The whole term is normalised with the number of collocation points. 
+The parameter of the kernels are determined via a \gls{cma_es} (\cite{hansen_cma_2006}). To further improve the solution, the evolutionary algorithm is coupled with a \gls{ds} method to carry out the local search. The authors show empirically that the local search significantly improves the performance by testing the algorithm on a set of 32 differential equations. 
 
-\cite{babaei_general_2013} takes a different approach. They approximate a solution using a partial Fourier series. The main advantage of this candidate representation is, that it is backed up with a solid foundation of convergence theory. The optimal parameters for the candidates are found using a \gls{pso} algorithm (\cite{kennedy_particle_1995}). The fitness function consists of two parts, one for the inner area (equation \ref{eq:inner_WRF}) and one for the boundary (equation \ref{eq:boundary_penalty}). These are added together resulting in $F(u(\mathbf{x})_{apx}) = WRF + PFV$.
-\begin{equation}
-\label{eq:inner_WRF}
-WRF = \int_{\Omega} |\mathbf{W}(\mathbf{x)}| |\mathbf{R}(\mathbf{x})| dx
-\end{equation}
-This is exactly the formulation of the \gls{wrm}, where $\mathbf{R}$ is the residual that originates directly from the differential equation $\mathbf{R} = \mathbf{L}u(\mathbf{x}_i) - f(\mathbf{x}_i)$ and $\mathbf{W}$ is an arbitrary weighting function. Instead of using a sum of collocation points, the integral is evaluated using a numerical integration scheme. 
-\begin{equation}
-\label{eq:boundary_penalty}
-PFV = WRF \cdot \sum_{m=1}^{n_B} K_m g_m
-\end{equation}
-In the penalty function from equation \ref{eq:boundary_penalty} the $g_m$ stands for the boundary condition and $K_m$ are penalty multipliers. The concept of this penalty function originates from \cite{rajeev_s_discrete_1992}. 
-
-\cite{sobester_genetic_2008} tried a radical different approach to incorporate the boundary condition into the solution. They found, that using \gls{gp} (\cite{koza_genetic_1992}) for the inner domain is only effective if the algorithm does not have to consider the boundary. They split the solution $u(\mathbf{x})_{apx}$ into two parts where $u(\mathbf{x})_{GP}$ represents the solution for the inner domain and $u(\mathbf{x})_{RBF}$ ensures the boundary condition, as seen in equation \ref{eq:solution_sobester}. 
-\begin{equation}
-\label{eq:solution_sobester}
-u(\mathbf{x})_{apx} = u(\mathbf{x})_{GP} + u(\mathbf{x})_{RBF}
-\end{equation}
-At first, the \gls{gp} step produced a trial solution according to the objective function \ref{eq:fit_func_sobester}. 
-\begin{equation}
-\label{eq:fit_func_sobester}
-F(u(\mathbf{x})_{apx}) = \sum_{i=1}^{n_C} || \mathbf{L}u(\mathbf{x}_i) - f(\mathbf{x}_i)||^2
-\end{equation}
-After the \gls{gp} procedure, a linear combination of radial basis functions $u(\mathbf{x})_{RBF} = \sum_{i=1}^{n_b} \alpha_i \Phi (||\mathbf{x}-\mathbf{x}_{i+n_d}||)$ is specifically tailored to $u(\mathbf{x})_{GP}$, that ensures the boundary condition at all $\mathbf{x}_{i+n_d}$ points on $\partial \Omega$. Finding the parameters $\alpha_i$ can be formulated as a least squares problem. 
-
-\cite{chaquet_solving_2012} use a simple self-adaptive \gls{es} (as developed by \cite{schwefel_evolutionsstrategien_1977} and \cite{rechenberg_evolutionsstrategien_1978}) to evolve the coefficients of a partial Fourier series. The fitness function from equation \ref{eq:fit_func_chaquet} is reused. To reduce the search dimension (represented by the number of harmonics), they developed a scheme that only optimises one harmonic at a time and freezes the other coefficients. This scheme is based on the often observed principle that lower frequencies are more important in reconstructing a signal than higher ones. Albeit this concept might not be valid for all possible functions, it worked on all differential equations of their testbed. 
-
-\cite{sadollah_metaheuristic_2017} compares three different optimisation algorithms to approximate differential equations: \gls{pso}, \gls{hs} (\cite{geem_new_2001}) and \gls{wca} (\cite{eskandar_water_2012}). The objective function for all algorithms is the same. They use the formulation in equation \ref{eq:inner_WRF}, where the weighting function is the same as the residual $|\mathbf{W}(\mathbf{x})| = |\mathbf{R}(\mathbf{x})| \implies WRF = \int_{\Omega} |\mathbf{R}(\mathbf{x})|^2 dx$. The integral is again approximated using a numerical integration scheme. They find that the \gls{pso} is slightly better at producing low error solutions, however the \gls{wca} is better at satisfying the boundary condition. 
-
-\cite{fateh_differential_2019} use a simple variant of \gls{de} (\cite{storn_differential_1997}) where the candidates are extended to matrices. They take discrete function value points within the domain to approximate a solution of elliptic partial differential equations. This is a radical brute force approach that results in a massive search space dimension. Yet the main advantage is, that the solution is not limited to a decomposition of kernel functions and thus even non-smooth functions can be approximated. Since this approach does not produce an analytical solution, the boundary condition can be easily incorporated into the fitness function by simply taking the sum of squared residuals at every grid point, as seen in equation \ref{eq:fit_fateh}.
+\cite{fateh_differential_2019} use a simple variant of \gls{de} where candidates are represented as discrete function value points within the domain. The function values between the grid points are linearly interpolated. This is a radical brute force approach that results in a massive search space dimension. Yet, the main advantage is that the solution is not limited to a decomposition of kernel functions and thus, even non-smooth functions can be approximated. Since this approach does not produce an analytical solution, the differential equation and the boundary condition is incorporated into the fitness function by taking the sum of squared residuals at every grid point, as seen in equation \eqref{eq:fit_fateh}. The derivatives within the residual are calculated between two neighbouring points by the difference quotient. 
 \begin{equation}
 \label{eq:fit_fateh}
-F(u(\mathbf{x})_{apx}) = \sqrt{\sum_{i=0}^{n} R(\mathbf{x}_i)^2}
+F(\mathbf{x}) = \sqrt{\sum_{i=0}^{n} R(\mathbf{x}_i)^2}
 \end{equation}
 
-\cite{howard_genetic_2011} use a \gls{gp} scheme to find the solution to a specific set of simplified convection-diffusion equations. They also represent a candidate as function value points over the domain. The function between these points is interpolated. The fitness function is similar to equation \ref{eq:fit_func_sobester} with the exception that the $n_C$ points are not predetermined. These points are sampled randomly in the domain, thus allowing the algorithm to approximate the solution aside from the base points. 
-
-\cite{panagant_solving_2014} use polynomials as a candidate representation. They did not specify the order or the type of the polynomial. Five different simple versions of \gls{de} were tested. Further, they introduce a so called DE-New that increases the population size after every generation. Their proposition is that greater population sizes are better at finding good solutions. 
-
-\cite{tsoulos_solving_2006} use a \gls{ge} (\cite{ryan_grammatical_1998}) to find solutions to various differential equations. In contrary to \gls{gp}, \gls{ge} uses vectors instead of trees to represent the candidate string. The solution is evaluated as an analytical string, constructed of the functions $sin$, $cos$, $exp$ and $log$, as well as all digits and all four basic arithmetic operations. The solution is measured by the same idea as displayed in equation \ref{eq:fit_func_sobester}. The algorithm was tested on multiple problems of \gls{ode}, system of ODEs and \gls{pde}. Only the results for ODEs were promising. 
-
-\cite{mastorakis_unstable_2006} couples a \gls{ga} (\cite{holland_outline_1962}) with a \gls{ds} method for the local solution refinement. The candidates are represented as polynomials of the order 5 where the coefficients are optimised. The boundary condition is directly incorporated into the candidate, thus simplifying the objective function to equation \ref{eq:fit_func_sobester}. The focus here lays on unstable ODEs, that can not be solved with finite difference methods. 
-
-\cite{kirstukas_hybrid_2005} proposes a three-step procedure. The first step is time consuming and employs \gls{gp} techniques to find basis functions that span the solution space. The second step is faster and uses a Gram–Schmidt algorithm to compute the basis function multipliers to develop a complete solution for a given set of boundary conditions. Using linear solver methods, a set of coefficients is found that produces a single function that both satisfies the differential equation and the boundary or initial conditions at all collocation points. 
-
-\cite{howard_genetic_2001} is one of the first advances in this field. They approximate a subset of the convection-diffusion equations with \gls{gp}. Their main idea is to use a polynomial of variable length as the candidate representation. They use the same fitness function as already described in equation \ref{eq:solution_sobester}. 
 
 
-\begin{table}[h]
+\begin{table}[H]
 	\centering
 	\noindent\adjustbox{max width=\linewidth}{
 		\begin{tabular}{|c|c|c|c|}
@@ -144,31 +164,31 @@ F(u(\mathbf{x})_{apx}) = \sqrt{\sum_{i=0}^{n} R(\mathbf{x}_i)^2}
 			\hline
 			\rowcolor[HTML]{\farbeTabA}
 			
-			Paper & Algorithm & Coding & Problems \\ \hline
+			Paper & Algorithm & Representation & Problems \\ \hline
 			
-			\multilinecell{\cite{chaquet_using_2019}} & \multilinecell{\gls{cma_es} \\ (global); \\ \gls{ds} (local)} & \multilinecell{linear combination \\ of Guassian kernals} & \multilinecell{testbench of \\ ODEs \\ system of ODEs \\ and PDEs}\\ \hline
-			
-			\multilinecell{\cite{babaei_general_2013}} & \multilinecell{\gls{pso}} & \multilinecell{partial sum \\ of Fourier series} & \multilinecell{integro-differential equation \\ systme of linear ODEs \\ Brachistochrone \\ nonlinear Bernoulli} \\ \hline
-			
-			\multilinecell{\cite{sobester_genetic_2008}} & \multilinecell{\gls{gp} \\ and \\ RBF-NN} & \multilinecell{algebraic term \\ for inner; \\ RBF for boundary} & Elliptic PDEs \\ \hline
-			
-			\multilinecell{\cite{chaquet_solving_2012}} & \multilinecell{self-adaptive \\ \gls{es}} & \multilinecell{partial sum \\ of Fourier series} & \multilinecell{testbench of \\ ODEs \\ system of ODEs \\ and PDEs} \\ \hline
-			
-			\multilinecell{\cite{sadollah_metaheuristic_2017}} & \multilinecell{\gls{pso} \\ \gls{hs} \\ \gls{wca}} & \multilinecell{partial sum \\ of Fourier series} & \multilinecell{singular BVP} \\ \hline
-			
-			\multilinecell{\cite{fateh_differential_2019}} & \multilinecell{\gls{de}} & \multilinecell{function value \\ gird} & Elliptic PDEs \\ \hline
-			
-			\multilinecell{\cite{howard_genetic_2011}} & \multilinecell{\gls{gp}} & function value grid & \multilinecell{convection–diffusion \\ equation \\ at different \\ Peclet numbers } \\ \hline
-			
-			\multilinecell{\cite{panagant_solving_2014}} & \multilinecell{\gls{de}} & \multilinecell{polynomial of \\ unspecified order} & \multilinecell{set of 6 \\ different PDEs}  \\ \hline
-			
-			\multilinecell{\cite{tsoulos_solving_2006}} & \multilinecell{\gls{ge}} & \multilinecell{algebraic term} & \multilinecell{set of ODEs \\ system of ODEs \\ and PDEs} \\ \hline
-			
-			\multilinecell{\cite{mastorakis_unstable_2006}} & \multilinecell{\gls{ga} (global); \\ \gls{ds} \\ (local)} & \multilinecell{5th order \\ polynomial}& \multilinecell{unstable \\ ODEs} \\ \hline
+			\multilinecell{\cite{howard_genetic_2001}} & \multilinecell{\gls{gp}} & \multilinecell{polynomial of \\ arbitrary lengt} & \multilinecell{one-dimensional \\ steady-state \\ model of \\ convection-diffusion \\ equation} \\ \hline
 			
 			\multilinecell{\cite{kirstukas_hybrid_2005}} & \multilinecell{\gls{gp}} & \multilinecell{algebraic \\ expression} & \multilinecell{heating of thin rod \\ heating by current} \\ \hline
 			
-			\multilinecell{\cite{howard_genetic_2001}} & \multilinecell{\gls{gp}} & \multilinecell{polynomial of \\ arbitrary lengt} & \multilinecell{one-dimensional \\ steady-state \\ model of \\ convection-diffusion \\ equation} \\ \hline
+			\multilinecell{\cite{tsoulos_solving_2006}} & \multilinecell{\gls{ge}} & \multilinecell{algebraic term} & \multilinecell{set of ODEs \\ system of ODEs \\ and PDEs} \\ \hline
+			
+			\multilinecell{\cite{mastorakis_unstable_2006}} & \multilinecell{\gls{ga}\\(global); \\ \gls{ds}\\(local)} & \multilinecell{5th order \\ polynomial}& \multilinecell{unstable \\ ODEs} \\ \hline
+			
+			\multilinecell{\cite{sobester_genetic_2008}} & \multilinecell{\gls{gp} \\ and \\ RBF-NN} & \multilinecell{algebraic term \\ for inner; \\ RBF for boundary} & Elliptic PDEs \\ \hline
+			
+			\multilinecell{\cite{howard_genetic_2011}} & \multilinecell{\gls{gp}} & function value grid & \multilinecell{convection–diffusion \\ equation \\ at different \\ Peclet numbers } \\ \hline
+			
+			\multilinecell{\cite{chaquet_solving_2012}} & \multilinecell{\gls{es}} & \multilinecell{partial sum \\ of Fourier series} & \multilinecell{testbench of \\ ODEs \\ system of ODEs \\ and PDEs} \\ \hline
+			
+			\multilinecell{\cite{babaei_general_2013}} & \multilinecell{\gls{pso}} & \multilinecell{partial sum\\of Fourier series} & \multilinecell{integro-differential equation\\systme of linear ODEs \\ Brachistochrone \\ nonlinear Bernoulli} \\ \hline
+			
+			\multilinecell{\cite{panagant_solving_2014}} & \multilinecell{\gls{de}} & \multilinecell{polynomial of \\ unspecified order} & \multilinecell{set of 6 \\ different PDEs}  \\ \hline
+			
+			\multilinecell{\cite{sadollah_metaheuristic_2017}} & \multilinecell{\gls{pso}\\\gls{hs}\\\gls{wca}} & \multilinecell{partial sum\\of Fourier series} & \multilinecell{singular BVP} \\ \hline
+			
+			\multilinecell{\cite{chaquet_using_2019}} & \multilinecell{\gls{cma_es}\\(global); \\ \gls{ds}\\(local)} & \multilinecell{linear combination \\ of Guassian kernals} & \multilinecell{testbench of \\ ODEs \\ system of ODEs \\ and PDEs}\\ \hline
+			
+			\multilinecell{\cite{fateh_differential_2019}} & \multilinecell{\gls{de}} & \multilinecell{function value\\gird} & Elliptic PDEs \\ \hline
 			
 		\end{tabular}
 	}
@@ -179,21 +199,20 @@ F(u(\mathbf{x})_{apx}) = \sqrt{\sum_{i=0}^{n} R(\mathbf{x}_i)^2}
 
 \section{Differential Evolution}
 
-The differential evolution optimisation framework was first introduced in \cite{storn_differential_1997}. Due to its simple and flexible structure, it quickly became one of the most successful evolutionary algorithm. Over the years, several adaptations to the original framework have been proposed and some of them currently count to the best performing algorithms, as the 100-Digit Challenge at the GECCO 2019 (\cite{suganthan_p-n-suganthancec2019_2020}) shows. 
+The differential evolution framework was first introduced in \cite{storn_differential_1997}. Due to its simple and flexible structure, it quickly became one of the most successful evolutionary algorithm. Over the years, several adaptations to the original framework have been proposed and some of them currently count to the best performing algorithms, as the 100-Digit Challenge at GECCO 2019 (\cite{suganthan_suganthancec2019_2020}) shows. 
 
-The main \gls{de} framework consists of three necessary steps, that continuously update a population of possible solutions. The population can be interpreted as a matrix, where each vector is a possible candidate for the optimum of the fitness function $f: \mathbf{R}^n \rightarrow \mathbf{R}$. These steps are performed in a loop until some termination condition is reached. Each of these steps are controlled by a user-defined parameter: 
+The main \gls{de} framework consists of three necessary steps, that continuously update a population of possible solutions. The population can be interpreted as a matrix, where each row-vector $\mathbf{x}_i$, also called individual, represents a point within the search domain and has a fitness value corresponding to the fitness function $f(\mathbf{x}_i): \mathbb{R}^n \rightarrow \mathbb{R}$. The goal is to minimise the fitness function. These steps are performed in a loop until some termination condition is reached. Each of these steps is controlled by a user-defined parameter: 
 \begin{itemize}
-	\item \underline{mutation}: \\
-		  mutation strength parameter F;\\
-		  uses the information from within the population to create a trial vector $v_i$;\\
-		  this is done by scaling the difference between some vectors in the population - hence the name \textit{differential} evolution; the \textit{/current-to-pbest/1} mutation operator can be seen in equation \ref{eq:mut_rand_1}; $x_i$ is the current individual, $x_{best}^p$ is one random vector of the p\% top vectors, $x_{r1}$ is a random vector of the population while $\tilde{x}_{r2}$ is randomly chosen from the population and the archive;
+	\item \underline{Mutation}: \\
+		  Mutation strength parameter F;\\
+		  The mutation uses the information from within the population to create a trial vector $v_i$. This is done by scaling the difference between some vectors in the population - hence the name \textit{differential} evolution. The \textit{/current-to-pbest/1} mutation operator can be seen in equation \eqref{eq:mut_rand_1} where $x_i$ is the current individual, $x_{best}^p$ is one random vector of the p\% top vectors, $x_{r1}$ is a random vector from the population while $\tilde{x}_{r2}$ is randomly chosen from the population and the archive. $x_{r1}$ and $\tilde{x}_{r2}$ must not describe the same individual.
 		  \begin{equation}
 		  \label{eq:mut_rand_1}
 		  v_i = x_{i} + F_i(x_{best}^p - x_{i}) + F_i(x_{r1} - \tilde{x}_{r2})
 		  \end{equation}
-	\item \underline{crossover}: \\
-		  crossover probability parameter CR;\\
-		  randomly mix the information between the trial vector $v_i$ and a random candidate from the population $x_{i}$ to a new trial vector $u_i$; the binomial crossover from equation \ref{eq:crs_bin} randomly takes elements from both vectors, where $K$ is a random index to ensure that at least one element from the trial vector $v_i$ is taken;
+	\item \underline{Crossover}: \\
+		  Crossover probability parameter CR;\\
+		  The crossover procedure randomly mixes the information between the trial vector $v_i$ and a random candidate from the population $x_{i}$ to create a new trial vector $u_i$. The binomial crossover from equation \eqref{eq:crs_bin} randomly takes elements from both vectors, where $K$ is a random index to ensure that at least one element from the trial vector $v_i$ is taken.
 		  \begin{equation}
 		  \label{eq:crs_bin}
 		  u_{ij}=\begin{cases}
@@ -201,18 +220,18 @@ The main \gls{de} framework consists of three necessary steps, that continuously
 		  x_{ij}, &\text{otherwise}
 		  \end{cases}
 		  \end{equation}
-	\item \underline{selection}: \\
-		  population size N;\\
-		  replace the old candidate $x_i$ if the trial candidate $u_i$ is better (according to the fitness function); this is performed for every individual in the population;
+	\item \underline{Selection}: \\
+		  Population size N;\\
+		  The selection replaces the old candidate $x_i$ if the trial candidate $u_i$ is better (according to the fitness function). This is performed for every individual in the population, then the next generation is started.
 \end{itemize}  
 
 In modern \gls{de} variants, these parameters are self-adapted during the evolutionary process. This means that the algorithms can balance out between exploration of the search-space and exploitation of promising locations. 
 
 A prominent example of a modern \gls{de} with self-adaption is JADE, which was developed by \cite{zhang_jade_2009}. The adaption is performed by taking successful F and CR parameter of the last generation into account. If a certain setting is successful in generating better candidates, newly selected F and CR tend towards that setting. The pseudocode is represented in the appendix \ref{chap:pscode_jade}. 
 
-This idea was later refined by \cite{tanabe_success-history_2013}. They propose a similar self-adaptive scheme but extend the ``memory'' for good F and CR parameters over multiple generations. This idea should improve the robustness as compared to JADE. The pseudocode in appendix \ref{chap:pscode_shade} shows the outline of this so called SHADE algorithm. 
+This idea was later refined by \cite{tanabe_success-history_2013}. They propose a similar self-adaptive scheme but extend the ``memory'' for good F and CR parameters over multiple generations. This idea improves the robustness as compared to JADE. The pseudocode in appendix \ref{chap:pscode_shade} shows the outline of this so called SHADE algorithm. 
 
-The latest iteration of SHADE is called L-SHADE (\cite{tanabe_improving_2014}), which further improves the performance by including a deterministic adaptive concept for the population size. At first, L-SHADE starts with a big population size, and reduces the number of individuals in a linear fashion by deleting bad candidates. This has the effect of reducing the number of unnecessary function evaluation. The code is displayed in the appendix \ref{chap:pscode_lshade}. 
+The latest iteration of SHADE is called L-SHADE (\cite{tanabe_improving_2014}), which improves the performance by including a deterministic adaptive concept for the population size. At first, L-SHADE starts with a big population size, and reduces the number of individuals in a linear fashion by deleting bad candidates. This has the effect of reducing the number of unnecessary function evaluation. The code is displayed in the appendix \ref{chap:pscode_lshade}. 
 
 
 

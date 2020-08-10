@@ -7,6 +7,9 @@ import matplotlib.pyplot as plt
 import json
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
+import matplotlib as mpl
+from scipy import ndimage
+import matplotlib.patches as mpatches
 
 import sys
 import os
@@ -567,7 +570,55 @@ def plotABSError3D(kernel, parameter, pdeName, lD, uD, name=None):
     plt.show()
     return None
 
+def plotError3D(kernel, parameter, pdeName, lD, uD, name=None):
+    """Draws a 2-dimensional error plot 
+       on the squared domain from lD to uD
+    
+    Parameters
+    ----------
+    kernel : IKernelBase
+        object that implements the IKernelBase interface
+    parameter : numpy array
+        parameter associated with the solution
+    pdeName : string
+        name of the pde class used as key to the 
+        analytic solution
+    lD: float
+        lower boundary of the squared domain
+    uD: float
+        upper boundary of the squared domain
+    name: string
+          saves the figure as this file
 
+    Examples
+    --------
+    >>> import KernelGauss as gk
+    >>> gkernel = gk.KernelGauss()
+    >>> param = np.array([[1,4,0.5,0.5]])
+    >>> plotApprox3D(gkernel, param, 0.0, 1.0)
+    
+    """
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    x = y = np.arange(lD, uD+0.01, 0.01)
+    X, Y = np.meshgrid(x, y)
+    
+    zs0 = np.array([kernel.solution(parameter, np.array([x,y])) \
+                    - pde_solution[pdeName](np.array([x,y]))
+                    for x,y in zip(np.ravel(X), np.ravel(Y))])
+    
+    Z = zs0.reshape(X.shape)
+    ax.plot_surface(X, Y, Z, cmap=cm.gnuplot)
+    
+    ax.set_xlabel("X0")
+    ax.set_ylabel("X1")
+    ax.set_zlabel("abs(error)")
+    plt.tight_layout()
+    if type(name) == type(""):
+        plt.savefig(name,bbox_inches='tight')
+        
+    plt.show()
+    return None
 
 
 
@@ -687,6 +738,132 @@ def plotFEDynamic(FEDynamic, name=None):
     return None
     
     
+def plotKernelAdaption(obj_dict, title="insert title", kernelBarWidth=60, newKernelColor='#30ab00', reduceKernelColor='#ff0000', figsize=(100,10), name=None):
+    """plots the fitness difference by the individual 0 over the whole domain
+       indicates new kernels with a colord bar
+       different alpha levels for the color map taken from:
+           https://stackoverflow.com/questions/10127284/overlay-imshow-plots-in-matplotlib
+    
+    Parameters
+    ----------
+    obj_dict: dictionary
+        solved dictionary as returned by loadExpObject
+    title: string
+        title of plot
+    kernelBarWidth: int
+        width of kernel bar
+    newKernelColor: string
+        color indicating a new kernel
+    reduceKernelColor: string
+        color indicaten the reduction of kerenl
+    figisize: tuple
+        size of matplotlib figure
+    name: string
+        filename and path to save image
+    """
+    
+    fit_diff = []
+    for i in range(len(obj_dict["fit_history"])-1):
+        fit_diff.append(obj_dict["fit_history"][i][0]-obj_dict["fit_history"][i+1][0] != 0)
+        
+    x = np.array(fit_diff)
+    
+    pop_diff = []
+    for i in range(len(obj_dict["pop_history"])-1):
+         pop_diff.append(obj_dict["pop_history"][i].shape[0] < obj_dict["pop_history"][i+1].shape[0])
+    
+    y = np.array(pop_diff)
+    y = ndimage.binary_dilation(y,iterations=int(kernelBarWidth/2))
+    
+    pop_diff_lower = []
+    for i in range(len(obj_dict["pop_history"])-1):
+         pop_diff_lower.append(obj_dict["pop_history"][i].shape[0] > obj_dict["pop_history"][i+1].shape[0])
+    
+    r = np.array(pop_diff_lower)
+    r = ndimage.binary_dilation(r,iterations=int(kernelBarWidth/2))
+    
+    cmapKernelnew = mpl.colors.LinearSegmentedColormap.from_list('my_cmap',['#b3b3b3',newKernelColor],256)
+    cmapKernelnew._init()
+
+    alphas = np.zeros(cmapKernelnew.N+3)
+    alphas[-4:] = 1.0
+    cmapKernelnew._lut[:,-1] = alphas
+    
+    cmapKernelreduce = mpl.colors.LinearSegmentedColormap.from_list('my_cmap',['#b3b3b3',reduceKernelColor],256)
+    cmapKernelreduce._init()
+
+    alphas = np.zeros(cmapKernelreduce.N+3)
+    alphas[-4:] = 1.0
+    cmapKernelreduce._lut[:,-1] = alphas
+    
+    barprops_fitness = dict(aspect='auto', cmap='binary', interpolation='sinc')
+    barprops_kernel_new = dict(aspect='auto', cmap=cmapKernelnew, interpolation='none')
+    barprops_kernel_reduce = dict(aspect='auto', cmap=cmapKernelreduce, interpolation='none')
+    
+    fig = plt.figure(figsize=figsize)
+    
+    ax2 = fig.add_axes([1.0, 1.0, 1.0, 1.0])
+    # ax2.set_axis_off()
+    ax2.set_title(title, fontsize=150, loc="left")
+    ax2.yaxis.set_visible(False)
+    ax2.tick_params(axis='x', which='major', labelsize=130)
+    ax2.set_xlabel(r'generation $\rightarrow$', fontsize=150)
+    ax2.spines['bottom'].set_linewidth(1)
+    patches = [mpatches.Patch(color="black", label=r"great $\Delta$ fit"), mpatches.Patch(color="darkgray", label=r"small $\Delta$ fit"), \
+               mpatches.Patch(color=newKernelColor, label=r"$\uparrow$ #kernel"), mpatches.Patch(color=reduceKernelColor, label=r"$\downarrow$ #kernel")]
+    plt.legend(handles=patches, bbox_to_anchor=(1, 1), loc=2, borderaxespad=0.0, prop={'size': 130})
+    ax2.imshow(x.reshape((1, -1)), **barprops_fitness)
+    ax2.imshow(y.reshape((1, -1)), **barprops_kernel_new)
+    ax2.imshow(r.reshape((1, -1)), **barprops_kernel_reduce)
+    
+    if type(name) == type(""):
+        plt.savefig(name,bbox_inches='tight')
+        
+    plt.show()
+    return None
+
+
+
+
+def calcSingleERT(rundata, target):
+    """Calculates the expected running time and the success probability for a 
+       single target value. 
+    
+    Parameters
+    ----------
+    rundata: iterable
+        of the form [[[fval_run1], [fe_run1]], [[fval_run2], [fe_run2]], ...]
+    target: float
+        the target value that needs to be reached
+        
+    Returns
+    -------
+    tuple
+        (ert, success_probability)
+    """
+    ert = 0
+    success = 0
+    for r in rundata:
+        fval = np.asarray(r[0])
+        fe = np.asarray(r[1])
+        if np.min(fval) > target:
+            ert += fe[-1]
+        else:
+            success += 1
+            # argument of fval where the target is first undercut
+            idfval = np.argmax(fval < target) 
+            ert += fe[max(0, idfval-1)]
+    if success > 0:
+        # return:
+            # expected running time corrected with success ratio
+            # success probability
+        return ert/success, success/len(rundata)
+    else:
+        return np.inf, 0
+
+
+
+
 # --------------------------------------------------------------------------- #
 # --------------------------- internal functions ---------------------------- #
 # --------------------------------------------------------------------------- #

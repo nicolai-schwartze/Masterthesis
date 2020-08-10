@@ -153,7 +153,7 @@ if __name__ == "__main__":
     import KernelGauss as gk
     
     initialPop = np.random.randn(8,4)
-    max_fe = 1*10**6
+    max_fe = 1*10**3
     min_err = 0
     mpJade = oaMempJadeadaptive.OptAlgoMemeticpJADEadaptive(initialPop, max_fe, min_err)
     

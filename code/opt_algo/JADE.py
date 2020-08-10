@@ -10,6 +10,7 @@ import numpy as np
 import time
 from scipy.stats import cauchy
 import testFunctions as tf
+import matplotlib.pyplot as plt
 
 def JADE(population, p, c, function, minError, maxFeval):
     '''
@@ -255,7 +256,12 @@ if __name__ == "__main__":
     t1 = time.time()
     (popDynamic, FEDynamic, FDynamic, CRDynamic) = JADE(population, p, c, tf.sphere, maxError, maxGen)
     print("time to run JADE: " + str(time.time() - t1))
-    plt.plot(FDynamic)
+    
+    varDynamic = []
+    for p in popDynamic:
+        varDynamic.append(np.var(p))
+    
+    plt.semilogy(varDynamic)
     
     
     

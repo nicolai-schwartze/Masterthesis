@@ -145,6 +145,7 @@ if __name__ == "__main__":
     candidate_1 = np.array([1,0.01,2,3,-1,20,2,-2])
     candidate_1_reshaped = candidate_1.reshape((2,4))
     
+    
     # show solution
     print("show solution")
     fig = plt.figure()

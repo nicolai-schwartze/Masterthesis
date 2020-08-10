@@ -30,7 +30,7 @@ sys.path.append("../../testbed/pde9/")
 import CiPde9 as pde9
 
 sys.path.append("../../opt_algo")
-import OptAlgoMemeticpJADEadaptive as oapMJa
+import OptAlgoMemeticpJADE as oapMJ
 
 sys.path.append("../../kernels")
 import KernelGSin as gsk
@@ -44,7 +44,7 @@ if __name__ == "__main__":
     
     # experiment parameter
     replications = 20
-    max_fe = 1*10**6
+    max_fe = 1*10**3
     min_err = 0
     gskernel = gsk.KernelGSin()
     
@@ -85,14 +85,14 @@ if __name__ == "__main__":
     ####################################
     cipde0A = []
     for i in range(replications):
-        initialPop = np.random.randn(12,6)
-        mpJADEa = oapMJa.OptAlgoMemeticpJADEadaptive(initialPop, max_fe, min_err)
-        cipde0A.append(pde0A.CiPde0A(mpJADEa, gskernel, nb2, nc2))
+        initialPop = np.random.randn(60,30)
+        mpJADE = oapMJ.OptAlgoMemeticpJADE(initialPop, max_fe, min_err)
+        cipde0A.append(pde0A.CiPde0A(mpJADE, gskernel, nb2, nc2))
 
     for i in range(replications):
         cipde0A[i].solve()
-        pp.saveExpObject(cipde0A[i], "../../cipde0a_mpjagsk_rep_" + str(i) + ".json")
-        print("../../cipde0a_mpjagsk_rep_" + str(i) + ".json" + " -> saved")
+        pp.saveExpObject(cipde0A[i], "../../cipde0a_mpjgsk_rep_" + str(i) + ".json")
+        print("../../cipde0a_mpjgsk_rep_" + str(i) + ".json" + " -> saved")
     
     
     
@@ -103,14 +103,14 @@ if __name__ == "__main__":
     ####################################
     cipde0B = []
     for i in range(replications):
-        initialPop = np.random.randn(12,6)
-        mpJADEa = oapMJa.OptAlgoMemeticpJADEadaptive(initialPop, max_fe, min_err)
-        cipde0B.append(pde0B.CiPde0B(mpJADEa, gskernel, nb2, nc2))
+        initialPop = np.random.randn(60,30)
+        mpJADE = oapMJ.OptAlgoMemeticpJADE(initialPop, max_fe, min_err)
+        cipde0B.append(pde0B.CiPde0B(mpJADE, gskernel, nb2, nc2))
         
     for i in range(replications):
         cipde0B[i].solve()
-        pp.saveExpObject(cipde0B[i], "../../cipde0b_mpjagsk_rep_" + str(i) + ".json")
-        print("../../cipde0b_mpjagsk_rep_" + str(i) + ".json" + " -> saved")
+        pp.saveExpObject(cipde0B[i], "../../cipde0b_mpjgsk_rep_" + str(i) + ".json")
+        print("../../cipde0b_mpjgsk_rep_" + str(i) + ".json" + " -> saved")
     
     
     
@@ -121,14 +121,14 @@ if __name__ == "__main__":
     ####################################
     cipde1 = []
     for i in range(replications):
-        initialPop = np.random.randn(12,6)
-        mpJADEa = oapMJa.OptAlgoMemeticpJADEadaptive(initialPop, max_fe, min_err)
-        cipde1.append(pde1.CiPde1(mpJADEa, gskernel, nb1, nc1))
+        initialPop = np.random.randn(60,30)
+        mpJADE = oapMJ.OptAlgoMemeticpJADE(initialPop, max_fe, min_err)
+        cipde1.append(pde1.CiPde1(mpJADE, gskernel, nb1, nc1))
         
     for i in range(replications):
         cipde1[i].solve()
-        pp.saveExpObject(cipde1[i], "../../cipde1_mpjagsk_rep_" + str(i) + ".json")
-        print("../../cipde1_mpjagsk_rep_" + str(i) + ".json" + " -> saved")
+        pp.saveExpObject(cipde1[i], "../../cipde1_mpjgsk_rep_" + str(i) + ".json")
+        print("../../cipde1_mpjgsk_rep_" + str(i) + ".json" + " -> saved")
     
     
     
@@ -139,14 +139,14 @@ if __name__ == "__main__":
     ####################################
     cipde2 = []
     for i in range(replications):
-        initialPop = np.random.randn(12,6)
-        mpJADEa = oapMJa.OptAlgoMemeticpJADEadaptive(initialPop, max_fe, min_err)
-        cipde2.append(pde2.CiPde2(mpJADEa, gskernel, nb1, nc1))
+        initialPop = np.random.randn(60,30)
+        mpJADE = oapMJ.OptAlgoMemeticpJADE(initialPop, max_fe, min_err)
+        cipde2.append(pde2.CiPde2(mpJADE, gskernel, nb1, nc1))
 
     for i in range(replications):
         cipde2[i].solve()
-        pp.saveExpObject(cipde2[i], "../../cipde2_mpjagsk_rep_" + str(i) + ".json")
-        print("../../cipde2_mpjagsk_rep_" + str(i) + ".json" + " -> saved")
+        pp.saveExpObject(cipde2[i], "../../cipde2_mpjgsk_rep_" + str(i) + ".json")
+        print("../../cipde2_mpjgsk_rep_" + str(i) + ".json" + " -> saved")
     
     
     
@@ -157,14 +157,14 @@ if __name__ == "__main__":
     ####################################
     cipde3 = []
     for i in range(replications):
-        initialPop = np.random.randn(12,6)
-        mpJADEa = oapMJa.OptAlgoMemeticpJADEadaptive(initialPop, max_fe, min_err)
-        cipde3.append(pde3.CiPde3(mpJADEa, gskernel, nb1, nc1))
+        initialPop = np.random.randn(60,30)
+        mpJADE = oapMJ.OptAlgoMemeticpJADE(initialPop, max_fe, min_err)
+        cipde3.append(pde3.CiPde3(mpJADE, gskernel, nb1, nc1))
 
     for i in range(replications):
         cipde3[i].solve()
-        pp.saveExpObject(cipde3[i], "../../cipde3_mpjagsk_rep_" + str(i) + ".json")
-        print("../../cipde3_mpjagsk_rep_" + str(i) + ".json" + " -> saved")
+        pp.saveExpObject(cipde3[i], "../../cipde3_mpjgsk_rep_" + str(i) + ".json")
+        print("../../cipde3_mpjgsk_rep_" + str(i) + ".json" + " -> saved")
     
     
     
@@ -175,14 +175,14 @@ if __name__ == "__main__":
     ####################################
     cipde4 = []
     for i in range(replications):
-        initialPop = np.random.randn(12,6)
-        mpJADEa = oapMJa.OptAlgoMemeticpJADEadaptive(initialPop, max_fe, min_err)
-        cipde4.append(pde4.CiPde4(mpJADEa, gskernel, nb1, nc1))
+        initialPop = np.random.randn(60,30)
+        mpJADE = oapMJ.OptAlgoMemeticpJADE(initialPop, max_fe, min_err)
+        cipde4.append(pde4.CiPde4(mpJADE, gskernel, nb1, nc1))
 
     for i in range(replications):
         cipde4[i].solve()
-        pp.saveExpObject(cipde4[i], "../../cipde4_mpjagsk_rep_" + str(i) + ".json")
-        print("../../cipde4_mpjagsk_rep_" + str(i) + ".json" + " -> saved")
+        pp.saveExpObject(cipde4[i], "../../cipde4_mpjgsk_rep_" + str(i) + ".json")
+        print("../../cipde4_mpjgsk_rep_" + str(i) + ".json" + " -> saved")
     
     
     
@@ -193,14 +193,14 @@ if __name__ == "__main__":
     ####################################
     cipde5 = []
     for i in range(replications):
-        initialPop = np.random.randn(12,6)
-        mpJADEa = oapMJa.OptAlgoMemeticpJADEadaptive(initialPop, max_fe, min_err)
-        cipde5.append(pde5.CiPde5(mpJADEa, gskernel, nb1, nc1))
+        initialPop = np.random.randn(60,30)
+        mpJADE = oapMJ.OptAlgoMemeticpJADE(initialPop, max_fe, min_err)
+        cipde5.append(pde5.CiPde5(mpJADE, gskernel, nb1, nc1))
 
     for i in range(replications):
         cipde5[i].solve()
-        pp.saveExpObject(cipde5[i], "../../cipde5_mpjagsk_rep_" + str(i) + ".json")
-        print("../../cipde5_mpjagsk_rep_" + str(i) + ".json" + " -> saved")
+        pp.saveExpObject(cipde5[i], "../../cipde5_mpjgsk_rep_" + str(i) + ".json")
+        print("../../cipde5_mpjgsk_rep_" + str(i) + ".json" + " -> saved")
     
     
     
@@ -211,14 +211,14 @@ if __name__ == "__main__":
     ####################################
     cipde6 = []
     for i in range(replications):
-        initialPop = np.random.randn(12,6)
-        mpJADEa = oapMJa.OptAlgoMemeticpJADEadaptive(initialPop, max_fe, min_err)
-        cipde6.append(pde6.CiPde6(mpJADEa, gskernel, nb1, nc1))
+        initialPop = np.random.randn(60,30)
+        mpJADE = oapMJ.OptAlgoMemeticpJADE(initialPop, max_fe, min_err)
+        cipde6.append(pde6.CiPde6(mpJADE, gskernel, nb1, nc1))
 
     for i in range(replications):
         cipde6[i].solve()
-        pp.saveExpObject(cipde6[i], "../../cipde6_mpjagsk_rep_" + str(i) + ".json")
-        print("../../cipde6_mpjagsk_rep_" + str(i) + ".json" + " -> saved")
+        pp.saveExpObject(cipde6[i], "../../cipde6_mpjgsk_rep_" + str(i) + ".json")
+        print("../../cipde6_mpjgsk_rep_" + str(i) + ".json" + " -> saved")
 
     
     
@@ -230,14 +230,14 @@ if __name__ == "__main__":
     ####################################
     cipde7 = []
     for i in range(replications):
-        initialPop = np.random.randn(12,6)
-        mpJADEa = oapMJa.OptAlgoMemeticpJADEadaptive(initialPop, max_fe, min_err)
-        cipde7.append(pde7.CiPde7(mpJADEa, gskernel, nb1, nc1))
+        initialPop = np.random.randn(60,30)
+        mpJADE = oapMJ.OptAlgoMemeticpJADE(initialPop, max_fe, min_err)
+        cipde7.append(pde7.CiPde7(mpJADE, gskernel, nb1, nc1))
 
     for i in range(replications):
         cipde7[i].solve()
-        pp.saveExpObject(cipde7[i], "../../cipde7_mpjagsk_rep_" + str(i) + ".json")
-        print("../../cipde7_mpjagsk_rep_" + str(i) + ".json" + " -> saved")
+        pp.saveExpObject(cipde7[i], "../../cipde7_mpjgsk_rep_" + str(i) + ".json")
+        print("../../cipde7_mpjgsk_rep_" + str(i) + ".json" + " -> saved")
     
     
     
@@ -248,14 +248,14 @@ if __name__ == "__main__":
     ####################################
     cipde8 = []
     for i in range(replications):
-        initialPop = np.random.randn(12,6)
-        mpJADEa = oapMJa.OptAlgoMemeticpJADEadaptive(initialPop, max_fe, min_err)
-        cipde8.append(pde8.CiPde8(mpJADEa, gskernel, nb1, nc1))
+        initialPop = np.random.randn(60,30)
+        mpJADE = oapMJ.OptAlgoMemeticpJADE(initialPop, max_fe, min_err)
+        cipde8.append(pde8.CiPde8(mpJADE, gskernel, nb1, nc1))
 
     for i in range(replications):
         cipde8[i].solve()
-        pp.saveExpObject(cipde8[i], "../../cipde8_mpjagsk_rep_" + str(i) + ".json")
-        print("../../cipde8_mpjagsk_rep_" + str(i) + ".json" + " -> saved")
+        pp.saveExpObject(cipde8[i], "../../cipde8_mpjgsk_rep_" + str(i) + ".json")
+        print("../../cipde8_mpjgsk_rep_" + str(i) + ".json" + " -> saved")
     
     
     
@@ -266,14 +266,14 @@ if __name__ == "__main__":
     ####################################
     cipde9 = []
     for i in range(replications):
-        initialPop = np.random.randn(12,6)
-        mpJADEa = oapMJa.OptAlgoMemeticpJADEadaptive(initialPop, max_fe, min_err)
-        cipde9.append(pde9.CiPde9(mpJADEa, gskernel, nb1, nc1))
+        initialPop = np.random.randn(60,30)
+        mpJADE = oapMJ.OptAlgoMemeticpJADE(initialPop, max_fe, min_err)
+        cipde9.append(pde9.CiPde9(mpJADE, gskernel, nb1, nc1))
 
     for i in range(replications):
         cipde9[i].solve()
-        pp.saveExpObject(cipde9[i], "../../cipde9_mpjagsk_rep_" + str(i) + ".json")
-        print("../../cipde9_mpjagsk_rep_" + str(i) + ".json" + " -> saved")
+        pp.saveExpObject(cipde9[i], "../../cipde9_mpjgsk_rep_" + str(i) + ".json")
+        print("../../cipde9_mpjgsk_rep_" + str(i) + ".json" + " -> saved")
     
     
     

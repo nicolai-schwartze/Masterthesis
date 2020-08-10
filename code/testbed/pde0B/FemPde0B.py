@@ -234,7 +234,7 @@ if __name__ == "__main__":
     import matplotlib.pyplot as plt
     from matplotlib import cm
     
-    fig = plt.figure(figsize=(7,5))
+    fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     x = y = np.arange(-2.0, 2.01, 0.01)
     X, Y = np.meshgrid(x, y)
@@ -247,10 +247,9 @@ if __name__ == "__main__":
     
     fig.tight_layout()
     
-    ax.set_xlabel("x")
-    ax.set_ylabel("y")
-    ax.set_zlabel("z")
-    ax.set_title("Solution of PDE 0B", fontsize=20)
+    ax.set_xlabel("X0")
+    ax.set_ylabel("X1")
+    ax.set_zlabel("f(X0, X1)")
     
     plt.show()
     fig.savefig("sol_pde_0b.pdf", bbox_inches='tight')

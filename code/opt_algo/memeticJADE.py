@@ -54,7 +54,7 @@ def memeticJADE(population, function, minError, maxFeval):
     
     '''
     psize, dim = population.shape
-    p = 0.3
+    p = 0.025
     c = 0.5
     popDynamic, FEDynamic, FDynamic, CRDynamic = JADE(population, p, c, function, \
                                                       minError, maxFeval-2*dim)

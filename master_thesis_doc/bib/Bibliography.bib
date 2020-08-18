@@ -442,24 +442,21 @@ provided that the boundary operator is linear, the problem of finding the correc
 	note = {original-date: 2017-07-18T08:47:19Z}
 }
 
-@incollection{hansen_cma_2006,
-	address = {Berlin, Heidelberg},
-	series = {Studies in {Fuzziness} and {Soft} {Computing}},
-	title = {The {CMA} {Evolution} {Strategy}: {A} {Comparing} {Review}},
-	isbn = {978-3-540-32494-2},
-	shorttitle = {The {CMA} {Evolution} {Strategy}},
-	url = {https://doi.org/10.1007/3-540-32494-1_4},
-	abstract = {SummaryDerived from the concept of self-adaptation in evolution strategies, the CMA (Covariance Matrix Adaptation) adapts the covariance matrix of a multi-variate normal search distribution. The CMA was originally designed to perform well with small populations. In this review, the argument starts out with large population sizes, reflecting recent extensions of the CMA algorithm. Commonalities and differences to continuous Estimation of Distribution Algorithms are analyzed. The aspects of reliability of the estimation, overall step size control, and independence from the coordinate system (invariance) become particularly important in small populations sizes. Consequently, performing the adaptation task with small populations is more intricate.},
-	language = {en},
-	urldate = {2020-05-05},
-	booktitle = {Towards a {New} {Evolutionary} {Computation}: {Advances} in the {Estimation} of {Distribution} {Algorithms}},
-	publisher = {Springer},
-	author = {Hansen, Nikolaus},
-	editor = {Lozano, Jose A. and Larrañaga, Pedro and Inza, Iñaki and Bengoetxea, Endika},
-	year = {2006},
-	doi = {10.1007/3-540-32494-1_4},
-	pages = {75--102},
-	file = {Hansen - 2006 - The CMA Evolution Strategy A Comparing Review.pdf:C\:\\Users\\Admin\\OneDrive\\FH Mechatronik\\Literaturquellen\\storage\\JVTYNKR5\\Hansen - 2006 - The CMA Evolution Strategy A Comparing Review.pdf:application/pdf}
+@article{hansen_reducing_2003,
+	title = {Reducing the {Time} {Complexity} of the {Derandomized} {Evolution} {Strategy} with {Covariance} {Matrix} {Adaptation} ({CMA}-{ES})},
+	volume = {11},
+	issn = {1063-6560},
+	url = {https://doi.org/10.1162/106365603321828970},
+	doi = {10.1162/106365603321828970},
+	abstract = {This paper presents a novel evolutionary optimization strategy based on the derandomized evolution strategy with covariance matrix adaptation (CMA-ES). This new approach is intended to reduce the number of generations required for convergence to the optimum. Reducing the number of generations, i.e., the time complexity of the algorithm, is important if a large population size is desired: (1) to reduce the effect of noise; (2) to improve global search properties; and (3) to implement the algorithm on (highly) parallel machines. Our method results in a highly parallel algorithm which scales favorably with large numbers of processors. This is accomplished by efficiently incorporating the available information from a large population, thus significantly reducing the number of generations needed to adapt the covariance matrix. The original version of the CMA-ES was designed to reliably adapt the covariance matrix in small populations but it cannot exploit large populations efficiently. Our modifications scale up the efficiency to population sizes of up to 10n, where n is the problem dimension. This method has been applied to a large number of test problems, demonstrating that in many cases the CMA-ES can be advanced from quadratic to linear time complexity.},
+	number = {1},
+	urldate = {2020-08-15},
+	journal = {Evolutionary Computation},
+	author = {Hansen, Nikolaus and Müller, Sibylle D. and Koumoutsakos, Petros},
+	month = mar,
+	year = {2003},
+	note = {Publisher: MIT Press},
+	pages = {1--18}
 }
 
 @article{nelder_simplex_1965,
@@ -829,7 +826,7 @@ documentation: http://numbbo.github.io/coco-doc/}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%									COCO BBOB Plots     								   %
+%									COCO BBOB Plots     								                                                      %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -855,5 +852,101 @@ documentation: http://numbbo.github.io/coco-doc/}
   version      = {v2.3},
   doi          = {10.5281/zenodo.2594848},
   url          = {https://doi.org/10.5281/zenodo.2594848}
+}
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%									              Theoretical Notes       					                                                      %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+
+@article{hangelbroek_nonlinear_2010,
+	title = {Nonlinear approximation using {Gaussian} kernels},
+	volume = {259},
+	issn = {0022-1236},
+	url = {http://www.sciencedirect.com/science/article/pii/S0022123610000467},
+	doi = {10.1016/j.jfa.2010.02.001},
+	abstract = {It is well known that nonlinear approximation has an advantage over linear schemes in the sense that it provides comparable approximation rates to those of the linear schemes, but to a larger class of approximands. This was established for spline approximations and for wavelet approximations, and more recently by DeVore and Ron (in press) [2] for homogeneous radial basis function (surface spline) approximations. However, no such results are known for the Gaussian function, the preferred kernel in machine learning and several engineering problems. We introduce and analyze in this paper a new algorithm for approximating functions using translates of Gaussian functions with varying tension parameters. At heart it employs the strategy for nonlinear approximation of DeVore–Ron, but it selects kernels by a method that is not straightforward. The crux of the difficulty lies in the necessity to vary the tension parameter in the Gaussian function spatially according to local information about the approximand: error analysis of Gaussian approximation schemes with varying tension are, by and large, an elusive target for approximators. We show that our algorithm is suitably optimal in the sense that it provides approximation rates similar to other established nonlinear methodologies like spline and wavelet approximations. As expected and desired, the approximation rates can be as high as needed and are essentially saturated only by the smoothness of the approximand.},
+	language = {en},
+	number = {1},
+	urldate = {2020-02-28},
+	journal = {Journal of Functional Analysis},
+	author = {Hangelbroek, Thomas and Ron, Amos},
+	month = jul,
+	year = {2010},
+	keywords = {Theory},
+	pages = {203--219},
+	file = {Hangelbroek und Ron - 2010 - Nonlinear approximation using Gaussian kernels.pdf:C\:\\Users\\Admin\\OneDrive\\FH Mechatronik\\Literaturquellen\\storage\\UQJXB5NZ\\Hangelbroek und Ron - 2010 - Nonlinear approximation using Gaussian kernels.pdf:application/pdf}
+}
+
+@article{park_universal_1991,
+	title = {Universal {Approximation} {Using} {Radial}-{Basis}-{Function} {Networks}},
+	volume = {3},
+	issn = {0899-7667},
+	url = {https://doi.org/10.1162/neco.1991.3.2.246},
+	doi = {10.1162/neco.1991.3.2.246},
+	abstract = {There have been several recent studies concerning feedforward networks and the problem of approximating arbitrary functionals of a finite number of real variables. Some of these studies deal with cases in which the hidden-layer nonlinearity is not a sigmoid. This was motivated by successful applications of feedforward networks with nonsigmoidal hidden-layer units. This paper reports on a related study of radial-basis-function (RBF) networks, and it is proved that RBF networks having one hidden layer are capable of universal approximation. Here the emphasis is on the case of typical RBF networks, and the results show that a certain class of RBF networks with the same smoothing factor in each kernel node is broad enough for universal approximation.},
+	number = {2},
+	urldate = {2020-08-11},
+	journal = {Neural Computation},
+	author = {Park, J. and Sandberg, I. W.},
+	month = jun,
+	year = {1991},
+	note = {Publisher: MIT Press},
+	pages = {246--257},
+	file = {Park und Sandberg - 1991 - Universal Approximation Using Radial-Basis-Functio.pdf:C\:\\Users\\Admin\\OneDrive\\FH Mechatronik\\Literaturquellen\\storage\\KWRZ849T\\Park und Sandberg - 1991 - Universal Approximation Using Radial-Basis-Functio.pdf:application/pdf}
+}
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%									              Shape from Shading    					                                                      %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+@article{durou_numerical_2008,
+	title = {Numerical methods for shape-from-shading: {A} new survey with benchmarks},
+	volume = {109},
+	issn = {1077-3142},
+	shorttitle = {Numerical methods for shape-from-shading},
+	url = {http://www.sciencedirect.com/science/article/pii/S1077314207001361},
+	doi = {10.1016/j.cviu.2007.09.003},
+	abstract = {Many algorithms have been suggested for the shape-from-shading problem, and some years have passed since the publication of the survey paper by Zhang et al. [R. Zhang, P.-S. Tsai, J.E. Cryer, M. Shah, Shape from shading: a survey, IEEE Transactions on Pattern Analysis and Machine Intelligence 21 (8) (1999) 690–706]. In this new survey paper, we try to update their presentation including some recent methods which seem to be particularly representative of three classes of methods: methods based on partial differential equations, methods using optimization and methods approximating the image irradiance equation. One of the goals of this paper is to set the comparison of these methods on a firm basis. To this end, we provide a brief description of each method, highlighting its basic assumptions and mathematical properties. Moreover, we propose some numerical benchmarks in order to compare the methods in terms of their efficiency and accuracy in the reconstruction of surfaces corresponding to synthetic, as well as to real images.},
+	language = {en},
+	number = {1},
+	urldate = {2020-04-24},
+	journal = {Computer Vision and Image Understanding},
+	author = {Durou, Jean-Denis and Falcone, Maurizio and Sagona, Manuela},
+	month = jan,
+	year = {2008},
+	keywords = {application, nice to have},
+	pages = {22--43},
+	file = {Durou et al. - 2008 - Numerical methods for shape-from-shading A new su.pdf:C\:\\Users\\Admin\\OneDrive\\FH Mechatronik\\Literaturquellen\\storage\\BPDC9HET\\Durou et al. - 2008 - Numerical methods for shape-from-shading A new su.pdf:application/pdf}
+}
+
+@article{horn_shape_1970,
+	title = {Shape from {Shading} {A} {Method} for {Obtaining} the {Shape} of a {Smooth} {Opaque} {Object} from {One} {View}},
+	shorttitle = {Shape from {Shading}},
+	url = {https://dspace.mit.edu/handle/1721.1/6885},
+	abstract = {A method will be described for finding the  shape of a smooth apaque object form a  monocular image, given a knowledge of the  surface photometry, the position of the  lightsource and certain auxiliary information to  resolve ambiguities. This method is  complementary to the use of stereoscopy  which relies on matching up sharp detail and  will fail on smooth objects. Until now the  image processing of single views has been  restricted to objects which can meaningfully  be considered two-dimensional or bounded  by plane surfaces. It is possible to derive a  first-order non-linear partial differential  equation in two unknowns relating the  intensity at the image points to the shape of  the objects. This equation can be solved by  means of an equivalent set of five ordinary  differential equations. A curve traced out by  solving this set of equations for one set of  starting values is called a characteristic strip.  Starting one of these strips from each point on  some initial curve will produce the whole  solution surface. The initial curves can  usually be constructed around so-called  singular points. A number of applications of  this metod will be discussed including one to  lunar topography and one to the scanning  electron microscope. In both of these cases  great simplifications occur in the equations. A  note on polyhedra follows and a quantitative  theory of facial make-up is touched upon. An  implementation of some of these ideas on the  PDP-6 computer with its attached image-dissector camera at the Artificial intelligence  Laboratory will be described, and also a  nose-recognition program.},
+	language = {en},
+	urldate = {2020-08-13},
+	author = {Horn, Berthold K. P.},
+	month = nov,
+	year = {1970},
+	file = {Horn - 1970 - Shape from Shading A Method for Obtaining the Sha.pdf:C\:\\Users\\Admin\\OneDrive\\FH Mechatronik\\Literaturquellen\\storage\\369AXU65\\Horn - 1970 - Shape from Shading A Method for Obtaining the Sha.pdf:application/pdf}
 }
 

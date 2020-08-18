@@ -2,9 +2,10 @@
 \begin{document}
 
 \chapter{Experimental Design}
-This chapter gives an overview on how the subsequent experiments are conducted. An integral part of solver comparison is to define a testbed that holds example problems with a known analytical solution. Further, a quality measurements must be defined that compares the numerical to the analytical solution. Since the memory consumption and the solving time is of interest, a robust method to measure these characteristics is needed. The baseline for all experiments is the \gls{fem} solver NGSolve (\cite{mitchell_nist_2018}). 
+This chapter gives an overview on how the subsequent experiments are conducted. An integral part of solver comparison is to define a testbed that holds example problems with a known analytical solution. Further, a quality measurement must be defined that compares the numerical to the analytical solution. Since the memory consumption and the solving time is of interest, a robust method to measure these characteristics is needed. The baseline for all experiments is the \gls{fem} solver NGSolve (\cite{schoberl_ngsolvengsolve_2020}). 
 
 \section{Testbed}
+\label{chap:testbed_description}
 The testbed is a collection of multiple 2-dimensional scalar \gls{pde}s that are analytically solved such that $u(\mathbf{x}): \mathbb{R}^2 \rightarrow \mathbb{R}$ is a solution to the underlying PDE. These can be used to demonstrate the correct implementation of a solver. The testbed can also be used to compare the performance of the classical \gls{fem} solver (NGSolve) with the \gls{ci} solver. The equations and graphs are displayed in the appendix \ref{chap:testbed}. The equations used here are a mixture of different testbeds. Specifically, the equations \gls{pde} 2 and \gls{pde} 3 are picked from the testbed in \cite{chaquet_using_2019}. These problems were also used by \cite{tsoulos_solving_2006} and \cite{panagant_solving_2014}. Preliminary tests have shown that the equations used in these papers are rather simple to approximate. Thus, more complicate equations are added to test the solvability over a wider variety of functions. The more complex equations are taken from the National Institute of Standards and Technology (NIST) website (\cite{mitchell_nist_2018}) that provides benchmarking problems for \gls{fem} solvers with adaptive mesh refinement methods. The other equations 0A, 0B and 8 are specially created to show different properties of the solver. 
 
 \textbf{PDE 0A: Gauss Kernel} \\
@@ -15,7 +16,7 @@ The testbed is a collection of multiple 2-dimensional scalar \gls{pde}s that are
 
 \textbf{PDE 0B: GSin Kernel} \\
 \underline{Equation Reference:} \eqref{eq:pde0b} \\
-\underline{Characteristics:} can be approximated arbitrarily close by 3 \gls{gsk}; only 3 kernels are used to keep the dimension of the fitness function similar to \gls{pde} 0A;\\
+\underline{Characteristics:} can be approximated arbitrarily close by 3 \gls{gsk}; only 3 kernels are used to keep the minimal necessary dimension of the representation similar to \gls{pde} 0A;\\
 \underline{Difficulty:} the contrast between a dominant wave with a steep gradient in the middle and small waves with little influence on the boundary; simple approximations lay the focus on the middle, while good approximations also match the small waves; \\
 \underline{Boundary:} function value of solution; \\
 
@@ -28,14 +29,14 @@ The testbed is a collection of multiple 2-dimensional scalar \gls{pde}s that are
 
 \textbf{PDE 2: Chaquet PDE 1} \\
 \underline{Equation Reference:} \eqref{eq:pde2} \\
-\underline{Characteristics:} used in other testbeds to compare the performance to other papers; \\
+\underline{Characteristics:} compare the performance to other solvers; \\
 \underline{Difficulty:} rather simple; slight curvature and no steep gradient; \\
 \underline{Boundary:} function value on boundary; \\
 \underline{Reference:} \cite{chaquet_using_2019}, \cite{chaquet_solving_2012}, \cite{tsoulos_solving_2006}, \cite{sobester_genetic_2008}, \cite{panagant_solving_2014}\\
 
 \textbf{PDE 3: Chaquet PDE 3} \\
 \underline{Equation Reference:} \eqref{eq:pde3} \\
-\underline{Characteristics:} polynomial of order 2; \\
+\underline{Characteristics:} compare the performance to other solvers; polynomial of order 2; \\
 \underline{Difficulty:} well behaved, no steep gradient; \\
 \underline{Boundary:} function value on boundary; \\
 \underline{Reference:} \cite{chaquet_using_2019}, \cite{chaquet_solving_2012}, \cite{tsoulos_solving_2006}, \cite{panagant_solving_2014} \\
@@ -85,7 +86,7 @@ The testbed is a collection of multiple 2-dimensional scalar \gls{pde}s that are
 \section{Software Architecture}
 \label{chap:software_architecutre}
 
-To simplify the preparation, execution and evaluation of the experiments, a comprehensive software architecture is defined. The \gls{uml} class diagram can be seen in the appendix \ref{chap:software_architecture}. The limited class diagram, without any methods and attributes is shown in the figure \ref{fig:uml_class_small} below. The architecture is organised in 4 main segments. 
+To simplify the preparation, execution and evaluation of the experiments, a comprehensive software architecture is defined. The \gls{uml} class diagram can be seen in the appendix \ref{chap:appendix_software_architecture}. The limited class diagram, without any methods and attributes is shown in the figure \ref{fig:uml_class_small} below. The architecture is organised in 4 main segments. 
 
 \large \underline{\textbf{Optimisation Algorithm}} \\
 The \inlinecode{IOptAlgoBase} interface must be implemented by every \inlinecode{OptAlgo} class to ensure the compatibility with \inlinecode{CiPdeBase} class of the testbed. A nice side-effect is that it reduces the number of user-defined parameters. An optimisation algorithm of this class must only take an initial guess (e.g. the starting population) as well as two stopping criteria: the maximum number of function evaluation or a minimum error to reach. Also a fitness function (i.e. the function to be optimised) must be provided. Four lists of the same length are returned: the optimum-guess, the function value, the crossover probability and the scale factor per each generation. The actual implementation of the algorithm is not predefined. 
@@ -94,16 +95,16 @@ The \inlinecode{IOptAlgoBase} interface must be implemented by every \inlinecode
 As described in chapter \ref{chap:candidate_rep}, a candidate solution is defined as a sum of \gls{rbf}. In order to test different candidate representations, different classes must be implemented. Again, to ensure compatibility with the \inlinecode{CiPdeBase} class, all representations must implement the \inlinecode{IKernelBase} interface. This assures that all classes have a method that can calculate the solution as well as the first and the second order derivatives. Here, only two kernels are implemented. A typical Gauss kernel as described in chapter \ref{chap:gauss_kernel} and a so called GSin kernel shown in chapter \ref{chap:gsin_kernel}. 
 
 \large \underline{\textbf{Testbed}} \\
-The testbed holds the 11 differential equations used in all experiments. The testbed is abstracted in such a way that an experiment is as simple as creating an \gls{pde} object and calling its solve method. All testbed classes must implement the \inlinecode{ITestbenchBase} interface. This ensures the minimal functionality of every subsequent class. Currently two classes implement this interface, the \inlinecode{FemPdeBase} and the \inlinecode{CiPdeBase}. These are the base classes that provide the specific attributes and methods needed for the \gls{fem} solver and the \gls{ci} solver. The actual \gls{pde} problems are implemented in the classes \inlinecode{FemPde0} or \inlinecode{CiPde0} which, inherit from the \inlinecode{FemPdeBase} and the \inlinecode{CiPdeBase}, respectively. The number in their name is representative for all different testbench problems and every \gls{pde} has its own class. Since all \gls{pde} classes have the same methods/attributes and only differ in their implementation and name, they do not have to be displayed separately. Therefore, they are symbolised together by a ``stacked notation'' used in the class diagram. Some methods in these classes must be overridden and adapted to the current \gls{pde} problem, which is indicated by the $\land$ character.
+The testbed holds the 11 differential equations used in all experiments. The testbed is abstracted in such a way that an experiment is as simple as creating an \gls{pde} object and calling its solve method. All testbed classes must implement the \inlinecode{ITestbenchBase} interface. This ensures the minimal functionality of every subsequent class. Currently two classes implement this interface, the \inlinecode{FemPdeBase} and the \inlinecode{CiPdeBase}. These are the base classes that provide the specific attributes and methods needed for the \gls{fem} solver and the \gls{ci} solver. The actual \gls{pde} problems are implemented in the classes \inlinecode{FemPde0} or \inlinecode{CiPde0} which inherit from the \inlinecode{FemPdeBase} and the \inlinecode{CiPdeBase}, respectively. The number in their name is representative for all different testbench problems and every \gls{pde} has its own class. Since all \gls{pde} classes have the same methods/attributes and only differ in their implementation and name, they do not have to be displayed separately. Therefore, they are symbolised together by a ``stacked notation'' used in the class diagram. Some methods in these classes must be overridden and adapted to the current \gls{pde} problem, which is indicated by the $\land$ character.
 
 \large \underline{\textbf{Post Processing}} \\
-Although the post processing block is not actually a class, it is still represented in this diagram. This module provides functions that take \inlinecode{FemPdeN} or \inlinecode{CiPdeN} objects and perform actions with them. The methods are used in the experiments chapters to interpret the results. A detailed description of the implementation is given in the appendix \ref{chap:post_proc}.
+Although the post processing block is not actually a class, it is still represented in this diagram. This module provides functions that take \inlinecode{FemPdeN} or \inlinecode{CiPdeN} objects and perform actions with them. The methods are used in the experiments chapters to interpret the results. A detailed description of the implementation is given in the appendix \ref{chap:apendix_post_proc}.
 
 \begin{figure}[H]
 	\centering
 	\noindent\adjustbox{max width=\linewidth}{\includegraphics[width=1\textwidth]{../../code/uml_diag/testbench_uml_class_small.pdf}
 	}
-	\unterschrift{This limited \gls{uml} class diagram gives a small overview of the testbed design and its interfaces and classes.}{}{}
+	\unterschrift{This reduced \gls{uml} class diagram gives an overview of the testbed design and its interfaces and classes.}{}{}
 	\label{fig:uml_class_small}
 \end{figure}
 
@@ -115,7 +116,7 @@ In order to scientifically compare the results produced by the different solvers
 \label{chap:metric_time}
 The solving time is measured within the \inlinecode{solve()} method of either class. The time module of the \cite{python_standard_library_time_2020} is used to interact with the system clock. The resolution, that the time module can access, depends on the system it is running on. Specifically, on the machine used in all further experiments, \inlinecode{time.time()} returns a 24 byte float that represents the time passed since 1st of January 1970. Usually, consecutive calls of this function return increasing values - changing the system time could interfere with the correctness of this value.\\ 
 
-As the execution time of a program depends on many other factors, such as the current system load, the CPU temperature and the process scheduler, it is necessary to view it as a random variant. Thus, multiple replications have to be done before trying to interpret the results. To make for a fair comparison, the same machine with a similar work-load must be used.  The replications are not done within the \inlinecode{solve()} function and must be applied during the experiment. To reduce the random effects and prevent possible outlier, the Python garbage collector is switched off during the time measurement. For a step-by-step description, the pseudocode is displayed in the appendix \ref{chap:solve_function}. 
+As the execution time of a program depends on many other factors, such as the current system load, the CPU temperature and the process scheduler, it is necessary to view it as a random variable. Thus, multiple replications have to be done before trying to interpret the results. To make for a fair comparison, the same machine with a similar work-load must be used.  The replications are not done within the \inlinecode{solve()} function and must be applied during the experiment. To reduce the random effects and prevent possible outlier, the Python garbage collector is switched off during the time measurement. For a step-by-step description, the pseudocode is displayed in the appendix \ref{chap:solve_function}. 
 
 
 
@@ -123,7 +124,7 @@ As the execution time of a program depends on many other factors, such as the cu
 \label{chap:metric_mem}
 Similar to the solving time measurement, the memory usage is determined within the \inlinecode{solve()} method. The \textit{psutil} module (\cite{rodola_psutil_2020}) provides the functionality to read the amount of memory attached to a process at a given time. The function call \inlinecode{process.memory_info()} returns an object with multiple attributes about the current state of the process. Of special interest is the \gls{vms} field. This includes the \gls{rss}, the memory that is currently held within the main memory, and the memory that is currently swapped out to the hard drive.
 
-Without assuming anything about the inner workings of the process, the memory usage is also a random variant. Thus, similar to the time measurement, replications have to be performed. The same pseudocode as for the time measurement (appendix \ref{chap:solve_function}) also applies here. To remove outliers, it is helpful to create and solve one testbed object before recording the experiment. This sets up the necessary references and then are mingled into the actual solving process. This holds true for both, the \gls{fem} and the \gls{ci} solver.  
+Without assuming anything about the inner workings of the process, the memory usage is also a random variable. Thus, similar to the time measurement, replications have to be performed. The same pseudocode as for the time measurement (appendix \ref{chap:solve_function}) also applies here. To remove outliers, it is helpful to create and solve one testbed object before recording the experiment. This sets up the necessary references and then are mingled into the actual solving process. This holds true for both, the \gls{fem} and the \gls{ci} solver.  
 
 \subsection{Quality Measurement}
 \label{chap:metric_quality}
@@ -139,7 +140,9 @@ Thus, \cite{chaquet_using_2019} define a new quality measurement based on the \g
 \label{eq:rmse_chaquet}
 RMSE^2 = \frac{\sum_{i=1, \mathbf{x}_i \in C}^{n_C} \left|\left| u(\mathbf{x}_i) - u_{ext}(\mathbf{x}_i) \right|\right|^2 + \sum_{j=1, \mathbf{x}_j \in B}^{n_B} \left|\left| u(\mathbf{x}_j) - u_{ext}(\mathbf{x}_j) \right|\right|^2}{(n_C + n_B)}
 \end{equation}
-This quality criterion has three inherent issues. At first, it firmly depends on the number of collocation points used. In an algorithm that uses self-adaptive collocation points, where the distribution of the points depends on random variants, subsequent measures of similar solutions could result in different quality values. Especially in solutions with a high condition number, the \gls{rmse} measurement would be rendered useless. Further, the quality is only measured on the collocation points and not in between. However, a good solution fits not only these discrete points, but the whole domain. This is called an aliasing error. An approximation can fit the points, without correctly representing the space between them. This is shown in the following figure \ref{fig:aliasing error}.
+This quality criterion has three inherent issues. At first, it firmly depends on the number of collocation points used. In an algorithm that uses self-adaptive collocation points, where the distribution of the points depends on random variables, subsequent measures of similar solutions could result in different quality values. Especially in solutions with high condition numbers, the \gls{rmse} measurement would be rendered useless since a small deviation of the point results in a large difference of the function value. 
+
+Further with the \gls{rmse}, the quality is only measured on the collocation points and not in between. However, a good solution fits not only these discrete points, but the whole domain. This is called an aliasing error. An approximation can fit the points, without correctly representing the space between them. This is shown in the following figure \ref{fig:aliasing error}.
 
 \begin{figure}[H]
 	\centering
@@ -172,7 +175,7 @@ At first the \gls{pde}s must be transformed into their corresponding weak form. 
 \int_{\Omega} \nabla u^T \nabla v dV = \int_{\Omega} f v dV
 \end{equation}
 
-To enhance the performance of NGSolve, static condensation is turned on. Further, a multigrid preconditioner is used. All problems are approximated by second order polynomials. The automatic mesh refinement is performed until a maximum of $5 \cdot 10^4$ \gls{dof} is reached. To properly interpret the results, 20 replications for each problem are performed. This is only needed for regarding time and memory, the solution itself is not a random variant. To further reduce the memory consumption, the GUI of NGSolve is switched off. 
+To enhance the performance of NGSolve, static condensation is turned on. Further, a multigrid preconditioner is used. All problems are approximated by second order polynomials. The automatic mesh refinement is performed until a maximum of $5 \cdot 10^4$ \gls{dof} is reached. To properly interpret the results, 20 replications for each problem are performed. This is only needed for regarding time and memory, the solution itself is not a random variable. To further reduce the memory consumption, the GUI of NGSolve is switched off. 
 
 \subsection{Result}
 With the parameters described above, the following results are produced. The solving time as well as the memory usage are displayed in the boxplots \ref{fig:_fem_time_boxplot} and \ref{fig:_fem_mem_boxplot}, respectively. These datasets provide a reference point for the performance of the \gls{ci} solver. In general, the solving time ranges from 2.5 to 5.0 seconds at about 50 to 80 Mbyte of memory. Only problem 3 stands out as a notable exception. To keep the diagram within a readable scale, this \gls{pde} is omitted and plotted in a separate figure. 
@@ -228,7 +231,7 @@ The problem \gls{pde} 7 only needs around 2.5 seconds to be solved. A reason cou
 	\label{fig:_fem_mem_boxplot}
 \end{figure}
 
-The following figures \ref{fig:_fem_time_boxplot_pde3} and \ref{fig:_fem_mem_boxplot_pde3} show the boxplot of the time and memory consumption for the testbed \gls{pde} 3 with $5 \cdot 10^4$ \gls{dof}. Compared to the other equations, this problem takes longer to solve while also needing more memory: somewhere around 65.2 seconds at about 130 Mbyte. One possible explanation for that is the fundamental structure of the \gls{pde}. As described in equation \eqref{eq:sol3}, the exact solution to this problem is a polynomial of second order. This can be approximated perfectly by the \gls{fem} solver, since it also uses second order polynomials as basis functions. The mesh-refinement step takes more iteration to produce the $5 \cdot 10^4$ \gls{dof} as compared to the other testbed problems. In fact, it should be possible to use less \gls{dof} and still reach a similar solution quality. Figure \ref{fig:_dof_sweep_pde3} shows the performance metrics at different \gls{dof} budgets. The plot confirms this hypothesis, that less \gls{dof} take less time and memory to solve the \gls{pde} and still end up with the same quality. 
+The following figures \ref{fig:_fem_time_boxplot_pde3} and \ref{fig:_fem_mem_boxplot_pde3} show the boxplot of the time and memory consumption for the testbed \gls{pde} 3 with $5 \cdot 10^4$ \gls{dof}. Compared to the other equations, this problem takes longer to solve while also needing more memory: somewhere around 65.2 seconds at about 130 Mbyte. One possible explanation for that is the fundamental structure of the \gls{pde}. As described in equation \eqref{eq:sol3}, the exact solution to this problem is a polynomial of second order. This can be approximated perfectly by the \gls{fem} solver, since it also uses second order polynomials as basis functions. The mesh-refinement step takes more iterations to produce the $5 \cdot 10^4$ \gls{dof} as compared to the other testbed problems. In fact, since the numerical errors per finite element accumulate, more \gls{dof} should result in a larger approximation error. Figure \ref{fig:_dof_sweep_pde3} shows the performance metrics at different \gls{dof} budgets. The plot confirms this hypothesis, that less \gls{dof} take less time and memory to solve the \gls{pde} and still end up with a better quality. 
 
 \begin{figure}[H]
 	\centering
@@ -260,8 +263,7 @@ The following figures \ref{fig:_fem_time_boxplot_pde3} and \ref{fig:_fem_mem_box
 
 \section{Default CI Parameter}
 \label{chap:default_ci_param}
-
-Typically, heuristic optimisation algorithm use some parameters to tune the performance on specific testbed problems - for all further experiments this is the JADE algorithm form pseudocode \ref{algo: jade}. Similarly, the reported \gls{ci} solver has many parameters that could be adapted. However, adjusting every parameter in order to find the best combination is not an option, since that would take an extensive amount of computation time. Some parameters that might not have a great effect on the performance can be predefined. These values are be determined by preliminary test. If not stated otherwise, the following parameters from table \ref{tab:ci_parameter} are used in the subsequent experiments. 
+Typically, the performance of heuristic optimisation algorithms can be adjusted to specific testbed problems by tuning its parameters. For all further experiments the JADE algorithm from pseudocode \ref{algo: jade} is used. Similarly, the reported \gls{ci} solver has many parameters that could be adapted. However, adjusting every parameter in order to find the best combination is not an option, since that would take an extensive amount of computation time. Some parameters that might not have a great effect on the performance can be predefined. These values are determined by preliminary test. If not stated otherwise, the following parameters from table \ref{tab:ci_parameter} are used in the subsequent experiments. 
 
 \begin{table}[h]
 	\centering
@@ -271,7 +273,7 @@ Typically, heuristic optimisation algorithm use some parameters to tune the perf
 			\hline
 			\rowcolor[HTML]{\farbeTabA}
 			
-			Parameter & Value & \cite{chaquet_using_2019} \\ \hline
+			Parameter & JADE & \multilinecell{\gls{cma_es} \\ (\cite{chaquet_using_2019})} \\ \hline
 			
 			$\varphi$ & 100 & 300 \\ \hline
 			$\kappa$  & 1   & 3   \\ \hline
@@ -300,13 +302,13 @@ The parameters $\varphi$ and $\kappa$ are used in the fitness function (equation
 	\label{fig:collocation_weight}
 \end{figure}
 
-The population size used by \cite{chaquet_using_2019} is based on the original formulation of the \gls{cma_es}. However, they observed a better convergence when scaling the recommended population size by 3. Typically, \gls{de} uses larger population sizes. \cite{mallipeddi_empirical_2008} describe an empirical study on choosing this parameter. They discuss the trade-off between premature convergence and computational effort. The results suggest that population sizes of $2\cdot dim$ do get stuck in local optimums, but also converge faster. Since time is a critical resource, this population size is chosen. 
+The population size used by \cite{chaquet_using_2019} is based on the original formulation of the \gls{cma_es}. However, they observed a better convergence when scaling the recommended population size by 3. Typically, \gls{de} uses larger population sizes. \cite{mallipeddi_empirical_2008} describe an empirical study on choosing this parameter. They discuss the trade-off between premature convergence and computational effort. The results suggest that population sizes of $2\cdot dim$ are more likely to stagnate, but also converge faster. Since time is a critical resource, this population size is chosen. 
 
 The termination condition for \gls{de} is either a maximum number of function evaluation, or a minimal function value to reach. Since the fitness function (equation \eqref{eq:fit_func}) has its optimum at 0, this value is used as the termination condition. A helpful side-effect is that it ensures the same amount of function evaluation in every run, without early termination. This prevents outliers in the time and memory measurement. 
 
 The parameters p and c are specific to JADE (algorithm \ref{algo: jade}). The mutation operator \inlinecode{mutationCurrentToPBest1} uses p to select the best individuals and c weights the parameter adaption mechanism. For all experiments these values are set at $p=0.3$ and $c=0.5$. 
 
-To account for the statistical influence, all experiments are restarted 20 times with independent initial guesses. 
+To account for the statistical influence, every setup is reevaluated by 20 replications where each replication starts with independent initial guesses. 
 
 \cite{chaquet_using_2019} use 100 equally spaced collocation points over the domain to solve the \gls{pde}. Here, 121 points are created, as seen in figure \ref{fig:collocation_points}. 
 
@@ -320,13 +322,13 @@ To account for the statistical influence, all experiments are restarted 20 times
 	\label{fig:collocation_points}
 \end{figure}
 
-The initialisation is done by a standard normal distribution. This means that every value in the $param_{uapx}$ vector is drawn from a normal distribution. On the contrary, \cite{chaquet_using_2019} initialise the values specifically tailored to each parameter of the kernel. This process assumes a priori information about the solution and thus should be dropped. 
+The initialisation is done by a standard normal distribution. This means that every value in the $\mathbf{p_{apx}}$ vector is drawn from a normal distribution. On the contrary, \cite{chaquet_using_2019} initialise the values specifically tailored to each parameter of the kernel. This process assumes a priori information about the solution. In the typical application, this knowledge is not available and thus it should not be used. 
 
 
 \section{Hardware Infrastructure}
 \label{chap:hardware_setup}
 
-To increase the experimental throughput, two machines are used: a personal computer (machine 1) and a server on the cloud (machine 2). It is important that any time or memory comparisons must be performed between experiments on the same machine. In the experiments chapter it is separately denoted which comparisons are allowed. The following table \ref{tab:machines} shows the properties of both machines. It is important to note that these information are only a reference point. This is probably not enough to actually recreate the exact time or memory data presented in this work. 
+To increase the experimental throughput, two machines are used: a personal computer (machine 1) and a server in the cloud (machine 2). It is important that any time or memory comparisons must be performed between experiments on the same machine. In the experiments chapter it is separately denoted which comparisons are allowed. The following table \ref{tab:machines} shows the properties of both machines. It is important to note that these information are only a reference point. This is probably not enough to actually recreate the exact time or memory data presented in this work. 
 
 \begin{table}[h]
 	\centering

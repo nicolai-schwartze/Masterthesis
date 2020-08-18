@@ -77,7 +77,7 @@ The weighting function is also split into two parts: $\xi$ for the inner colloca
 \section{Candidate Representation}
 \label{chap:candidate_rep}
 
-As \cite{chaquet_using_2019} suggest, an approximate solution should be represented as a summation of $N$ scaled and shifted radial basis functions $\phi$, as stated in equation \eqref{eq:u_apx} \todo{cite approximation theorem} \gls{rbf} are functions that are point symmetric to a centre $c$ and their function value only depends on the radius $r$. 
+As \cite{chaquet_using_2019} suggest, an approximate solution should be represented as a summation of $N$ scaled and shifted radial basis functions $\phi$, as stated in equation \eqref{eq:u_apx} Gauss kernels have frequently been used for the approximation of functions. A solid foundation on the approximation theorem can be seen in \cite{park_universal_1991}. \gls{rbf} are functions that are point symmetric to a centre $c$ and their function value only depends on the radius $r$. 
 
 \begin{equation}
 \label{eq: radius}
@@ -89,7 +89,7 @@ This thesis mainly works with two different types of \gls{rbf}. The first one is
 \subsection{Gauss Kernel}
 \label{chap:gauss_kernel}
 
-In general, a \gls{gak} is the classical choice to approximate functions. It was first introduced in \cite{broomhead_multivariable_1988}. \todo{cite approximation proof} Equation \eqref{eq:gauss_kernel} shows the formulation of such a kernel. One kernel has 4 parameters, that change its shape and location. $\omega$ is a scaling factor for each and $\gamma$ describes how sharp the e-function is. Depending on the space the solution is defined in, the number of values in the vector $\mathbf{c}$ could change - one for each dimension. However, in this work only $\mathbb{R}^2$ is of interest, thus $\mathbf{c}$ always includes 2 values. In figure \ref{fig:gauss_kernel_3d_plot} a single standard \gls{gak} is plotted. 
+In general, a \gls{gak} is the classical choice to approximate functions. It was first introduced in \cite{broomhead_multivariable_1988}. Equation \eqref{eq:gauss_kernel} shows the formulation of such a kernel. One kernel has 4 parameters, that change its shape and location. $\omega$ is a scaling factor for each and $\gamma$ describes how sharp the e-function is. Depending on the space the solution is defined in, the number of values in the vector $\mathbf{c}$ could change - one for each dimension. However, in this work only $\mathbb{R}^2$ is of interest, thus $\mathbf{c}$ always includes 2 values. In figure \ref{fig:gauss_kernel_3d_plot} a single standard \gls{gak} is plotted. 
 
 \begin{equation}
 \label{eq:gauss_kernel}
@@ -116,7 +116,7 @@ A solution is encoded as a vector of these $4\cdot N$ parameters stacked togethe
 
 \begin{equation}
 \label{eq:gauss_parameter_vector}
-\mathbf{param_{uapx}} = \left[\underbrace{\omega_0, \gamma_0, c_{00}, c_{01}}_{\text{kernel 0}}, \cdots \underbrace{\omega_i, \gamma_i, c_{i0}, c_{i1}}_{\text{kernel i}}, \cdots \underbrace{\omega_N, \gamma_N, c_{N0}, c_{N1}}_{\text{kernel N}} \right]^T
+\mathbf{p_{apx}} = \left[\underbrace{\omega_0, \gamma_0, c_{00}, c_{01}}_{\text{kernel 0}}, \cdots \underbrace{\omega_i, \gamma_i, c_{i0}, c_{i1}}_{\text{kernel i}}, \cdots \underbrace{\omega_N, \gamma_N, c_{N0}, c_{N1}}_{\text{kernel N}} \right]^T
 \end{equation}
 
 To evaluate the residual of a \gls{pde}, the derivatives must be known. To that extend, the derivative of $u_{apx}$ from equation \eqref{eq:u_apx} is calculated. The first order derivative with respect to $x_0$ is seen in equation \eqref{eq:uapx_gauss_kernel_x0}. To solve the proposed testbed, also the second order derivatives are needed, as described in equation \eqref{eq:uapx_gauss_kernel_x0x0}. Although the mixed term derivative is not used in this work, for the sake of completeness it is displayed in equation \eqref{eq:uapx_gauss_kernel_x0x1}.  
@@ -139,8 +139,8 @@ To evaluate the residual of a \gls{pde}, the derivatives must be known. To that 
 
 \subsection{GSin Kernel}
 \label{chap:gsin_kernel}
-Additional to the Gauss kernel, a ``GSin'' kernel, further also abbreviated as \gls{gsk}, is proposed. \todo{approximation proof possible?}In essence, this is a multiplication of a \gls{gak} with a sine function, as seen in equation \eqref{eq:gsin_kernel}. It can be thought of a sine function, where its influence declines with the radius $r$. Both ``sub-functions'' are centred at the same $\mathbf{c}$. As shown in chapter \ref{chap:gsin_approximation_theorem}, the universal approximation theorem for the GSin kernel holds true. 
-The plot in figure \ref{fig:gsin_kernel_3d_plot} shows how the first half period is much larger than the second half. With the sine, two new parameters are introduced: $f$ for the frequency of the sine wave and $\varphi$ represents the phase shift. 
+Additional to the Gauss kernel, a ``GSin'' kernel, further also abbreviated as \gls{gsk}, is proposed. In essence, this is a multiplication of a \gls{gak} with a sine function, as seen in equation \eqref{eq:gsin_kernel}. It can be thought of a sine function, where its influence declines with the radius $r$. The plot in figure \ref{fig:gsin_kernel_3d_plot} shows how the first half period is much larger than the second half. Both ``sub-functions'' are centred at the same $\mathbf{c}$. As shown in chapter \ref{chap:gsin_approximation_theorem}, the universal approximation theorem for the GSin kernel holds true. 
+With the sine, two new parameters are introduced: $f$ for the frequency of the sine wave and $\varphi$ represents the phase shift. 
 \begin{equation}
 \label{eq:gsin_kernel}
 gsk(\mathbf{x}) = \omega e^{-\gamma ||\mathbf{x} - \mathbf{c}||^2} sin(f ||\mathbf{x} - \mathbf{c}||^2 - \varphi)
@@ -168,7 +168,7 @@ Equation \eqref{eq:gsin_parameter_vector} shows the solution representation in s
 
 \begin{equation}
 \label{eq:gsin_parameter_vector}
-\mathbf{param_{uapx}} = \left[\underbrace{\omega_0, \gamma_0, c_{00}, c_{01}, f_0, \varphi_0}_{\text{kernel 0}}, \cdots \underbrace{\omega_i, \gamma_i, c_{i0}, c_{i1}, f_i, \varphi_i}_{\text{kernel i}}, \cdots \underbrace{\omega_N, \gamma_N, c_{N0}, c_{N1}, f_N, \varphi_N}_{\text{kernel N}} \right]^T
+\mathbf{p_{apx}} = \left[\underbrace{\omega_0, \gamma_0, c_{00}, c_{01}, f_0, \varphi_0}_{\text{kernel 0}}, \cdots \underbrace{\omega_i, \gamma_i, c_{i0}, c_{i1}, f_i, \varphi_i}_{\text{kernel i}}, \cdots \underbrace{\omega_N, \gamma_N, c_{N0}, c_{N1}, f_N, \varphi_N}_{\text{kernel N}} \right]^T
 \end{equation}
 
 Again, the derivatives of the solution are needed, which are shown in the equations \eqref{eq:uapx_gsin_kernel_x0} through \eqref{eq:uapx_gsin_kernel_x0_x1}. 

@@ -83,7 +83,7 @@ The solving time for the memetic pJADE with \gls{gsk} forms the same pattern as 
 
 As mentioned above, the memory measurement includes many outliers. However, the median is quite stable. The \gls{ci} solver needs only 2 to 5 percent of the memory used by the \gls{fem} solver. This is more than the corresponding \gls{gak} results from figure \ref{fig:parallel_jade_memory_boxplot}. The greater memory usage can be explained by the larger search dimension and the greater population size. 
 
-\subsection{PDE 0A 6}
+\subsection{PDE 0A and PDE 6}
 
 Theoretically, \gls{pde}s 0A and 6 could be approximated perfectly by the \gls{gak} and the \gls{gsk}. To that extend, the parameters of the \gls{gsk} must evaluate to $f=0$ and $\varphi=-\frac{\pi}{2}$. Since the optimisation algorithm will always produce numerical inaccuracies and never actually result in these values, the solution quality is expected to be worse. As table \ref{tab:compare_mpj_mpjgsk_10^6} shows, the \gls{gsk} results are not significantly different on \gls{pde} 0A. 
 

@@ -697,10 +697,14 @@ The post-processing module includes these functions. Their implementation is des
 	\end{itemize} 
 	\item \inlinecode{None plotFEDynamic(FEDynamic, name=None)} \\
 	This method plots the function value dynamic of the population on a y-axis logarithmic plot. It can also cope with a varying population size. The plot can be saved with an optional argument. 
+	\item \inlinecode{None plotError3D(kernel, parameter, pdeName, lD, uD, name=None)} \\
+	Similar to the 	\inlinecode{plotApprox3D} method, a 3D graph of the solution is plotted. Instead of the function value, the error is shown. The error is calculated by $E  = u_{apx}(x,y) - u_{ext}(x,y) \forall x,y \in \Omega$. 
 	\item \inlinecode{None plotABSError3D(kernel, parameter, pdeName, lD, uD, name=None)} \\
-	Similar to the 	\inlinecode{plotApprox3D} method, a 3D graph of the solution is plotted. Instead of the function value, the absolute error is shown. The error is calculated by $E_{abs}  = \left| u_{apx}(x,y) - u_{ext}(x,y) \right| \forall x,y \in \Omega$. 
+	Similar to the 	\inlinecode{plotError3D} method, a 3D graph of the solution is plotted. The absolute error is shown. The error is calculated by $E_{abs}  = \left| u_{apx}(x,y) - u_{ext}(x,y) \right| \forall x,y \in \Omega$. 
 	\item \inlinecode{None plotKernelAdaption(obj_dict, title, 'green', 'red', name=None)} \\
 	This function plot the fitness difference over all generations. Additionally, it marks if the number of kernels (and thus the search dimension) is increased or reduced. 
+	\item \inlinecode{(float, float) calcSingleERT(rundata, target)} \\
+	Calculates the expected running time and the success probability for a single target value. The expected running time is corrected by the success probability. 
 \end{itemize}
 
 
@@ -859,8 +863,9 @@ The post-processing module includes these functions. Their implementation is des
 	\DontPrintSemicolon
 	\SetKwFunction{FmpaJADE}{memeticpJADEadaptive}
 	\SetKwProg{Fn}{Function}{:}{}
-	\Fn{\FmpaJADE{$\mathbf{X}$, $funct$, $minErr$, $maxFE$}}{
-		$dim$, $popopsize$, $kernelsize$ $\gets size(\mathbf{X})$\;
+	\Fn{\FmpaJADE{$\mathbf{X}$, $func$, $kSize$, $minErr$, $maxFE$}}{
+		$dim$, $popsize$ $\gets size(\mathbf{X})$\;
+		$\kappa$ $\gets$ $dim/kSize$ \tcp{number of kernels}
 		$p \gets 0.3$\;
 		$c \gets 0.5$\;
 		$dT$ $\gets 100$\;
@@ -869,24 +874,28 @@ The post-processing module includes these functions. Their implementation is des
 		$\mathbf{\mathbf{bestPop}} \gets \emptyset$\;
 		$popFactor$ $\gets$ $popsize/dim$\;
 		\While{$fecounter < maxFE$}{
-			$\mathbf{pop}$, $\mathbf{FE}$, $F$, $CR$ $\gets paJADE($$\mathbf{X}$, $p$, $c$, $dT$, $funct$, $minErr$, $maxFE - 2 \cdot dim$ $)$\;
+			$\mathbf{pop}$, $\mathbf{FE}$, $F$, $CR$ $\gets paJADE($$\mathbf{X}$, $p$, $c$, $dT$, $func$, $minErr$, $maxFE - 2 \cdot dim$ $)$\;
 			$fecounter \gets fecounter + len(F)\cdot popsize$\;
 			$bestIndex \gets argmin(\mathbf{FE})$\;
 			$bestSol \gets \mathbf{pop}[bestIndex]$\;
-			$\mathbf{pop}$, $\mathbf{FE}$ $ \gets ds$($funct$, $bestSol$, $minErr$, $2 \cdot dim)$\;
+			$\mathbf{pop}$, $\mathbf{FE}$ $ \gets ds$($func$, $bestSol$, $minErr$, $2 \cdot dim)$\;
 			$fecounter \gets fecounter + 2 \cdot dim$\;
 			\If{$min(\mathbf{FE}) < bestFE$}{
 				\tcp{increase dimension}
-				$\mathbf{X} \gets hstack(\mathbf{pop},\mathbf{\mathcal{N}}(popsize, kernelsize))$\;
-				$\mathbf{X} \gets vstack(\mathbf{X},\mathbf{\mathcal{N}}((popFactor \cdot dim)-popsize, dim))$\;
+				$\mathbf{X} \gets appendRndKernel(\mathbf{pop}, popsize, kSize)$\;
+				$\kappa \gets \kappa+1$ \;
+				\tcp{adapt population size to dimension}
+				$\mathbf{X} \gets appendRndPop(\mathbf{X}, popFactor, kSize)$\;
 				$bestFE \gets min(\mathbf{FE})$\;
 				$\mathbf{bestPop} \gets \mathbf{pop}$\;
 				$dim$, $popsize$ $\gets size(\mathbf{X})$\;
 			}
 			\Else {
 				\tcp{reduce dimension}
+				\tcp{restart around previous best}
 				$\mathbf{X} \gets \mathbf{bestPop} + \mathbf{\mathcal{N}}(size(\mathbf{bestPop}))$\;
-				$dim$, $popsize$ $\gets size(\mathbf{X})$\;
+				$\kappa \gets \kappa - 1$ \;
+				$dim$, $popsize$ $\gets size(\mathbf{X})$ \;
 			}
 		}
 		\Return $\mathbf{pop}$, $\mathbf{FE}$, $F$, $CR$

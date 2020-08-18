@@ -119,7 +119,7 @@ The weighted residual integral WRF is exactly the formulation of the \gls{wrm} f
 WRF(u_{apx}(\mathbf{x})) = \int_{\Omega} |W(\mathbf{x)}| |R(u_{apx}(\mathbf{x}))| dx
 \end{equation} 
 
-The boundary condition is incorporated by summing up its normed violations at distinct points $\mathbf{x}_i$. $K_j$ are penality multipliers that shift the focus to different points of the boundary. The concept of this penalty function originates from \cite{rajeev_s_discrete_1992}.
+The boundary condition is incorporated by summing up its normed violations at distinct points $\mathbf{x}_i$. $K_j$ are penality multipliers that shift the focus to different points of the boundary. The concept of this penalty function originates from \cite{rajeev_discrete_1992}.
 
 \begin{equation}
 \label{eq:boundary_penalty}
@@ -139,14 +139,14 @@ In their paper \cite{chaquet_using_2019} describe an algorithm that approximates
 \begin{equation}
 u(\mathbf{x})_{apx} = \sum_{i=1}^{N} \omega_i e^{\gamma_i (\left||\mathbf{x} - \mathbf{c}_i\right||^2)}
 \end{equation}
-The approximated function $u(\mathbf{x})_{apx}$ can be fully determined by a finite number of parameters: $\omega_i, \gamma_i, \mathbf{c}_i$. These are stacked together into a vector $param_{uapx}$ and called the decision variables which are optimised by the algorithm. 
+The approximated function $u(\mathbf{x})_{apx}$ can be fully determined by a finite number of parameters: $\omega_i, \gamma_i, \mathbf{c}_i$. These are stacked together into a vector $\mathbf{p_{apx}}$ and called the decision variables which are optimised by the algorithm. 
 The objective function can be seen in equation \eqref{eq:fit_func_chaquet}. This is an update of the objective function in \ref{eq:fit_func_chaquet_2012} where the inner collocation points also get scaled by a weighting function $\xi(\mathbf{x}_i)$.
 \begin{equation}
 \label{eq:fit_func_chaquet}
 F(u_{apx}(\mathbf{x})) = \frac{\sum_{i=1}^{n_C} \xi (\mathbf{x}_i) || \mathbf{L}u_{apx}(\mathbf{x}_i) - f(\mathbf{x}_i)||^2 + \phi \sum_{j=1}^{n_B} || \mathbf{B}u_{apx}(\mathbf{x}_j) - g(\mathbf{x}_j)||^2}{m (n_C + n_B)}  
 \end{equation}
 The multipliers $\xi(\mathbf{x}_i)$ and $\phi$ are weighting factors for either the inner or the boundary term. The whole term is normalised with the number of collocation points. 
-The parameter of the kernels are determined via a \gls{cma_es} (\cite{hansen_cma_2006}). To further improve the solution, the evolutionary algorithm is coupled with a \gls{ds} method to carry out the local search. The authors show empirically that the local search significantly improves the performance by testing the algorithm on a set of 32 differential equations. 
+The parameter of the kernels are determined via a \gls{cma_es} (\cite{hansen_reducing_2003}). To further improve the solution, the evolutionary algorithm is coupled with a \gls{ds} method to carry out the local search. The authors show empirically that the local search significantly improves the performance by testing the algorithm on a set of 32 differential equations. 
 
 \cite{fateh_differential_2019} use a simple variant of \gls{de} where candidates are represented as discrete function value points within the domain. The function values between the grid points are linearly interpolated. This is a radical brute force approach that results in a massive search space dimension. Yet, the main advantage is that the solution is not limited to a decomposition of kernel functions and thus, even non-smooth functions can be approximated. Since this approach does not produce an analytical solution, the differential equation and the boundary condition is incorporated into the fitness function by taking the sum of squared residuals at every grid point, as seen in equation \eqref{eq:fit_fateh}. The derivatives within the residual are calculated between two neighbouring points by the difference quotient. 
 \begin{equation}

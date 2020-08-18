@@ -3,11 +3,8 @@
 %\clearpage
 \setcounter{page}{2}
 \chapter*{Kurzreferat}
-\section*{Deutscher TITEL}
+\section*{Computational Intelligence Methoden zum Lösen partieller Differentialgleichungen}
 %
-Ein Kurzreferat macht die Relevanz der Arbeit sowie die innovativen Gedankengänge ersichtlich. Alleiniges Ziel ist es, in jeweils einem Absatz einen gerafften Überblick der Arbeit zu geben, so dass die Nutzer/innen entscheiden können, ob die vorliegende Arbeit für das eigene Forschungsvorhaben relevant ist oder nicht. Dementsprechend müssen darin die zentralen Abschnitte in neutraler, nicht wertender Perspektive beschrieben werden, vergleichbar einem Text über den Text von einem imaginierten Dritten.\par
+Diese Masterarbeit beschreibt und testet einen Differenzialgleichungs-Solver, der auf der heuristischen Black-Box Optimierungstechnik JADE basiert. Der Solver formuliert das Residuum der Differenzialgleichung in eine Fitness Funktion um. Die zugrundeliegende Lösung der Differenzialgleichung wird durch eine endliche Summe an radialen Basisfunktionen approximiert. Um die Performance des Solvers evaluieren zu können, wird ein Testbed von 11 zwei-dimensionalen Poisson-Gleichungen gebildet. Der Vergleich hinsichtlich Lösungszeit, Speicherbedarf und Genauigkeit erfolgt mit dem open-source Finite Elementen Solver NGSolve sowie anderen ähnlichen Solvern aus der Literatur. Um die Dauer des Verfahrens zu minimieren, wird JADE parallelisiert. Diese Arbeit behandelt zwei neue Lösungsstrategien: Zunächst wird die Anzahl der Kernel während dem Lösen an die Differenzialgleichung angepasst. Weiters wird ein neuer Kernel gebildet und getestet. Diese Konzepte werden anhand von entsprechenden Experimenten am Testbed auf signifikante Verbesserungen überprüft. Die Struktur der Fitness Funktion wird untersucht. Dabei ist eine grundlegende Symmetrie zu beobachten, die in weiteren Arbeiten verwendet werden könnte, um bessere Optimierungsalgorithmen zu entwickeln. 
 %
-Das Abstract muss für sich alleine verständlich sein. Es sollte zudem die zentralen Schlagwörter, die das Thema der Arbeit treffend umreißen, enthalten, um eine Indexierung in einer bibliographischen Referenzdatei zu erleichtern. Der Umfang von 1200 Anschlägen (d.h. Zeichen mit Leerzeichen; ca. 20 Zeilen) sollte nicht überschritten werden.\par
-%
-\blindtext[2]
 \end{document}

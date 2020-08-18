@@ -27,8 +27,12 @@ The algorithm always starts with one kernel. From there on, the number of kernel
 This adaptive scheme operates under 3 strong assumptions. To reduce their possible negative impact, corresponding counter-strategies are implemented. 
 \begin{itemize}
 	\item \underline{\textbf{Assumption 1:}} The optimisation algorithm (JADE + \gls{ds}) finds (a close approximation to) the global optimum. This would be the best approximation of the solution by $N$ kernels. Obviously, this property is not necessarily true. Currently, only a very limited amount of research papers exist, that discuss global convergence properties of \gls{de} (\cite{hu_sufficient_2013}, \cite{opara_differential_2019}). To counteract this assumption, restarts are performed. 
-	\item \underline{\textbf{Assumption 2:}} The theoretically best achievable solution quality increases with the number of kernels. After a maximum number of kernels is reached, the quality can not be surpassed. Based on this assumption, the algorithm starts with one kernel and the dimensionality increases by only one kernel at a time. To catch the point after which too many kernels are used, the dimensionality reduction step is introduced. 
-	\item \underline{\textbf{Assumption 3:}} The best approximation to a particular problem can be decomposed into independent kernels. This means, that the first kernel would not influence the next one. This premise would allow to simply include a new kernel without altering the kernels that have already been found. Again, this is not true for every \gls{pde}. The concept is similar to the one explained in \cite{chaquet_solving_2012}. Contrary to their work, the first kernels in the lower dimensions are not fixed. This means that the old kernels are merely used as a starting point and all kernels are allowed to adapt to the new setting. 
+	\item \underline{\textbf{Assumption 2:}} The theoretically best achievable solution quality increases with the number of kernels. After a maximum number of kernels is reached, the quality can not be surpassed. Based on this assumption, the algorithm starts with one kernel and the dimensionality increases by only one kernel at a time. To catch the point after which too many kernels are used, the dimensionality reduction step is introduced. Generally, the maximum number of kernels is not known except for \gls{pde} 0A and \gls{pde} 6. 
+	\item \underline{\textbf{Assumption 3:}} The best approximation of e.g. 3 kernels to a particular problem is independent of the best approximation by 4 kernels. This means that from 3 to 4 kernels simply a new kernel is introduced while not altering the other 3. Again, this is not true for every \gls{pde}. Preliminary experiments on \gls{pde} 0A have confirmed this assumption, while on other \gls{pde}s, like \gls{pde} 2, the solution can not simply be decomposed into independent kernels. 
+	
+	The concept is similar to the one explained in \cite{chaquet_solving_2012}. They start the approximation process by optimising the first harmonic. During the search for the second harmonic, the first one is fixed in place. 
+	
+	In this algorithm, the first kernels are allowed to change. When introducing a new random kernel, it is simply appended to the ever evolving $\mathbf{p_{apx}}$ vector. Thus, the search for the 4\textsuperscript{th} kernel starts where the best approximation for 3 kernels was found, but since the earlier kernels are allowed to readapt, other solutions can be retrieved.
 \end{itemize} 
 
 This chapter tries to answer the question if this strategy is an effective method to increase the quality of obtained solutions. Also, the time and memory aspects are investigated. 
@@ -93,7 +97,7 @@ The table \ref{tab:compare_mpj_mpja_10^6} shows the L2 norm data obtained by the
 	\label{tab:compare_mpj_mpja_10^6}
 \end{table}
 
-Since the number of kernels is not predefined, the resulting solution may have any amount of kernels. This is also a random variant, and the results are shown in the boxplot \ref{fig:pajade_kernels_boxplot} below. As expected, this varies between different testbed problems, but it can not be less than 1 kernel. 
+Since the number of kernels is not predefined, the resulting solution may have any amount of kernels. This is also a random variable, and the results are shown in the boxplot \ref{fig:pajade_kernels_boxplot} below. As expected, this varies between different testbed problems, but it can not be less than 1 kernel. 
 
 \begin{figure}[H]
 	\centering
@@ -111,7 +115,7 @@ This chapter analyses the presented results from section \ref{chap:results_ex2}.
 
 \subsection{Solving Time}
 
-This new adaptive strategy can significantly decrease the time that is necessary to solve any \gls{pde} of the testbed. This follows from the solving time box plot in figure \ref{fig:pajade_time_boxplot}. This effect can be explained by the reduction of the dimension and the adaptive population size. Depending on the number of kernels, the population can grow. It always starts with 1 kernel and therefore the size of the population is 8. The boxplot shows that this breaks the pattern of simpler and more complex \gls{pde}s, that is exhibited in the previous experiments.
+This new adaptive strategy can significantly decrease the time that is necessary to solve any \gls{pde} of the testbed. This follows from the solving time box plot in figure \ref{fig:pajade_time_boxplot}. This effect can be explained by the reduction of the dimension and the adaptive population size. Depending on the number of kernels, the population can grow. It always starts with 1 kernel and therefore the size of the population is 8. The boxplot shows that this breaks the pattern of simpler and more complex \gls{pde}s that is exhibited in the previous experiments.
 
 \subsection{Memory Usage}
 The adaptive approach also leads to a reduction in the memory usage, as described by the memory boxplot in figure \ref{fig:pajade_memory_boxplot}. The same explanation that describes the solving time reduction can applied here: smaller populations need less memory to be stored. Since not all \gls{pde}s result in the same dimension, the memory consumption over all testbed problems is not the same. Further, the adaptive scheme dismantles the linear scaling of memory usage with increasing \gls{nfe}. 
@@ -278,7 +282,7 @@ The approximate solution of the outlier is shown in the two 3D plots in figure \
 	\label{fig:paJADE_pde5_3D_plot_outlier}
 \end{figure}
 
-Due to the common structure of both outliers, a fundamental issue might be suggested. The adaptive strategy could not improve the results on \gls{pde} 5. A second possibility would be to use a different kernel type. 
+Both outliers have a very similar structure. This might indicate, that JADE diverges to areas where the fitness function does not give a proper signal towards the optimum. The adaptive strategy can not improve the results on \gls{pde} 5. A second possibility would be to use a different kernel type. 
 
 
 \subsection{PDE 6}

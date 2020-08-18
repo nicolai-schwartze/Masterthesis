@@ -434,26 +434,6 @@ provided that the boundary operator is linear, the problem of finding the correc
 	note = {original-date: 2017-07-18T08:47:19Z}
 }
 
-@incollection{hansen_cma_2006,
-	address = {Berlin, Heidelberg},
-	series = {Studies in {Fuzziness} and {Soft} {Computing}},
-	title = {The {CMA} {Evolution} {Strategy}: {A} {Comparing} {Review}},
-	isbn = {978-3-540-32494-2},
-	shorttitle = {The {CMA} {Evolution} {Strategy}},
-	url = {https://doi.org/10.1007/3-540-32494-1_4},
-	abstract = {SummaryDerived from the concept of self-adaptation in evolution strategies, the CMA (Covariance Matrix Adaptation) adapts the covariance matrix of a multi-variate normal search distribution. The CMA was originally designed to perform well with small populations. In this review, the argument starts out with large population sizes, reflecting recent extensions of the CMA algorithm. Commonalities and differences to continuous Estimation of Distribution Algorithms are analyzed. The aspects of reliability of the estimation, overall step size control, and independence from the coordinate system (invariance) become particularly important in small populations sizes. Consequently, performing the adaptation task with small populations is more intricate.},
-	language = {en},
-	urldate = {2020-05-05},
-	booktitle = {Towards a {New} {Evolutionary} {Computation}: {Advances} in the {Estimation} of {Distribution} {Algorithms}},
-	publisher = {Springer},
-	author = {Hansen, Nikolaus},
-	editor = {Lozano, Jose A. and Larrañaga, Pedro and Inza, Iñaki and Bengoetxea, Endika},
-	year = {2006},
-	doi = {10.1007/3-540-32494-1_4},
-	pages = {75--102},
-	file = {Hansen - 2006 - The CMA Evolution Strategy A Comparing Review.pdf:C\:\\Users\\Admin\\OneDrive\\FH Mechatronik\\Literaturquellen\\storage\\JVTYNKR5\\Hansen - 2006 - The CMA Evolution Strategy A Comparing Review.pdf:application/pdf}
-}
-
 @article{nelder_simplex_1965,
 	title = {A {Simplex} {Method} for {Function} {Minimization}},
 	volume = {7},
@@ -608,4 +588,21 @@ provided that the boundary operator is linear, the problem of finding the correc
 	author = {Guyan, R. J.},
 	year = {1965},
 	file = {Guyan - 1965 - Reduction of stiffness and mass matrices.pdf:C\:\\Users\\Admin\\OneDrive\\FH Mechatronik\\Literaturquellen\\storage\\FUIJFALD\\Guyan - 1965 - Reduction of stiffness and mass matrices.pdf:application/pdf}
+}
+
+@article{hansen_reducing_2003,
+	title = {Reducing the {Time} {Complexity} of the {Derandomized} {Evolution} {Strategy} with {Covariance} {Matrix} {Adaptation} ({CMA}-{ES})},
+	volume = {11},
+	issn = {1063-6560},
+	url = {https://doi.org/10.1162/106365603321828970},
+	doi = {10.1162/106365603321828970},
+	abstract = {This paper presents a novel evolutionary optimization strategy based on the derandomized evolution strategy with covariance matrix adaptation (CMA-ES). This new approach is intended to reduce the number of generations required for convergence to the optimum. Reducing the number of generations, i.e., the time complexity of the algorithm, is important if a large population size is desired: (1) to reduce the effect of noise; (2) to improve global search properties; and (3) to implement the algorithm on (highly) parallel machines. Our method results in a highly parallel algorithm which scales favorably with large numbers of processors. This is accomplished by efficiently incorporating the available information from a large population, thus significantly reducing the number of generations needed to adapt the covariance matrix. The original version of the CMA-ES was designed to reliably adapt the covariance matrix in small populations but it cannot exploit large populations efficiently. Our modifications scale up the efficiency to population sizes of up to 10n, where n is the problem dimension. This method has been applied to a large number of test problems, demonstrating that in many cases the CMA-ES can be advanced from quadratic to linear time complexity.},
+	number = {1},
+	urldate = {2020-08-15},
+	journal = {Evolutionary Computation},
+	author = {Hansen, Nikolaus and Müller, Sibylle D. and Koumoutsakos, Petros},
+	month = mar,
+	year = {2003},
+	note = {Publisher: MIT Press},
+	pages = {1--18}
 }

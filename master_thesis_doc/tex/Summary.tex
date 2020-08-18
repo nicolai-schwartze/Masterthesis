@@ -2,9 +2,19 @@
 \begin{document}
 \chapter{Summary}
 
-Advantage: Can be applied to nearly any PDE without restrictions to a specific problem set
-Problematic: Might be applied to a problem although, there is an algorithm that is faster and has better convergence
+This master-thesis investigates a \gls{ci}-based method for solving differential equations. The proposed strategy formulates the residual of an equation and solves it by approximating a function by a finite sum of kernels. An appropriate optimisation technique is deployed that searches the best fitting parameters for these kernels. This field of numerical solvers is fairly new, a comprehensive literature research reveals several past papers that investigate similar techniques. This thesis closely aligns with the work presented in \cite{chaquet_using_2019}. The main difference is the substitution of the optimisation algorithm. 
 
+To test the solver and evaluate its performance, a comprehensive testbed is defined. It consists of 11 different Poisson equations, where two are also represented in \cite{chaquet_using_2019}. The solving time, the memory consumption and the quality of the solutions are compared to the state of the art open-source \gls{fem} solver NGSolve. 
+
+The first experiment tests a serial memetic JADE. This is essentially the same fitness function formulation and algorithm used in \cite{chaquet_using_2019}, but with JADE as the core optimisation technique. The results are not as good as the relatable work in the literature. Further, a strange behaviour is observed, where the fitness function value decreases but the defined quality metric gets worse. 
+
+The second experiment implements a parallel memetic JADE. The population of JADE is evaluated in parallel, which allows to make use of parallel hardware infrastructure. This significantly speeds up the solving time and thus more experiments can be performed in the same time. Only an insignificant difference in the quality of the results is observed. 
+
+To increase the quality of the approximations, the parallel memetic JADE with adaptive kernels is proposed. The basic idea is to start with a low dimension, i.e. one kernel, and increase the number of kernels along the solving process. A significant improvement is observed on one \gls{pde}, that is purposely built to be solvable. However, on all other testbed functions the difference is insignificant or even worse than with the parallel memetic JADE. 
+
+The last experiment tries to overcome the discrepancy between the fitness function and the quality metric. Therefore, a new kernel is defined. This kernel inherits all features of the old kernel and extends it with a sine function. As a result, the observed inconsistency between fitness and quality is mitigated. 
+
+The thesis closes with a proposal for further investigations. First and foremost, the concepts here should be reconsidered by using an objectively better performing \gls{cma_es}. Beyond that, an adaptive scheme for the collocation points could increase the performance and improve the quality of the approximation. Finally, the fitness function should be further examined. With more clues on the structure of the function, better variational operators could be defined. 
 
 
 \end{document}

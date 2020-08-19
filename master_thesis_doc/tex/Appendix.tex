@@ -865,7 +865,8 @@ The post-processing module includes these functions. Their implementation is des
 	\SetKwProg{Fn}{Function}{:}{}
 	\Fn{\FmpaJADE{$\mathbf{X}$, $func$, $kSize$, $minErr$, $maxFE$}}{
 		$dim$, $popsize$ $\gets size(\mathbf{X})$\;
-		$\kappa$ $\gets$ $dim/kSize$ \tcp{number of kernels}
+		\tcp{number of kernels}
+		$\kappa$ $\gets$ $dim/kSize$ \;
 		$p \gets 0.3$\;
 		$c \gets 0.5$\;
 		$dT$ $\gets 100$\;

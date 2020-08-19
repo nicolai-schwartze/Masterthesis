@@ -1,0 +1,178 @@
+%
+% 1: documentation, e.g.: a documentation for a project done in a course
+% 2: thesis, e.g.: a master thesis
+% 3: summary
+% 5: presentation
+% 9: paper
+%
+\ifx\FHVmode\undefined
+	\def\FHVmode{9}
+\fi
+
+%
+% 1: Presentation only
+% 2: Presentation only notes
+% 3: Presentation all (left page is the presentation, right the notes)
+%
+\ifx\PresentationMode\undefined
+	\def\PresentationMode{3}
+\fi
+%
+\def\paperStyle{fhv}
+%
+\newcommand{\version}{v0.0}
+%
+\pdfminorversion=7 % use newer pdf version
+\pdfobjcompresslevel=2
+\pdfsuppresswarningpagegroup=1
+%
+\input{./sty/overallDefines.sty}
+%
+\documentclass[\documentclassOptions]{\komaScriptClass}
+%
+\usepackage{./sty/fhv}
+%
+\makeglossaries
+\renewcommand{\glsnamefont}[1]{\textbf{#1}}
+%
+% General Settings for Title...
+%
+
+% colour of hyperlinks instead of boxes
+\hypersetup{
+	colorlinks   = true,  %Colours links instead of ugly boxes
+	urlcolor     = blue,  %Colour for external hyperlinks
+	linkcolor    = black, %Colour of internal links
+	citecolor    = black  %Colour of citations
+}
+
+\setLanguage{\newLanguage}
+\setTitle{Computational Intelligence Method for Solving Partial Differential Equations}
+\setThesistype{Master Thesis}
+\setAuthor{\authorSurname\authorName}
+\setAuthorId{51835415}
+\setStudyprogram{Master's in Mechatronics}
+\setSupervisor{\supervisorSurname\supervisorName}
+\setSubtitle{an experimental study on performance and accuracy}
+\setSubject{Subject}
+\setDegree{Master of Science in Engineering, MSc}
+\setCompany{Company Name GmbH}
+%
+% PDF Settings
+%
+\pdfSettings
+%
+\allowdisplaybreaks
+%
+% hack to get the caption wider for a table
+%
+\renewcommand{\TPTminimum}{\linewidth}
+%
+\begin{document}
+	%
+	% Select the language defined in \newLanguage
+	%
+	\ifx\newLanguage\ngerman
+		\selectlanguage{ngerman}
+	\else
+		\selectlanguage{english}
+	\fi %
+	%
+	\if\FHVmode\paper
+		\SetAlgorithmName{Algorithmus}{Alg.}
+	\makeatletter
+		\crefname{equation}{Gl.}{Gln.}
+	\makeatother
+	\fi
+	% Import the acronyms
+	%
+	\input{./util/Acronym.tex} % provide the defined acronyms to be used
+	%
+	% for Backlinks to work properly
+	%
+	\begin{envModeNot}[\presentations]
+		%
+		% for Backlinks to work properly
+		%
+		\let\hypercontentsline=\contentsline
+		\renewcommand{\contentsline}[4]{\hypertarget{toc.#4}{}\hypercontentsline{#1}{#2}{#3}{#4}}%
+		%
+		\sisetup{output-decimal-marker = {,}}
+		\pagenumbering{gobble} % used to prevent the page numbering
+		%
+		\begin{envDebug}
+			\layout
+			\textrm{Serif: \rmdefault}\par
+			\textsf{Sans-Serif: \sfdefault}\par
+			\texttt{Teletype: \ttdefault}
+		\end{envDebug}
+		%
+		\begin{envModeNot}[\paper]
+		%
+		% evtl. Sperrvermerkseite
+		% nur in begründeten Ausnahmefällen verwenden
+		% Aufgrund gesetzlicher Bestimmungen ist eine Sperre maximal für fünf Jahre möglich
+		%
+		%\sperrvermerk{5}
+		%
+		\end{envModeNot}
+		%
+		\maketitle % creates the title page
+		\hypersetup{pageanchor=true}
+		%
+		\begin{envModeNot}[\paper]
+		%
+		\pagenumbering{Roman} 
+		%
+		% Abstracts
+		
+		\subfile{./tex/Abstract.tex}		
+		\subfile{./tex/Kurzreferat.tex}
+		
+		\newpage
+		%
+		\fhvlists
+		\end{envModeNot}
+		%
+		% INSERT your .tex files
+		%
+		\subfile{./tex/Introduction.tex}
+		\subfile{./tex/State_of_the_Art.tex}
+		\subfile{./tex/Problem_Definition.tex}
+		\subfile{./tex/Experimental_Design.tex}
+		\subfile{./tex/Experiment0.tex}
+		\subfile{./tex/Experiment1.tex}
+		\subfile{./tex/Experiment2.tex}
+		\subfile{./tex/Experiment3.tex}
+		\subfile{./tex/Limitations.tex}
+		\subfile{./tex/Theoretical_Notes.tex}
+		\subfile{./tex/Conclusion.tex}
+		\subfile{./tex/Further_Work.tex}
+		\subfile{./tex/Summary.tex}
+		%
+		% END INSERT
+		%
+		\glossaryAndBibliography
+		%
+		% uncomment this if you like a short CV
+		% \subfile{./tex/Lebenslauf.tex}
+		%
+		\begin{envModeNot}[\paper]
+			\newpage
+			\appendix
+			\addAppendix{
+			%
+			% INSERT your .tex files
+			%
+			%\subfile{./tex/Appendix.tex}
+			%
+			% END
+			%
+			}
+			% Statuory Declaration
+			\statuoryDeclaration
+			%
+		\end{envModeNot}
+	\end{envModeNot}
+	%
+\end{document}

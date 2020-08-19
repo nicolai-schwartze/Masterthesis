@@ -1,0 +1,10 @@
+\documentclass[./\jobname.tex]{subfiles}
+\begin{document}
+%\clearpage
+\setcounter{page}{2}
+\chapter*{Kurzreferat}
+\section*{Computational Intelligence Methoden zum Lösen partieller Differentialgleichungen}
+%
+Diese Masterarbeit beschreibt und testet einen Differenzialgleichungs-Solver, der auf der heuristischen Black-Box Optimierungstechnik JADE basiert. Der Solver formuliert das Residuum der Differenzialgleichung in eine Fitness Funktion um. Die zugrundeliegende Lösung der Differenzialgleichung wird durch eine endliche Summe an radialen Basisfunktionen approximiert. Um die Performance des Solvers evaluieren zu können, wird ein Testbed von 11 zwei-dimensionalen Poisson-Gleichungen gebildet. Der Vergleich hinsichtlich Lösungszeit, Speicherbedarf und Genauigkeit erfolgt mit dem open-source Finite Elementen Solver NGSolve sowie anderen ähnlichen Solvern aus der Literatur. Um die Dauer des Verfahrens zu minimieren, wird JADE parallelisiert. Diese Arbeit behandelt zwei neue Lösungsstrategien: Zunächst wird die Anzahl der Kernel während dem Lösen an die Differenzialgleichung angepasst. Weiters wird ein neuer Kernel gebildet und getestet. Diese Konzepte werden anhand von entsprechenden Experimenten am Testbed auf signifikante Verbesserungen überprüft. Die Struktur der Fitness Funktion wird untersucht. Dabei ist eine grundlegende Symmetrie zu beobachten, die in weiteren Arbeiten verwendet werden könnte, um bessere Optimierungsalgorithmen zu entwickeln. 
+%
+\end{document}

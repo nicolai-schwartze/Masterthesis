@@ -6,7 +6,9 @@ Created on Mon Apr 13 14:57:32 2020
 """
 
 import sys
-sys.path.append("../")
+import os
+importpath = os.path.dirname(os.path.realpath(__file__)) + "/../"
+sys.path.append(importpath)
 from FemPdeBase import FemPdeBase
 import numpy as np
 

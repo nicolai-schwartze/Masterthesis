@@ -6,7 +6,7 @@ This chapter gives an overview on how the subsequent experiments are conducted. 
 
 \section{Testbed}
 \label{chap:testbed_description}
-The testbed is a collection of multiple 2-dimensional scalar \gls{pde}s that are analytically solved such that $u(\mathbf{x}): \mathbb{R}^2 \rightarrow \mathbb{R}$ is a solution to the underlying PDE. These can be used to demonstrate the correct implementation of a solver. The testbed can also be used to compare the performance of the classical \gls{fem} solver (NGSolve) with the \gls{ci} solver. The equations and graphs are displayed in the appendix \ref{chap:testbed}. The equations used here are a mixture of different testbeds. Specifically, the equations \gls{pde} 2 and \gls{pde} 3 are picked from the testbed in \cite{chaquet_using_2019}. These problems were also used by \cite{tsoulos_solving_2006} and \cite{panagant_solving_2014}. Preliminary tests have shown that the equations used in these papers are rather simple to approximate. Thus, more complicate equations are added to test the solvability over a wider variety of functions. The more complex equations are taken from the National Institute of Standards and Technology (NIST) website (\cite{mitchell_nist_2018}) that provides benchmarking problems for \gls{fem} solvers with adaptive mesh refinement methods. The other equations 0A, 0B and 8 are specially created to show different properties of the solver. 
+The testbed is a collection of multiple two-dimensional scalar \gls{pde}s that are analytically solved such that $u(\mathbf{x}): \mathbb{R}^2 \rightarrow \mathbb{R}$ is a solution to the underlying PDE. These can be used to demonstrate the correct implementation of a solver. The testbed can also be used to compare the performance of the classical \gls{fem} solver (NGSolve) with the \gls{ci} solver. The equations and graphs are displayed in the appendix \ref{chap:testbed}. The equations used here are a mixture of different testbeds. Specifically, the equations \gls{pde} 2 and \gls{pde} 3 are picked from the testbed in \cite{chaquet_using_2019}. These problems were also used by \cite{tsoulos_solving_2006} and \cite{panagant_solving_2014}. Preliminary tests have shown that the equations used in these papers are rather simple to approximate. Thus, more complicate equations are added to test the solvability over a wider variety of functions. The more complex equations are taken from the National Institute of Standards and Technology (NIST) website (\cite{mitchell_nist_2018}) that provides benchmarking problems for \gls{fem} solvers with adaptive mesh refinement methods. The other equations 0A, 0B and 8 are specially created to show different properties of the solver. 
 
 \textbf{PDE 0A: Gauss Kernel} \\
 \underline{Equation Reference:} \eqref{eq:pde0a} \\
@@ -14,7 +14,7 @@ The testbed is a collection of multiple 2-dimensional scalar \gls{pde}s that are
 \underline{Difficulty:} not especially difficult; \\
 \underline{Boundary:} function value of solution; \\
 
-\textbf{PDE 0B: GSin Kernel} \\
+\textbf{PDE 0B: Gauss Sine Kernel} \\
 \underline{Equation Reference:} \eqref{eq:pde0b} \\
 \underline{Characteristics:} can be approximated arbitrarily close by 3 \gls{gsk}; only 3 kernels are used to keep the minimal necessary dimension of the representation similar to \gls{pde} 0A;\\
 \underline{Difficulty:} the contrast between a dominant wave with a steep gradient in the middle and small waves with little influence on the boundary; simple approximations lay the focus on the middle, while good approximations also match the small waves; \\
@@ -43,8 +43,8 @@ The testbed is a collection of multiple 2-dimensional scalar \gls{pde}s that are
 
 \textbf{PDE 4: Sine Bump 2D} \\
 \underline{Equation Reference:} \eqref{eq:pde4} \\
-\underline{Characteristics:} this \gls{pde} is used in both, the work of \cite{chaquet_using_2019} and  \cite{mitchell_nist_2018} with slightly different boundary condition; preliminary test have shown that the \cite{chaquet_using_2019} \gls{pde} is easier to solve, thus this formulation is disregarded;\\
-\underline{Difficulty:} sharp boundary condition on the corners of $\Omega$ \\
+\underline{Characteristics:} this \gls{pde} is used in both, the work of \cite{chaquet_using_2019} and  \cite{mitchell_nist_2018} with slightly different boundary condition; preliminary tests have shown that the \cite{chaquet_using_2019} \gls{pde} is easier to solve, thus this formulation is disregarded;\\
+\underline{Difficulty:} sharp boundary condition on the corners of $\Omega$; \\
 \underline{Boundary:} homogeneous boundary condition; \\
 \underline{Reference:} \cite{mitchell_nist_2018}\\
 
@@ -52,7 +52,7 @@ The testbed is a collection of multiple 2-dimensional scalar \gls{pde}s that are
 \underline{Equation Reference:} \eqref{eq:pde5} \\
 \underline{Characteristics:} quarter section of slightly shifted arctan; \\
 \underline{Difficulty:} transition from the flat plateaus to the steep gradient of the circular wave front; preliminary tests have shown that this problem is especially hard; \\
-\underline{Boundary:} function value on boundary \\
+\underline{Boundary:} function value on boundary; \\
 \underline{Reference:} \cite{mitchell_nist_2018} \\
 
 \textbf{PDE 6: Peak 2D} \\
@@ -86,13 +86,13 @@ The testbed is a collection of multiple 2-dimensional scalar \gls{pde}s that are
 \section{Software Architecture}
 \label{chap:software_architecutre}
 
-To simplify the preparation, execution and evaluation of the experiments, a comprehensive software architecture is defined. The \gls{uml} class diagram can be seen in the appendix \ref{chap:appendix_software_architecture}. The limited class diagram, without any methods and attributes is shown in the figure \ref{fig:uml_class_small} below. The architecture is organised in 4 main segments. 
+To simplify the preparation, execution and evaluation of the experiments, a comprehensive software architecture is defined. The \gls{uml} class diagram can be seen in the appendix \ref{chap:appendix_software_architecture}. The limited class diagram, without any methods and attributes is shown in the figure \ref{fig:uml_class_small} below. The architecture is organised in four main segments. 
 
 \large \underline{\textbf{Optimisation Algorithm}} \\
 The \inlinecode{IOptAlgoBase} interface must be implemented by every \inlinecode{OptAlgo} class to ensure the compatibility with \inlinecode{CiPdeBase} class of the testbed. A nice side-effect is that it reduces the number of user-defined parameters. An optimisation algorithm of this class must only take an initial guess (e.g. the starting population) as well as two stopping criteria: the maximum number of function evaluation or a minimum error to reach. Also a fitness function (i.e. the function to be optimised) must be provided. Four lists of the same length are returned: the optimum-guess, the function value, the crossover probability and the scale factor per each generation. The actual implementation of the algorithm is not predefined. 
 
 \large \underline{\textbf{Kernels}} \\
-As described in chapter \ref{chap:candidate_rep}, a candidate solution is defined as a sum of \gls{rbf}. In order to test different candidate representations, different classes must be implemented. Again, to ensure compatibility with the \inlinecode{CiPdeBase} class, all representations must implement the \inlinecode{IKernelBase} interface. This assures that all classes have a method that can calculate the solution as well as the first and the second order derivatives. Here, only two kernels are implemented. A typical Gauss kernel as described in chapter \ref{chap:gauss_kernel} and a so called GSin kernel shown in chapter \ref{chap:gsin_kernel}. 
+As described in chapter \ref{chap:candidate_rep}, a candidate solution is defined as a sum of \gls{rbf}. In order to test different candidate representations, different classes must be implemented. Again, to ensure compatibility with the \inlinecode{CiPdeBase} class, all representations must implement the \inlinecode{IKernelBase} interface. This assures that all classes have a method that can calculate the solution as well as the first and the second order derivatives. Here, only two kernels are implemented. A typical Gauss kernel as described in chapter \ref{chap:gauss_kernel} and a so called Gauss Sine kernel shown in chapter \ref{chap:gsin_kernel}. 
 
 \large \underline{\textbf{Testbed}} \\
 The testbed holds the 11 differential equations used in all experiments. The testbed is abstracted in such a way that an experiment is as simple as creating an \gls{pde} object and calling its solve method. All testbed classes must implement the \inlinecode{ITestbenchBase} interface. This ensures the minimal functionality of every subsequent class. Currently two classes implement this interface, the \inlinecode{FemPdeBase} and the \inlinecode{CiPdeBase}. These are the base classes that provide the specific attributes and methods needed for the \gls{fem} solver and the \gls{ci} solver. The actual \gls{pde} problems are implemented in the classes \inlinecode{FemPde0} or \inlinecode{CiPde0} which inherit from the \inlinecode{FemPdeBase} and the \inlinecode{CiPdeBase}, respectively. The number in their name is representative for all different testbench problems and every \gls{pde} has its own class. Since all \gls{pde} classes have the same methods/attributes and only differ in their implementation and name, they do not have to be displayed separately. Therefore, they are symbolised together by a ``stacked notation'' used in the class diagram. Some methods in these classes must be overridden and adapted to the current \gls{pde} problem, which is indicated by the $\land$ character.
@@ -116,7 +116,7 @@ In order to scientifically compare the results produced by the different solvers
 \label{chap:metric_time}
 The solving time is measured within the \inlinecode{solve()} method of either class. The time module of the \cite{python_standard_library_time_2020} is used to interact with the system clock. The resolution, that the time module can access, depends on the system it is running on. Specifically, on the machine used in all further experiments, \inlinecode{time.time()} returns a 24 byte float that represents the time passed since 1st of January 1970. Usually, consecutive calls of this function return increasing values - changing the system time could interfere with the correctness of this value.\\ 
 
-As the execution time of a program depends on many other factors, such as the current system load, the CPU temperature and the process scheduler, it is necessary to view it as a random variable. Thus, multiple replications have to be done before trying to interpret the results. To make for a fair comparison, the same machine with a similar work-load must be used.  The replications are not done within the \inlinecode{solve()} function and must be applied during the experiment. To reduce the random effects and prevent possible outlier, the Python garbage collector is switched off during the time measurement. For a step-by-step description, the pseudocode is displayed in the appendix \ref{chap:solve_function}. 
+As the execution time of a program depends on many other factors, such as the current system load, the CPU temperature and the process scheduler, it is necessary to view it as a random variable. Thus, multiple replications have to be done before trying to interpret the results. To make for a fair comparison, the same machine with a similar work-load must be used.  The replications are not done within the \inlinecode{solve()} function and must be applied during the experiment. To reduce the random effects and prevent possible outlier, the Python garbage collector is switched off during the time measurement. For a step-by-step description, the pseudocode is shown in the appendix \ref{chap:solve_function}. 
 
 
 
@@ -160,22 +160,22 @@ This leads to the quality measurement formulation used in this thesis: the L2 no
 \label{eq:quality_measurement}
 \left|\left|u_{ext} - u_{apx}\right|\right| = \sqrt{\int_{\Omega} (u_{ext}(\mathbf{x}) - u_{apx}(\mathbf{x}))^2 dx}
 \end{equation}
-Although this integral is numerically evaluated, the discretisation is much finer than the resolution of the collocation points used in the fitness function - thus also regarding the areas between these points.
+Although this integral is numerically evaluated, the discretisation is much finer than the resolution of the collocation points used in the fitness function - thus also taking the areas between these points into account.
 
 
 
 \section{Baseline: NGSolve}
 \label{chap:fem_baseline_results}
-As mentioned above, the NGSolve framework (\cite{schoberl_ngsolvengsolve_2020}) is used as the baseline for all experiments. NGSolve is a state of the art \gls{fem} solver, that is in part developed and maintained by numerous well-known institutes such as Vienna University of Technology, University of Göttingen and Portland State University. This chapter describes the results obtained by running NGSolve on the testbed. The metrics from chapter \ref{chap:metric} are applied. 
+As mentioned above, the NGSolve framework (\cite{schoberl_ngsolvengsolve_2020}) is used as the baseline for all experiments. NGSolve is a state of the art \gls{fem} solver, that is in part developed and maintained by numerous well-known institutes such as the Vienna University of Technology, the University of Göttingen and the Portland State University. This chapter describes the results obtained by running NGSolve on the testbed. The metrics from chapter \ref{chap:metric} are applied. 
 
 \subsection{Setup}
-At first the \gls{pde}s must be transformed into their corresponding weak form. As all testbed problems are Poisson equations and only differ in their algebraic sign and inhomogeneous part, the weak form is similar for all problems. Referring to equation \eqref{eq: weak form}, the terms $\vec{b} = 0$ and $c = 0$, thus these parts vanish. The matrix $A$ is either $\begin{bsmallmatrix} 1 & 0 \\ 0 & 1 \end{bsmallmatrix}$ or with a negative sign $\begin{bsmallmatrix} -1 & 0 \\ 0 & -1 \end{bsmallmatrix}$ as only the non-mixed second order derivatives occur in the equations. This results in weak form as presented in equation \eqref{eq: weak form testbed}, where the f is the inhomogeneous part of the \gls{pde}.
+At first the \gls{pde}s must be transformed into their corresponding weak form. As all testbed problems are Poisson equations and only differ in their algebraic sign and inhomogeneous part, the weak form is similar for all problems. Referring to equation \eqref{eq: weak form}, the terms $\vec{b} = 0$ and $c = 0$, thus these parts vanish. The matrix $A$ is either $\begin{bsmallmatrix} 1 & 0 \\ 0 & 1 \end{bsmallmatrix}$ or with a negative sign $\begin{bsmallmatrix} -1 & 0 \\ 0 & -1 \end{bsmallmatrix}$ as only the non-mixed second order derivatives occur in the equations. This results in the weak form as presented in equation \eqref{eq: weak form testbed}, where f is the inhomogeneous part of the \gls{pde}.
 \begin{equation}
 \label{eq: weak form testbed}
 \int_{\Omega} \nabla u^T \nabla v dV = \int_{\Omega} f v dV
 \end{equation}
 
-To enhance the performance of NGSolve, static condensation is turned on. Further, a multigrid preconditioner is used. All problems are approximated by second order polynomials. The automatic mesh refinement is performed until a maximum of $5 \cdot 10^4$ \gls{dof} is reached. To properly interpret the results, 20 replications for each problem are performed. This is only needed for regarding time and memory, the solution itself is not a random variable. To further reduce the memory consumption, the GUI of NGSolve is switched off. 
+To enhance the performance of NGSolve, static condensation is turned on. Further, a multigrid preconditioner is used. All problems are approximated by second order polynomials. The automatic mesh refinement is performed until a maximum of $5 \cdot 10^4$ \gls{dof} is reached. To properly interpret the results, 20 replications for each problem are performed. This is only needed for time and memory usage, the solution itself is not a random variable. To further reduce memory usage, the GUI of NGSolve is switched off. 
 
 \subsection{Result}
 With the parameters described above, the following results are produced. The solving time as well as the memory usage are displayed in the boxplots \ref{fig:_fem_time_boxplot} and \ref{fig:_fem_mem_boxplot}, respectively. These datasets provide a reference point for the performance of the \gls{ci} solver. In general, the solving time ranges from 2.5 to 5.0 seconds at about 50 to 80 Mbyte of memory. Only problem 3 stands out as a notable exception. To keep the diagram within a readable scale, this \gls{pde} is omitted and plotted in a separate figure. 
@@ -231,7 +231,7 @@ The problem \gls{pde} 7 only needs around 2.5 seconds to be solved. A reason cou
 	\label{fig:_fem_mem_boxplot}
 \end{figure}
 
-The following figures \ref{fig:_fem_time_boxplot_pde3} and \ref{fig:_fem_mem_boxplot_pde3} show the boxplot of the time and memory consumption for the testbed \gls{pde} 3 with $5 \cdot 10^4$ \gls{dof}. Compared to the other equations, this problem takes longer to solve while also needing more memory: somewhere around 65.2 seconds at about 130 Mbyte. One possible explanation for that is the fundamental structure of the \gls{pde}. As described in equation \eqref{eq:sol3}, the exact solution to this problem is a polynomial of second order. This can be approximated perfectly by the \gls{fem} solver, since it also uses second order polynomials as basis functions. The mesh-refinement step takes more iterations to produce the $5 \cdot 10^4$ \gls{dof} as compared to the other testbed problems. In fact, since the numerical errors per finite element accumulate, more \gls{dof} should result in a larger approximation error. Figure \ref{fig:_dof_sweep_pde3} shows the performance metrics at different \gls{dof} budgets. The plot confirms this hypothesis, that less \gls{dof} take less time and memory to solve the \gls{pde} and still end up with a better quality. 
+The following figures \ref{fig:_fem_time_boxplot_pde3} and \ref{fig:_fem_mem_boxplot_pde3} show the boxplot of the time and memory consumption for the testbed \gls{pde} 3 with $5 \cdot 10^4$ \gls{dof}. Compared to the other equations, this problem takes longer to solve while also needing more memory: somewhere around 65.2 seconds at about 130 Mbyte. One possible explanation for that is the fundamental structure of the \gls{pde}. As described in equation \eqref{eq:sol3}, the exact solution to this problem is a polynomial of second order. This can be approximated perfectly by the \gls{fem} solver, since it also uses second order polynomials as basis functions. The mesh-refinement step takes more iterations to produce the $5 \cdot 10^4$ \gls{dof} as compared to the other testbed problems. In fact, since the numerical errors per finite element accumulate, more \gls{dof} should result in a larger approximation error. Figure \ref{fig:_dof_sweep_pde3} shows the performance metrics at different \gls{dof} budgets. The plot supports this hypothesis, that less \gls{dof} take less time and memory to solve the \gls{pde} and still end up with a better quality. 
 
 \begin{figure}[H]
 	\centering
@@ -263,7 +263,7 @@ The following figures \ref{fig:_fem_time_boxplot_pde3} and \ref{fig:_fem_mem_box
 
 \section{Default CI Parameter}
 \label{chap:default_ci_param}
-Typically, the performance of heuristic optimisation algorithms can be adjusted to specific testbed problems by tuning its parameters. For all further experiments the JADE algorithm from pseudocode \ref{algo: jade} is used. Similarly, the reported \gls{ci} solver has many parameters that could be adapted. However, adjusting every parameter in order to find the best combination is not an option, since that would take an extensive amount of computation time. Some parameters that might not have a great effect on the performance can be predefined. These values are determined by preliminary test. If not stated otherwise, the following parameters from table \ref{tab:ci_parameter} are used in the subsequent experiments. 
+Typically, the performance of heuristic optimisation algorithms can be adjusted to specific testbed problems by tuning its parameters. For all further experiments the JADE algorithm, as described with pseudocode \ref{algo: jade}, is used. Similarly, the reported \gls{ci} solver has many parameters that could be adapted. However, adjusting every parameter in order to find the best combination is not an option, since that would take an extensive amount of computation time. Some parameters that might not have a great effect on the performance can be predefined. These values are determined by preliminary tests. If not stated otherwise, the following parameters from table \ref{tab:ci_parameter} are used in the subsequent experiments. 
 
 \begin{table}[h]
 	\centering
@@ -302,7 +302,7 @@ The parameters $\varphi$ and $\kappa$ are used in the fitness function (equation
 	\label{fig:collocation_weight}
 \end{figure}
 
-The population size used by \cite{chaquet_using_2019} is based on the original formulation of the \gls{cma_es}. However, they observed a better convergence when scaling the recommended population size by 3. Typically, \gls{de} uses larger population sizes. \cite{mallipeddi_empirical_2008} describe an empirical study on choosing this parameter. They discuss the trade-off between premature convergence and computational effort. The results suggest that population sizes of $2\cdot dim$ are more likely to stagnate, but also converge faster. Since time is a critical resource, this population size is chosen. 
+The population size used by \cite{chaquet_using_2019} is based on the original formulation of the \gls{cma_es}. However, they observed a better convergence when scaling the recommended population size by three. Typically, \gls{de} uses larger population sizes. \cite{mallipeddi_empirical_2008} describe an empirical study on choosing this parameter. They discuss the trade-off between premature convergence and computational effort. The results suggest that population sizes of $2\cdot dim$ are more likely to stagnate, but also converge faster. Since time is a critical resource, this population size is chosen. 
 
 The termination condition for \gls{de} is either a maximum number of function evaluation, or a minimal function value to reach. Since the fitness function (equation \eqref{eq:fit_func}) has its optimum at 0, this value is used as the termination condition. A helpful side-effect is that it ensures the same amount of function evaluation in every run, without early termination. This prevents outliers in the time and memory measurement. 
 
@@ -328,7 +328,7 @@ The initialisation is done by a standard normal distribution. This means that ev
 \section{Hardware Infrastructure}
 \label{chap:hardware_setup}
 
-To increase the experimental throughput, two machines are used: a personal computer (machine 1) and a server in the cloud (machine 2). It is important that any time or memory comparisons must be performed between experiments on the same machine. In the experiments chapter it is separately denoted which comparisons are allowed. The following table \ref{tab:machines} shows the properties of both machines. It is important to note that these information are only a reference point. This is probably not enough to actually recreate the exact time or memory data presented in this work. 
+To increase the experimental throughput, two machines are used: a personal computer (machine 1) and a server in the cloud (machine 2). It is important that any time or memory usage comparisons must be performed between experiments on the same machine. In the experiments chapter it is separately denoted which comparisons are allowed. The following table \ref{tab:machines} shows the properties of both machines. It is important to note that these information are only a reference point. This is probably not enough to actually recreate the exact time or memory data presented in this work. 
 
 \begin{table}[h]
 	\centering
@@ -351,6 +351,6 @@ To increase the experimental throughput, two machines are used: a personal compu
 	\label{tab:machines}
 \end{table}
 
-Due to the Python incompatibilities, NGSolve can only be installed on machine 1. Thus, any time or memory comparisons between the \gls{ci} solver and the \gls{fem} solver must be done within machine 1. 
+Due to the Python incompatibilities, NGSolve can only be installed on machine 1. Thus, any time or memory usage comparisons between the \gls{ci} solver and the \gls{fem} solver must be conducted on machine 1. 
 
 \end{document}

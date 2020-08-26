@@ -12,15 +12,15 @@ This experiment tries to answer the question if the new \gls{gsk} kernel type ca
 
 \section{Experiment Setup}
 
-As stated in the experiments chapters before, machine 1 performs the time and memory experiments at $10^4$ \gls{nfe}. Similar, machine 2 runs the experiment at the full computational budget of $10^6$ \gls{nfe}. The Wilcoxon test from appendix \ref{chap:apendix_post_proc} is used to show statistical significance. Because the last experiment was not entirely conclusive, only a memetic pJADE without kernel-adaption is tested. Since the new kernel has 6 parameters, the dimension and the population size changes. To ensure that the algorithm is able to solve \gls{pde} 0A, 5 \gls{gsk} are used. This results in a dimension of 30 parameters and a population size of 60. All other experimental parameters are taken from the table \ref{tab:ci_parameter}. 
+As stated in the experiments chapters before, machine 1 performs the time and memory experiments at $10^4$ \gls{nfe}. Similar, machine 2 runs the experiment at the full computational budget of $10^6$ \gls{nfe}. The Wilcoxon test from appendix \ref{chap:apendix_post_proc} is used to show statistical significance. Because the last experiment was not entirely conclusive, only a memetic pJADE without kernel-adaption is tested. Since the new kernel has 6 parameters, the dimension and the population size changes. To ensure that the algorithm is able to solve \gls{pde} 0A, 5 \gls{gsk} are used. This results in a dimension of 30 parameters and a population size of 60. All other parameters for the experiments are taken from the table \ref{tab:ci_parameter}. 
 
 \section{Result}
 
-The box plots in figure \ref{fig:pJADEgsk_time_boxplot} compares the relative execution time of the memetic pJADE with the \gls{fem} solver. The results seen in this graph are obtained after $10^4$ \gls{nfe} on machine 1. Similar, the data in figure \ref{fig:pJADEgsk_memory_boxplot} compares the memory consumption of both algorithms. 
+The box plots in figure \ref{fig:pJADEgsk_time_boxplot} compares the relative execution time of the memetic pJADE with the \gls{fem} solver. The results seen in this graph are obtained after $10^4$ \gls{nfe} on machine 1. Similar, the data in figure \ref{fig:pJADEgsk_memory_boxplot} compares the memory usage of both algorithms. 
 
-The memory consumption boxplot exhibits many outliers, where some even indicate a memory usage of 0 Mbyte. This is not expected and might result from technical difficulties. Thus, when comparing the results, only the median should be considered. 
+The memory usage boxplot exhibits many outliers, where some even indicate a memory usage of 0 Mbyte. This is not expected and might result from technical difficulties. Thus, when comparing the results, only the median should be considered. 
 
-The following table show the statistical test. The comparison between the \gls{gsk} and the \gls{gak} on the memetic parallel JADE is shown in table \ref{tab:compare_mpj_mpjgsk_10^6}. The comparison is done with a budget of $10^6$ \gls{nfe}. 
+The following table shows the statistical test. The comparison between the \gls{gsk} and the \gls{gak} on the memetic parallel JADE is shown in table \ref{tab:compare_mpj_mpjgsk_10^6}. The comparison is done with a budget of $10^6$ \gls{nfe}. 
 
 \begin{figure}[H]
 	\centering
@@ -74,7 +74,7 @@ The following table show the statistical test. The comparison between the \gls{g
 
 
 \section{Discussion}
-This chapter discusses the results obtained above with the \gls{gsk} kernel. It is compared to the memetic parallel JADE using a \gls{gak} from experiment 1 in chapter \ref{chap:experimet_1}. At first, the memory and time comparison is done. The performance on the \gls{pde}s 0A and 6 are discussed. The \gls{pde} 0B can be perfectly modelled with 3 \gls{gsk}, thus the performance on this \gls{pde} is interesting. Finally, the behaviour of the \gls{gsk} on \gls{pde} 5 is observed. 
+This chapter discusses the results obtained above with the \gls{gsk} kernel. It is compared to the memetic parallel JADE using a \gls{gak} from experiment 1 in chapter \ref{chap:experimet_1}. At first, the time and memory consumption comparison is done. The performance on the \gls{pde}s 0A and 6 are discussed. The \gls{pde} 0B can be perfectly modelled with 3 \gls{gsk}, thus the performance on this \gls{pde} is interesting. Finally, the behaviour of the \gls{gsk} on \gls{pde} 5 is observed. 
 
 \subsection{Solving Time}
 The solving time for the memetic pJADE with \gls{gsk} forms the same pattern as the time consumption by the \gls{gak} from figure \ref{fig:pajade_time_boxplot}. The solving time is depending on the testbed problem. On \gls{pde} 7 the \gls{ci} solver takes 20 times as long as the \gls{fem} solver. This is longer than for the \gls{gak}, which can be explained by the larger dimension and the greater population size.  
@@ -148,7 +148,7 @@ As table \ref{tab:compare_mpj_mpjgsk_10^6} shows, the results are indeed signifi
 	\label{fig:pde5_ex3_compare_best_worst}
 \end{figure}
 
-The following histograms in figure \ref{fig:pde5_L2norm_histogram_gsk} compare the experimental distribution of the L2 norm with the \gls{gak} and the \gls{gsk}. As inferred from the Wilcoxon test, the distributions are significantly different. Further, the mean and the median of the ``\gls{gsk}-data'' is smaller than the same statistical indicators of the ``\gls{gak}-data''. 
+The following histograms in figure \ref{fig:pde5_L2norm_histogram_gsk} compare the experimental distribution of the L2 norm with the \gls{gak} and the \gls{gsk}. As inferred from the Wilcoxon test, the distributions are significantly different. Further, the mean and the median of the ``\gls{gsk}-data'' are smaller than the same statistical indicators of the ``\gls{gak}-data''. 
 
 The histogram of the fitness values is shown in figure \ref{fig:pde5_fitness_histogram_gsk}. Contrary to the exception, the fitness values of the \gls{gak} are smaller than the fitness values of the \gls{gsk}. Because the fitness function changed with the usage of the \gls{gsk}, the numerical values can not be compared directly. 
 

@@ -6,7 +6,7 @@
 This chapter provides an overview of the current state of the art in solving \gls{pde}. Included are the widely used \gls{fem} as well as heuristic optimisation methods. Further, an introduction to the \gls{de} framework is given, which provides the basis for the algorithms described in this thesis. 
 
 \section{Finite Element Method}
-Currently the finite element method is the go-to approach to solve partial differential equations. The domain $\Omega$ on which the \gls{pde} is posed, is discretised into multiple smaller elements - as the name suggests. Thus, \gls{fem} counts to the category of meshed methods. The underlying solution function $u(\mathbf{x})$ to the PDE is then approximated by so called ``basis-functions'' $\Phi(\mathbf{x})$ limited to these finite elements. This thesis uses the open-source Netgen/NGSolve \gls{fem} package (\cite{schoberl_ngsolvengsolve_2020}). 
+Currently, the finite element method is the go-to approach to solve partial differential equations. The domain $\Omega$ on which the \gls{pde} is posed, is discretised into multiple smaller elements - as the name suggests. Thus, \gls{fem} counts to the category of meshed methods. The underlying solution function $u(\mathbf{x})$ to the PDE is then approximated by so called ``basis-functions'' $\Phi(\mathbf{x})$ limited to these finite elements. This thesis uses the open-source Netgen/NGSolve \gls{fem} package (\cite{schoberl_ngsolvengsolve_2020}). 
 
 The general steps taken to solve a PDE with an FEM solver are: 
 \begin{enumerate}
@@ -34,7 +34,7 @@ The general steps taken to solve a PDE with an FEM solver are:
 			      \underbrace{\int_{\Omega} - (\nabla^T A \nabla) u(\mathbf{x}) v(\mathbf{x}) dV - \int_{\Omega} b^T \nabla u(\mathbf{x}) v(\mathbf{x}) dV + \int_{\Omega} c u(\mathbf{x}) v(\mathbf{x}) dV}_{a(u,v)} \\ = \underbrace{\int_{\Omega} f(\mathbf{x}) v(\mathbf{x}) dV}_{F(v)}
 			  \end{split}
 		  \end{equation} 
-	\item \underline{Step: Discretisation} of $\Omega$ \\
+	\item \underline{Step: Discretisation of $\Omega$} \\
 		  Create a mesh of finite elements that span the whole domain. Usually these are triangles. Thus, this step is sometimes called ``triangulation''.
 	\item \underline{Step: Basis functions} \\
 		  Choose a basis function $\Phi(\mathbf{x})$ that can be used to approximate the solution $u(\mathbf{x}) \approx u_{h}(\mathbf{x}) = \sum_{i = 1}^{N} u_i \Phi(\mathbf{x})_i$. A common choice are Lagrange or Chebyshev polynomials. In the Galerkin type \gls{fem}, the test-function $v(\mathbf{x})$ is the same as the trail-function, thus $v(\mathbf{x}) = \sum_{j = 1}^{N} v_j \Phi(\mathbf{x})_j$. The choice of the basis function $\Phi(\mathbf{x})$ largely influences the computational effort.  $\Phi(\mathbf{x})$ should have a small support, to produce a thinly populated matrix $A$ in the linear system of equations \eqref{eq:linear_system_of_equations} below.
@@ -58,13 +58,13 @@ Modern solvers include more complex and advanced techniques to further improve t
 	\item \underline{Preconditioner}: \\
 		  Instead of solving the $\mathbf{A}^{-1}$ exactly, this can also be approximated by a matrix that is similar to $\mathbf{A}^{-1}$. The actual inverse can be iteratively approximated. NGSolve implements multiple different preconditioners and it even allows to create your own method. 
 	\item \underline{Adaptive Mesh Refinement}: \\
-		The accuracy of a FEM-approximated solution mainly depends on the density of the mesh. Typically, finer meshes tend to produce more accurate solutions, but the computation time takes longer. This trade-off can be overcome by a self-adaptive mesh. NGSolve implements that in an adaptive loop that executes: 
+		The accuracy of a FEM-approximated solution mainly depends on the density of the mesh. Typically, finer meshes tend to produce more accurate solutions, but the computation time is longer. This trade-off can be overcome by a self-adaptive mesh. NGSolve implements that in an adaptive loop that executes: 
 		\begin{itemize}
 			\item Solve PDE (with coarse mesh)
 			\item Estimate Error (for every element)
 			\item Mark Elements (that have the greatest error)
 			\item Refine Elements (that were previously marked)
-			\item $\mathbf{\circlearrowleft}$  until degrees of freedom exceed a specified $N$
+			\item Repeat until degrees of freedom exceed a specified $N$
 		\end{itemize}
 \end{itemize}
 
@@ -74,7 +74,7 @@ Modern solvers include more complex and advanced techniques to further improve t
 
 The research community interested in computational intelligence solvers for differential equations has been steadily growing over the past 20 years. This chapter summarises the most important works done in the general field of development and application of such statistical numerical solvers. The following table \ref{tab:literature_research} gives a brief overview of these papers and sorts them historically. 
 
-In general, all of these papers from the table use the \gls{wrm}, or some variant of that concept, to transform their differential equation into an optimisation problem. This serves as the fitness function and is necessary to evaluate a possible candidate solution and perform the evolutionary selection. The fitness function is the function to be optimised. It is also called objective function and these terms are used interchangeably. In short, the residual $R$ is defined through the differential equation itself and can be calculated by $R(u(\mathbf{x})) = \mathbf{L}u(\mathbf{x}) - f(\mathbf{x})$. The residual can be thought of as a functional that substitutes $u(\mathbf{x})$ with an approximate solution $u_{apx}(\mathbf{x})$ and returns a numerical score. The \gls{wrm} method is further described in chapter \ref{chap:opt_problem}.
+In general, all of these papers from the table use the \gls{wrm}, or some variant of that concept, to transform their differential equation into an optimisation problem. This serves as the fitness function and is necessary to evaluate a possible candidate solution and perform the evolutionary selection. The fitness function is the function to be optimised. It is also called objective function and these terms are used interchangeably in this thesis. In short, the residual $R$ is defined through the differential equation itself and can be calculated by $R(u(\mathbf{x})) = \mathbf{L}u(\mathbf{x}) - f(\mathbf{x})$. The residual can be thought of as a functional that substitutes $u(\mathbf{x})$ with an approximate solution $u_{apx}(\mathbf{x})$ and returns a numerical score. The \gls{wrm} method is further described in chapter \ref{chap:opt_problem}.
 
 \cite{howard_genetic_2001} is one of the first advances in this field. They approximate a subset of the convection-diffusion equations with \gls{gp} (\cite{koza_genetic_1992}). Their main idea is to use a polynomial of variable length as the candidate solution that is forced to satisfy the boundary condition. Their fitness value, as seen in equation \eqref{eq:howard_fitness_2001}, is calculated by squaring the residual $R$ and integrating it over the domain. Since the polynomials are known, and the problems are restricted to a specific differential equation, the integral can be evaluated analytically. 
 
@@ -92,7 +92,7 @@ In general, all of these papers from the table use the \gls{wrm}, or some varian
 F(u_{apx}(\mathbf{x})) = \sum_{i=1}^{n_C} ||R(u_{apx}(\mathbf{x}_i))||^2
 \end{equation} 
 
-\cite{mastorakis_unstable_2006} couples a \gls{ga} (\cite{holland_outline_1962}) with a \gls{ds} method (\cite{nelder_simplex_1965}) for the local solution refinement. The candidates are represented as polynomials of the order 5 where the coefficients are optimised. The boundary condition is directly incorporated into the candidate, thus simplifying the objective function to equation \eqref{eq:fit_func_tsoulos}. The focus here lays on unstable ODEs, that can not be solved with finite difference methods. 
+\cite{mastorakis_unstable_2006} couples a \gls{ga} (\cite{holland_outline_1962}) with a \gls{ds} method (\cite{nelder_simplex_1965}) for the local solution refinement. The candidates are represented as polynomials of the order 5 where the coefficients are optimised. The boundary condition is directly incorporated into the candidate, thus simplifying the objective function to equation \eqref{eq:fit_func_tsoulos}. The focus here is on unstable ODEs that can not be solved with finite difference methods. 
 
 \cite{sobester_genetic_2008} tried a radical different approach to incorporate the boundary condition into the solution. They found, that using \gls{gp} for the inner domain is only effective if the algorithm does not have to consider the boundary. They split the solution $u_{apx}(\mathbf{x})$ into two parts where $u_{GP}(\mathbf{x})$ represents the solution for the inner domain and $u_{RBF}(\mathbf{x})$ ensures the boundary condition 
 \begin{equation}
@@ -131,7 +131,7 @@ PFV(u_{apx}(\mathbf{x})) = WRF(u_{apx}(\mathbf{x})) \cdot \sum_{j=1}^{n_B} K_j \
 F(u_{apx}(\mathbf{x})) = WRF(u_{apx}(\mathbf{x})) + PFV(u_{apx}(\mathbf{x}))
 \end{equation}
 
-\cite{panagant_solving_2014} use polynomials as a candidate representation. They do not specify the order or the type of the polynomial. Five different simple versions of \gls{de} (\cite{storn_differential_1997}) are tested. Further, they introduce a so called DE-New that increases the population size after every generation. Their proposition is that greater population sizes are better at finding good solutions. 
+\cite{panagant_solving_2014} use polynomials as a candidate representation. They do not specify the order or the type of the polynomial. They test five different simple versions of the optimisation algorithm \gls{de} (\cite{storn_differential_1997}). Further, they introduce a so called DE-New that increases the population size after every generation. Their proposition is that greater population sizes are better at finding good solutions. 
 
 \cite{sadollah_metaheuristic_2017} compares three different optimisation algorithms to approximate differential equations: \gls{pso}, \gls{hs} (\cite{geem_new_2001}) and \gls{wca} (\cite{eskandar_water_2012}). They use the formulation in equation \eqref{eq:inner_WRF}, where the weighting function is the same as the residual $|W(\mathbf{x})| = |R(u_{apx}(\mathbf{x}))| \implies WRF = \int_{\Omega} |R(u_{apx}(\mathbf{x}))|^2 dx$. The integral is again approximated using a numerical integration scheme. They find that the \gls{pso} is slightly better at producing low error solutions, however \gls{wca} is better at satisfying the boundary condition. 
 
@@ -174,7 +174,7 @@ F(\mathbf{x}) = \sqrt{\sum_{i=0}^{n} R(\mathbf{x}_i)^2}
 			
 			\multilinecell{\cite{mastorakis_unstable_2006}} & \multilinecell{\gls{ga}\\(global); \\ \gls{ds}\\(local)} & \multilinecell{5th order \\ polynomial}& \multilinecell{unstable \\ ODEs} \\ \hline
 			
-			\multilinecell{\cite{sobester_genetic_2008}} & \multilinecell{\gls{gp} \\ and \\ RBF-NN} & \multilinecell{algebraic term \\ for inner; \\ RBF for boundary} & Elliptic PDEs \\ \hline
+			\multilinecell{\cite{sobester_genetic_2008}} & \multilinecell{\gls{gp} \\ and \\ RBF-NN} & \multilinecell{algebraic term \\ for inner; \\ RBF for boundary} & elliptic PDEs \\ \hline
 			
 			\multilinecell{\cite{howard_genetic_2011}} & \multilinecell{\gls{gp}} & function value grid & \multilinecell{convection–diffusion \\ equation \\ at different \\ Peclet numbers } \\ \hline
 			
@@ -188,11 +188,11 @@ F(\mathbf{x}) = \sqrt{\sum_{i=0}^{n} R(\mathbf{x}_i)^2}
 			
 			\multilinecell{\cite{chaquet_using_2019}} & \multilinecell{\gls{cma_es}\\(global); \\ \gls{ds}\\(local)} & \multilinecell{linear combination \\ of Guassian kernals} & \multilinecell{testbench of \\ ODEs \\ system of ODEs \\ and PDEs}\\ \hline
 			
-			\multilinecell{\cite{fateh_differential_2019}} & \multilinecell{\gls{de}} & \multilinecell{function value\\gird} & Elliptic PDEs \\ \hline
+			\multilinecell{\cite{fateh_differential_2019}} & \multilinecell{\gls{de}} & \multilinecell{function value\\gird} & elliptic PDEs \\ \hline
 			
 		\end{tabular}
 	}
-	\unterschrift{Literature research on the general topic of stochastic solver and their application. The papers are sorted by relevance to the present work. }{}{}
+	\unterschrift{Literature research on the general topic of stochastic solver and their application. The papers are sorted by date of release. }{}{}
 	\label{tab:literature_research}
 \end{table}
 
@@ -201,7 +201,7 @@ F(\mathbf{x}) = \sqrt{\sum_{i=0}^{n} R(\mathbf{x}_i)^2}
 
 The differential evolution framework was first introduced in \cite{storn_differential_1997}. Due to its simple and flexible structure, it quickly became one of the most successful evolutionary algorithm. Over the years, several adaptations to the original framework have been proposed and some of them currently count to the best performing algorithms, as the 100-Digit Challenge at GECCO 2019 (\cite{suganthan_suganthancec2019_2020}) shows. 
 
-The main \gls{de} framework consists of three necessary steps, that continuously update a population of possible solutions. The population can be interpreted as a matrix, where each row-vector $\mathbf{x}_i$, also called individual, represents a point within the search domain and has a fitness value corresponding to the fitness function $f(\mathbf{x}_i): \mathbb{R}^n \rightarrow \mathbb{R}$. The goal is to minimise the fitness function. These steps are performed in a loop until some termination condition is reached. Each of these steps is controlled by a user-defined parameter: 
+The main \gls{de} framework consists of three necessary steps that continuously update a population of possible solutions. The population can be interpreted as a matrix, where each row-vector $\mathbf{x}_i$, also called individual, represents a point within the search domain and has a fitness value corresponding to the fitness function $f(\mathbf{x}_i): \mathbb{R}^n \rightarrow \mathbb{R}$. The goal is to minimise the fitness function. These steps are performed in a loop until a predefined termination condition is reached. Each individual step is controlled by a user-defined parameter: 
 \begin{itemize}
 	\item \underline{Mutation}: \\
 		  Mutation strength parameter F;\\
@@ -222,16 +222,16 @@ The main \gls{de} framework consists of three necessary steps, that continuously
 		  \end{equation}
 	\item \underline{Selection}: \\
 		  Population size N;\\
-		  The selection replaces the old candidate $x_i$ if the trial candidate $u_i$ is better (according to the fitness function). This is performed for every individual in the population, then the next generation is started.
+		  The selection replaces the old candidate $x_i$ if the trial candidate $u_i$ is better as measured by the fitness function. This is performed for every individual in the population, then the next generation is started.
 \end{itemize}  
 
 In modern \gls{de} variants, these parameters are self-adapted during the evolutionary process. This means that the algorithms can balance out between exploration of the search-space and exploitation of promising locations. 
 
-A prominent example of a modern \gls{de} with self-adaption is JADE, which was developed by \cite{zhang_jade_2009}. The adaption is performed by taking successful F and CR parameter of the last generation into account. If a certain setting is successful in generating better candidates, newly selected F and CR tend towards that setting. The pseudocode is represented in the appendix \ref{chap:pscode_jade}. 
+A prominent example of a modern \gls{de} with self-adaption is JADE, which was developed by \cite{zhang_jade_2009}. The adaption is performed by taking successful F and CR parameter of the last generation into account. If a certain setting is successful in generating better candidates, newly selected F and CR gravitate towards that setting. The pseudocode is presented in the appendix \ref{chap:pscode_jade}. 
 
 This idea was later refined by \cite{tanabe_success-history_2013}. They propose a similar self-adaptive scheme but extend the ``memory'' for good F and CR parameters over multiple generations. This idea improves the robustness as compared to JADE. The pseudocode in appendix \ref{chap:pscode_shade} shows the outline of this so called SHADE algorithm. 
 
-The latest iteration of SHADE is called L-SHADE (\cite{tanabe_improving_2014}), which improves the performance by including a deterministic adaptive concept for the population size. At first, L-SHADE starts with a big population size, and reduces the number of individuals in a linear fashion by deleting bad candidates. This has the effect of reducing the number of unnecessary function evaluation. The code is displayed in the appendix \ref{chap:pscode_lshade}. 
+The latest iteration of SHADE is called L-SHADE (\cite{tanabe_improving_2014}), which improves the performance by including a deterministic adaptive concept for the population size. At first, L-SHADE starts with a big population size, and reduces the number of individuals in a linear fashion by deleting bad candidates. This has the effect of reducing the number of unnecessary function evaluations. The code is displayed in the appendix \ref{chap:pscode_lshade}. 
 
 
 

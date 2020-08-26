@@ -15,7 +15,7 @@ The most general description of a linear \gls{pde} is displayed in equation \eqr
 \text{subjected to: }\mathbf{B}u(\mathbf{x}) & = g(\mathbf{x}) \\
 \end{split}
 \end{equation}
-This is similar to the formulation of the strong form in equation \eqref{eq: strong form}, but not limited to a Dirichlet boundary problem. The matrix $\mathbf{B}$ can include differentiation, effectively allowing i.e. Neumann boundary condition. 
+This is similar to the formulation of the strong form in equation \eqref{eq: strong form}, but not limited to a Dirichlet boundary problem. The matrix $\mathbf{B}$ can include differentiation, effectively allowing Neumann boundary conditions. 
 
 An approximate solution to this problem is expressed as a finite sum of basis functions $\phi_k(\mathbf{x})$, as denoted in equation \eqref{eq:u_apx}. The coefficients $a_k$ need to be determined. In classical approximation schemes, the basis functions are orthogonal, such as trigonometric functions or Lagrange basis polynomials. 
 
@@ -24,7 +24,7 @@ An approximate solution to this problem is expressed as a finite sum of basis fu
 u(\mathbf{x}) \approx u_{apx}(\mathbf{x}) = \sum_{k=0}^{N} a_k \phi_k (\mathbf{x})
 \end{equation}
 
-The residual of a \gls{pde}, as shown in equation \eqref{eq:residual}, is formulated as the difference between the left and the right side of the differential equation. The residual of a solved \gls{pde} is zero. This is only possible for the analytical solution, further denoted as $u_{ext}(x,y)$. For a numerical approximation $u_{apx}(x,y)$, the residual should be ''small enough``. 
+The residual of a \gls{pde}, as shown in equation \eqref{eq:residual}, is formulated as the difference between the left and the right side of the differential equation. The residual of a solved \gls{pde} is zero. This is only possible for the analytical solution, further denoted as $u_{ext}(x,y)$. For a numerical approximation $u_{apx}(x,y)$, the residual should be small enough for the context of the approximation. 
 
 \begin{equation}
 \label{eq:residual}
@@ -38,7 +38,7 @@ The \gls{wrm} (\cite{shen_spectral_2011}) tries to minimise this residual of a n
 WRF = \int_{\Omega} R(\mathbf{x}) \psi(\mathbf{x}) W(\mathbf{x}) dx
 \end{equation}
 
-This integral must be evaluated numerically. There are many different integration schemes available, but they are typically computational expensive. A less extensive approach is to evaluate the integral argument at different ``collocation points''. This can be seen in equation \eqref{eq:wrm_colloc}. Although it is not an integral per se, it does assign a numerical ``score'' to the residual. 
+This integral must be evaluated numerically. There are many different integration schemes available, but typically they are computational expensive. A less extensive approach is to evaluate the integral argument at different ``collocation points''. This can be seen in equation \eqref{eq:wrm_colloc}. Although it is not an integral per se, it does assign a numerical ``score'' to the residual. 
 
 \begin{equation}
 \label{eq:wrm_colloc}
@@ -52,12 +52,12 @@ To ensure that negative and positive residuals do not cancel each other out, a c
 \sum_{k=0}^{N} R(\mathbf{x}_k)^2 W(\mathbf{x}_k)
 \end{equation}
 
-These methods are often called ``spectral methods'' (\cite{shen_spectral_2011}). Their main advantage over finite difference methods is that they take the whole domain into account. The derivative of the function at one point is influenced by the function at every other point in the domain. This global approach can lead to a better accuracy. 
+These methods are often called ``spectral methods'' (\cite{shen_spectral_2011}). Their main advantage over finite difference methods is that they take the whole domain into account. The derivative of the function at one point is influenced by the function at every other point in the domain. This global approach can lead to a higher accuracy. 
 
 \section{Fitness Function}
 \label{chap:fit_func}
 
-As mentioned above, the basis of the fitness function used in \cite{chaquet_using_2019} is the squared weighted residual in equation \eqref{eq:sum_squared_residual}. They split the summation over the collocation points into two parts: the points on the boundary ($n_B$) and the points on the inner domain ($n_C$). Further, they divide the fitness value by the number of points used. This fitness function, as seen in equation \eqref{eq:fit_func_chaquet}, is adopted in this thesis. Because here, systems of differential equations are not considered, the denominator changes to $m=1$ resulting in the fitness function \eqref{eq:fit_func} below. The norm around the residual is not necessary for this thesis, since the fitness function does not have to work for System of \gls{pde}s.
+As mentioned above, the basis of the fitness function used in \cite{chaquet_using_2019} is the squared weighted residual in equation \eqref{eq:sum_squared_residual}. They split the summation over the collocation points into two parts: the points on the boundary ($n_B$) and the points on the inner domain ($n_C$). Further, they divide the fitness value by the number of points used. This fitness function, as seen in equation \eqref{eq:fit_func_chaquet}, is adopted in this thesis. Because here, systems of differential equations are not considered, the denominator changes to $m=1$ resulting in the fitness function \eqref{eq:fit_func} below. The norm around the residual is not necessary for this thesis, since the fitness function does not have to work for system of \gls{pde}s.
 
 \begin{equation}
 \label{eq:fit_func}
@@ -84,12 +84,12 @@ As \cite{chaquet_using_2019} suggest, an approximate solution should be represen
 r = \left|\left|\mathbf{x} - \mathbf{c} \right|\right|
 \end{equation}
 
-This thesis mainly works with two different types of \gls{rbf}. The first one is the classical Gauss \gls{rbf} ($gak$). The second one, further called GSin \gls{rbf} ($gsk$), is more complex. A candidate solution is represented as the parameters that shift and deform these \gls{rbf}. 
+This thesis mainly works with two different types of \gls{rbf}. The first one is the classical Gauss \gls{rbf}, also denoted as \gls{gak}. The second one, further called Gauss Sine \gls{rbf}, or \gls{gsk}, is more complex. A candidate solution is represented as the parameters that shift and deform these \gls{rbf}. 
 
 \subsection{Gauss Kernel}
 \label{chap:gauss_kernel}
 
-In general, a \gls{gak} is the classical choice to approximate functions. It was first introduced in \cite{broomhead_multivariable_1988}. Equation \eqref{eq:gauss_kernel} shows the formulation of such a kernel. One kernel has 4 parameters, that change its shape and location. $\omega$ is a scaling factor for each and $\gamma$ describes how sharp the e-function is. Depending on the space the solution is defined in, the number of values in the vector $\mathbf{c}$ could change - one for each dimension. However, in this work only $\mathbb{R}^2$ is of interest, thus $\mathbf{c}$ always includes 2 values. In figure \ref{fig:gauss_kernel_3d_plot} a single standard \gls{gak} is plotted. 
+In general, a \gls{gak} is the classical choice to approximate functions. It was first introduced in \cite{broomhead_multivariable_1988}. Equation \eqref{eq:gauss_kernel} shows the formulation of such a kernel. One kernel has 4 parameters that change its shape and location. $\omega$ is a scaling factor for each kernel and $\gamma$ describes how sharp the e-function is. Depending on the space the solution is defined in, the number of values in the vector $\mathbf{c}$ could change - one for each dimension. However, in this work only $\mathbb{R}^2$ is of interest, thus $\mathbf{c}$ always includes 2 values. In figure \ref{fig:gauss_kernel_3d_plot} a single standard \gls{gak} is plotted. 
 
 \begin{equation}
 \label{eq:gauss_kernel}
@@ -137,10 +137,10 @@ To evaluate the residual of a \gls{pde}, the derivatives must be known. To that 
 \frac{\partial^2 u_{apx}(\mathbf{x})}{\partial x_j x_k} = 4 \sum_{i=0}^{N} \omega_i \gamma_i^2 (x_j - c_{ij}) (x_k - c_{ik}) e^{-\gamma_i r_i^2} 
 \end{equation}
 
-\subsection{GSin Kernel}
+\subsection{Gauss Sine Kernel}
 \label{chap:gsin_kernel}
-Additional to the Gauss kernel, a ``GSin'' kernel, further also abbreviated as \gls{gsk}, is proposed. In essence, this is a multiplication of a \gls{gak} with a sine function, as seen in equation \eqref{eq:gsin_kernel}. It can be thought of a sine function, where its influence declines with the radius $r$. The plot in figure \ref{fig:gsin_kernel_3d_plot} shows how the first half period is much larger than the second half. Both ``sub-functions'' are centred at the same $\mathbf{c}$. As shown in chapter \ref{chap:gsin_approximation_theorem}, the universal approximation theorem for the GSin kernel holds true. 
-With the sine, two new parameters are introduced: $f$ for the frequency of the sine wave and $\varphi$ represents the phase shift. 
+Additional to the Gauss kernel, a ``Gauss Sine'' kernel, further also abbreviated as \gls{gsk}, is proposed. In essence, this is a multiplication of a \gls{gak} with a sine function, as seen in equation \eqref{eq:gsin_kernel}. It can be thought of as a sine function, where its influence declines with the radius $r$. The plot in figure \ref{fig:gsin_kernel_3d_plot} shows how the first half period is much larger than the second half. Both ``sub-functions'' are centred at the same $\mathbf{c}$. As shown in chapter \ref{chap:gsin_approximation_theorem}, the universal approximation theorem for the \gls{gsk} holds true. 
+With the sine, two new parameters are introduced: $f$ for the frequency of the sine wave and $\varphi$ for the phase shift. 
 \begin{equation}
 \label{eq:gsin_kernel}
 gsk(\mathbf{x}) = \omega e^{-\gamma ||\mathbf{x} - \mathbf{c}||^2} sin(f ||\mathbf{x} - \mathbf{c}||^2 - \varphi)
@@ -153,11 +153,11 @@ It is important to notice that, with the correct parameter choice, both traits -
 	\noindent\adjustbox{max width=\linewidth}{
 		\includegraphics[width=\textwidth]{../../code/kernels/gsk.pdf}
 	}
-	\unterschrift{3D plot of a single GSin kernel with the parameters $\omega = 1$, $\gamma = 1$, $c_0 = 0$, $c_1 = 0$, $f = 1$, $\varphi = 0$}{}{}
+	\unterschrift{3D plot of a single Gauss Sine kernel with the parameters $\omega = 1$, $\gamma = 1$, $c_0 = 0$, $c_1 = 0$, $f = 1$, $\varphi = 0$}{}{}
 	\label{fig:gsin_kernel_3d_plot}
 \end{figure}
 
-Similar to the Gauss kernel, the approximate solution is described as the superposition of $N$ GSin kernels, as seen in equation \eqref{eq:uapx_gsin_kernel}. 
+Similar to the Gauss kernel, the approximate solution is described as the superposition of $N$ \gls{gsk}, as seen in equation \eqref{eq:uapx_gsin_kernel}. 
 
 \begin{equation}
 \label{eq:uapx_gsin_kernel}

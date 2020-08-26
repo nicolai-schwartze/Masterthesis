@@ -227,7 +227,7 @@ u_{ext}(x,y) = 2e^{-1.5(x^2 + y^2)} & + e^{-3((x+1)^2 + (y+1)^2)} + e^{-3((x+1)^
 
 
 
-\underline{\textbf{PDE 0B: GSin Kernel}}
+\underline{\textbf{PDE 0B: Gauss Sine Kernel}}
 
 \underline{Problem PDE:} 
 \begin{equation}
@@ -261,7 +261,7 @@ u_{ext}(x,y) = & e^{-2  (x^2 + y^2)}  sin(2  ((x^2 + y^2))) + e^{-1  (x^2 + y^2)
 	\noindent\adjustbox{max width=\linewidth}{
 		\includegraphics[width=0.46\textwidth]{../../code/testbed/pde0B/sol_pde_0b.pdf}
 	}
-	\unterschrift{PDE 0B Gsin Kernel solution plot}{}{}
+	\unterschrift{PDE 0B Gauss Sine Kernel solution plot}{}{}
 	\label{fig:sol_plot_0B}
 \end{figure}
 
@@ -678,10 +678,10 @@ The post-processing module includes these functions. Their implementation is des
 	\item \inlinecode{bool drawGaussKernel(parameter, ggb)} \\
 	Draws a solution approximated by Gauss kernels and with the specified parameters to a GeoGebra file. If the filename provided in the \textit{ggb} argument does not exist, the function searches for a template and prints to a copy of that file. 
 	\item \inlinecode{bool drawGSinKernel(parameter, ggb)} \\
-	This is similar to the \inlinecode{drawGaussKernel} method - but it takes parameters for a GSin kernel. 
+	This is similar to the \inlinecode{drawGaussKernel} method - but it takes parameters for a Gauss Sine kernel. 
 	\item 
 	\inlinecode{float calcRSME(solve_dict)} \\
-	To compare the obtained results with previous work, the \gls{rmse} quality metric (as described in the chapter \ref{chap:metric_quality}) must be computed. This is done from a single dictionary, as obtained by the functions \inlinecode{loadExpObject} or \inlinecode{loadExpObjectFast}.
+	To compare the obtained results with previous works, the \gls{rmse} quality metric (as described in the chapter \ref{chap:metric_quality}) must be computed. This is done from a single dictionary, as obtained by the functions \inlinecode{loadExpObject} or \inlinecode{loadExpObjectFast}.
 	\item 
 	\inlinecode{None plotApprox3D(kernel, parameter, lD, uD, name=None)} \\
 	The approximate solution of a \gls{pde} can be plotted over the domain with this function. Only square sized domains are accepted, as specified by the lower and the upper domain parameters \inlinecode{lD} and \inlinecode{uD}. If \textit{name} is of type string, the plot is saved as this file.

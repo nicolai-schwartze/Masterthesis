@@ -6,9 +6,9 @@
 With the serial algorithm from the chapter above, evaluating a \gls{pde} takes way to long to be practically relevant (beyond $14.5 \cdot 10^3$ seconds at $10^6$ \gls{nfe}). To reduce the solving time and speed up all further experiments, a parallel JADE is implemented. This chapter describes the benefits and drawbacks of the new algorithm.  
 
 \section{Hypotheses}
-The actual parallel JADE algorithm is shown in appendix \ref{chap:pseudocode_pjade}. The pseudocode \ref{algo: pjade} is very similar to the JADE algorithm \ref{algo: jade}. The main differences are laid out in the lines 11 to 17. The mutation, the crossover, the parameter adaption and the fitness evaluation are done in parallel for each individual in the population. The parallelism is based on the python module multiprocessing (\cite{python_standard_library_multiprocessing_2020}), in particular the \inlinecode{multiprocessing.Pool.apply\_async(func, *args)} method. This method takes a function, in this case an adapted version of the for-loop from line 11 to 17, and automatically maps it to a number of preallocated processes. After this is done for every individual in the population, the processes are synchronised and the results get returned to the main process. Therein lies the actual difference to the serial JADE. In the parallel algorithm new individuals are only available after each generation, whereas with the serial algorithm, the individuals are constantly updated before the next generation starts. This means that in the parallel algorithm information is withheld until the next generation - the same information can spread faster in the serial algorithm.  
+The actual parallel JADE algorithm is shown in appendix \ref{chap:pseudocode_pjade}. The pseudocode \ref{algo: pjade} is very similar to the JADE algorithm \ref{algo: jade}. The main differences are laid out in the code-lines 11 to 17. The mutation, the crossover, the parameter adaption and the fitness evaluation are done in parallel for each individual in the population. The parallelism is based on the python module multiprocessing (\cite{python_standard_library_multiprocessing_2020}), in particular the \inlinecode{multiprocessing.Pool.apply\_async(func, *args)} method. This method takes a function, in this case an adapted version of the for-loop from code-line 11 to 17, and automatically maps it to a number of preallocated processes. After this is done for every individual in the population, the processes are synchronised and the results get returned to the main process. Therein lies the actual difference to the serial JADE. In the parallel algorithm new individuals are only available after each generation, whereas with the serial algorithm, the individuals are constantly updated before the next generation starts. This means that in the parallel algorithm information is withheld until the next generation - the same information can spread faster in the serial algorithm.  
 
-For the sake of completeness, the memetic parallel JADE pseudocode is shown in the algorithm \ref{algo: memeticpJADE} below. The only difference compared to the simple memetic JADE \ref{algo: memeticJADE} is the usage of the pJADE in line 5. 
+For the sake of completeness, the memetic parallel JADE pseudocode is shown in the algorithm \ref{algo: memeticpJADE} below. The only difference compared to the simple memetic JADE \ref{algo: memeticJADE} is the usage of the pJADE in code-line 5. 
 
 \begin{algorithm}[h]
 	\SetAlgoNoLine
@@ -29,16 +29,16 @@ For the sake of completeness, the memetic parallel JADE pseudocode is shown in t
 	\label{algo: memeticpJADE}
 \end{algorithm}
 
-This chapter tries to answer the question if the explained distinctions actually influence the results, to the better or the worse. Further, the time-benefits of this strategy are examined and assessed.
+This chapter discusses the question if the explained distinctions actually influence the results, to the better or the worse. Further, the time-benefits of this strategy are examined and assessed.
 
 \section{Experiment Setup}
 Similar to the experiment 0 before, the standard parameters from table \ref{tab:ci_parameter} are used. Again, two different machines with either $10^4$ \gls{nfe} ($\rightarrow$ machine 1) or $10^6$ \gls{nfe} ($\rightarrow$ machine 2) are used, whereby the time comparison is only allowed on machine 1. Also, 5 \gls{gak} are used, meaning the problem dimension is 20 and the population size is 40. The standard Wilcoxon test (explained in appendix \ref{chap:apendix_post_proc}) is used to proof statistical significance. 
 
-Additionally, a new parameter is introduced: the number of allocated parallel processes. It is recommended to set this parameter to the number of available processors, but this also depends on the general workload of the machine. When using too many processes, the system might be overwhelmed, effectively slowing down the task and resulting in an even longer solving time. On machine 1, 5 processes are implemented, while machine 2 is capable of handling 30 processes. With other machines, it might be possible to introduce even more processes, potentially increasing the speed-up even further. 
+Additionally, a new parameter is introduced: the number of allocated parallel processes. Typically, this parameter is set to the number of available processors, but this also depends on the general workload of the machine. When using too many processes, the system might be overwhelmed, effectively slowing down the task and resulting in an even longer solving time. On machine 1, 5 processes are implemented, while machine 2 is capable of handling 30 processes. With other machines, it might be possible to introduce even more processes, potentially increasing the speed-up even further. 
 
 \section{Results}
 
-The two images \ref{fig:parallel_jade_time_boxplot} and \ref{fig:parallel_jade_memory_boxplot} display a boxplot of the time- and memory consumption. To ensure comparability with the results obtained for the serial JADE, these images represent the results at $10^4$ \gls{nfe} on machine 1. 
+The two images \ref{fig:parallel_jade_time_boxplot} and \ref{fig:parallel_jade_memory_boxplot} display a boxplot of the time- and memory usage. To ensure comparability with the results obtained for the serial JADE, these images represent the results at $10^4$ \gls{nfe} on machine 1. 
 
 \begin{figure}[H]
 	\centering
@@ -95,10 +95,10 @@ Table \ref{tab:compare_parallel_serial_jade_10^6} shows the mean and the median 
 
 \section{Discussion}
 
-The results from above are analysed in this chapter. The time and memory consumption as well as the speed-up for every testbed function is discussed. Further, the significant worse results on \gls{pde} 4 are investigated. Finally, the usage of the parallel JADE in all further experiments is justified. 
+The results from above are analysed in this chapter. The time and memory usage as well as the speed-up for every testbed function is discussed. Further, the significant worse results on \gls{pde} 4 are investigated. Finally, the usage of the parallel JADE in all further experiments is justified. 
 
 \subsection{Memory Usage}
-As the boxplot \ref{fig:parallel_jade_memory_boxplot} shows, the memory consumption is roughly at the same level, somewhere between 1.5 to 4.0 percent of \gls{fem} solver. The memory usage is very similar to the serial experiment. This is expected, since memory-wise no integral changes have been performed.  
+As the boxplot \ref{fig:parallel_jade_memory_boxplot} shows, the memory usage is roughly at the same level, somewhere between 1.5 to 4.0 percent of \gls{fem} solver. The memory usage is very similar to the serial experiment. This is expected, since memory-wise no integral changes have been performed.  
 
 \subsection{Solving Time}
 The main purpose of the parallelisation is to cut down the solving time and accelerate all further experiments. To that extent, the population is evaluated in parallel. As the solving time boxplot in figure \ref{fig:parallel_jade_time_boxplot} shows, this goal was achieved. The execution time after $10^4$ \gls{nfe} now ranks between the 8 and 15-fold of the \gls{fem} solver. This is unquestionably faster than the solving time of the serial algorithm. Remarkable is that on \gls{pde} 3, the \gls{ci} solver is even faster than NGSolve and takes only about $0.56 \cdot 65.2 \text{ s} \approx 36.5 \text{ s}$. Of course, to compete with the solution quality, more \gls{nfe} are needed, which increases the execution time. 

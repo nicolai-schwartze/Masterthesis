@@ -3,10 +3,10 @@
 
 \section{State of the Art}
 \label{chap:state_of_the_art}
-This chapter provides an overview of the current state of the art in solving \gls{pde}. Included are the widely used \gls{fem} as well as heuristic optimisation methods. Further, an introduction to the \gls{de} framework is given, which provides the basis for the algorithms described in this thesis. 
+This chapter provides an overview of the current state of the art in solving \gls{pde}. Included are the widely used \gls{fem} as well as heuristic optimisation methods. Further, an introduction to the \gls{de} framework is given.
 
 \subsection{Finite Element Method}
-Currently the finite element method is the go-to approach to solve partial differential equations. The domain $\Omega$ on which the \gls{pde} is posed, is discretised into multiple smaller elements - as the name suggests. Thus, \gls{fem} counts to the category of meshed methods. The underlying solution function $u(\mathbf{x})$ to the PDE is then approximated by so called ``basis-functions'' $\Phi(\mathbf{x})$ limited to these finite elements. This thesis uses the open-source Netgen/NGSolve \gls{fem} package (\cite{schoberl_ngsolvengsolve_2020}). 
+Currently the finite element method is the go-to approach to solve partial differential equations. The domain $\Omega$ on which the \gls{pde} is posed, is discretised into multiple smaller element. Thus, \gls{fem} counts to the category of meshed methods. The underlying solution function $u(\mathbf{x})$ to the PDE is then approximated by so called ``basis-functions'' $\Phi(\mathbf{x})$ limited to these finite elements. This thesis uses the open-source Netgen/NGSolve \gls{fem} package (\cite{schoberl_ngsolvengsolve_2020}). 
 
 The general steps taken to solve a PDE with an FEM solver are: 
 \begin{enumerate}
@@ -27,26 +27,17 @@ The general steps taken to solve a PDE with an FEM solver are:
 		  \end{equation}
 		  
 	\item \underline{Step: Weak Form} \\
-		  The next step is to reformulate the strong form into a usable weak form. This is equivalent to the strong form but written in an integral notation. In this equation, the $A$, $b$ and $c$ correspond to the constant factors of the derivatives in strong form. For the sake of completeness, this is kept abstract. In the \gls{pde}s considered in this work, $A = \mathbb{I}$ and $b=\mathbf{0}$, $c = 0$. Currently, the so-called test-function $v(\mathbf{x})$ is an arbitrary function, but it has to be 0 on the boundary $v(\mathbf{x})|_{\Omega} = 0$. The choice of the test-function correspond to different \gls{fem} types. \cite[p. 6f]{shen_spectral_2011}\\
-		  \begin{equation}
-		  \label{eq: weak form}
-			  \begin{split}
-			      \underbrace{\int_{\Omega} - (\nabla^T A \nabla) u(\mathbf{x}) v(\mathbf{x}) dV - \int_{\Omega} b^T \nabla u(\mathbf{x}) v(\mathbf{x}) dV + \int_{\Omega} c u(\mathbf{x}) v(\mathbf{x}) dV}_{a(u,v)} \\ = \underbrace{\int_{\Omega} f(\mathbf{x}) v(\mathbf{x}) dV}_{F(v)}
-			  \end{split}
-		  \end{equation} 
+		  The next step is to reformulate the strong form into a usable weak form. This is equivalent to the strong form but written in an integral notation. Currently, the so-called test-function $v(\mathbf{x})$ is an arbitrary function, but it has to be 0 on the boundary $v(\mathbf{x})|_{\Omega} = 0$. The choice of the test-function correspond to different \gls{fem} types. \cite[p. 6f]{shen_spectral_2011}\\
+		  
 	\item \underline{Step: Discretisation} of $\Omega$ \\
 		  Create a mesh of finite elements that span the whole domain. Usually these are triangles. Thus, this step is sometimes called ``triangulation''.
 	\item \underline{Step: Basis functions} \\
-		  Choose a basis function $\Phi(\mathbf{x})$ that can be used to approximate the solution $u(\mathbf{x}) \approx u_{h}(\mathbf{x}) = \sum_{i = 1}^{N} u_i \Phi(\mathbf{x})_i$. A common choice are Lagrange or Chebyshev polynomials. In the Galerkin type \gls{fem}, the test-function $v(\mathbf{x})$ is the same as the trail-function, thus $v(\mathbf{x}) = \sum_{j = 1}^{N} v_j \Phi(\mathbf{x})_j$. The choice of the basis function $\Phi(\mathbf{x})$ largely influences the computational effort.  $\Phi(\mathbf{x})$ should have a small support, to produce a thinly populated matrix $A$ in the linear system of equations \eqref{eq:linear_system_of_equations} below.
+		  Choose a basis function $\Phi(\mathbf{x})$ that can be used to approximate the solution $u(\mathbf{x}) \approx u_{h}(\mathbf{x}) = \sum_{i = 1}^{N} u_i \Phi(\mathbf{x})_i$. A common choice are Lagrange or Chebyshev polynomials. In the Galerkin type \gls{fem}, the test-function $v(\mathbf{x})$ is the same as the trail-function, thus $v(\mathbf{x}) = \sum_{j = 1}^{N} v_j \Phi(\mathbf{x})_j$. The choice of the basis function $\Phi(\mathbf{x})$ largely influences the computational effort.  $\Phi(\mathbf{x})$ should have a small support, to produce a thinly populated matrix $A$.
 	\item \underline{Step: Solution} \\
-		  In the weak form, as seen in equation \eqref{eq: weak form}, $a(u,v)$ is a continuous bilinear form and $F(v)$ is a continuous linear functional. Substituting $u$ and $v$ with their corresponding approximation from \mbox{step 4} results in 
-		  \begin{equation}
-		  \sum_{j=1}^{N} v_j \sum_{i=1}^{N} u_i a(\Phi_i, \Phi_j) = \sum_{j=1}^{N} v_j F(\Phi_j).
-		  \end{equation} 
-		  Dividing by the $v_j$ values on both sides results in a linear system of equations, where the constant factors $u_i$ need to be determined.  
+		  The integral formulation is used to convert the differential equation into a system of linear equations, where the constant factors $u_i$ of the approximate solution $u_h(\mathbf{x})$ need to be determined. 
 		  \begin{equation}
 		  \label{eq:linear_system_of_equations}
-		  \underbrace{\sum_{i=1}^{N} u_i a(\Phi_i, \Phi_j)}_{\mathbf{A u}} = \underbrace{F(\Phi_j)}_{\mathbf{b}} \text{ for $j=1,...N$}
+		  \mathbf{A} \mathbf{u} = \mathbf{b}
 		  \end{equation}
 \end{enumerate}
 
@@ -57,6 +48,9 @@ Modern solvers include more complex and advanced techniques to further improve t
 		  Depending on the number of discrete elements, the $\mathbf{A}$ matrix can be very large. Inverting large matrices is very time consuming. Static condensation, also called Guyan reduction (\cite{guyan_reduction_1965}), reduces this dimensionality by exploiting the structure of $\mathbf{A}$. 
 	\item \underline{Preconditioner}: \\
 		  Instead of solving the $\mathbf{A}^{-1}$ exactly, this can also be approximated by a matrix that is similar to $\mathbf{A}^{-1}$. The actual inverse can be iteratively approximated. NGSolve implements multiple different preconditioners and it even allows to create your own method. 
+		  
+\newpage		  
+		   
 	\item \underline{Adaptive Mesh Refinement}: \\
 		The accuracy of a FEM-approximated solution mainly depends on the density of the mesh. Typically, finer meshes tend to produce more accurate solutions, but the computation time takes longer. This trade-off can be overcome by a self-adaptive mesh. NGSolve implements that in an adaptive loop that executes: 
 		\begin{itemize}
@@ -107,7 +101,11 @@ At first, the \gls{gp} step produced a trial solution according to the objective
 
 \begin{equation}
 \label{eq:fit_func_chaquet_2012}
-F(u_{apx}(\mathbf{x})) = \frac{\sum_{i=1}^{n_C} || \mathbf{L}u_{apx}(\mathbf{x}_i) - f(\mathbf{x}_i)||^2 + \phi \sum_{j=1}^{n_B} || \mathbf{B}u_{apx}(\mathbf{x}_j) - g(\mathbf{x}_j)||^2}{m (n_C + n_B)}  
+\begin{split}
+F(u_{apx}(\mathbf{x})) = 
+\frac{1}{m (n_C + n_B)} \\ 
+\sum_{i=1}^{n_C} || \mathbf{L}u_{apx}(\mathbf{x}_i) - f(\mathbf{x}_i)||^2 + \phi \sum_{j=1}^{n_B} || \mathbf{B}u_{apx}(\mathbf{x}_j) - g(\mathbf{x}_j)||^2  
+\end{split}
 \end{equation}
 
 \cite{babaei_general_2013} takes a similar approach. They approximate a solution using a partial Fourier series. The optimal parameters for the candidates are found using a \gls{pso} algorithm (\cite{kennedy_particle_1995}). The fitness function consists of two parts, one for the inner area (equation \eqref{eq:inner_WRF}) and one for the boundary (equation \eqref{eq:boundary_penalty}). These are added together resulting in equation \eqref{eq:inner_and_boundary_fitness}.

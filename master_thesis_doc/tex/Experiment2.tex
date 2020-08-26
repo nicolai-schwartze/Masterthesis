@@ -9,7 +9,7 @@ Although the parallel algorithm is effectively faster, the quality of the achiev
 
 The idea tested in this chapter is an adaptive scheme for the number of kernels used, which is directly linked to the search dimensionality of the optimisation problem. 
 
-This new concept requires a convergence based halting criterion in the JADE algorithm, which is not included in the algorithm before. The pseudocode \ref{algo: pajade} in the \mbox{appendix \ref{chap:pseudocode_pajade}} is extended by a so called ``state detector''. Ideally, the state detector (lines 37 to 40) should stop the overall optimisation loop as soon as the algorithm has converged and before the function evaluation budget is exceeded. Generally, this is done by checking if the function value has not changed for a certain amount of generations. The state detector introduces a new parameter. The \gls{dt} represents the number of generations over which the best function value must remain unchanged. It can also be thought of a buffer-time that allows the \gls{de} parameters F and CR to self-adapt. Further, the minError parameter has a new purpose. This is the minimal difference that the value is allowed to change over \gls{dt} generations. 
+This new concept requires a convergence based halting criterion in the JADE algorithm, which is not included in the algorithm before. The pseudocode \ref{algo: pajade} in the \mbox{appendix \ref{chap:pseudocode_pajade}} is extended by a so called ``state detector''. Ideally, the state detector (code-lines 37 to 40) should stop the overall optimisation loop as soon as the algorithm has converged and before the function evaluation budget is exceeded. Generally, this is done by checking if the function value has not changed for a certain amount of generations. The state detector introduces a new parameter. The \gls{dt} represents the number of generations over which the best function value must remain unchanged. It can also be thought of as a buffer-time that allows the \gls{de} parameters F and CR to self-adapt. Further, the minError parameter has a new purpose. This is the minimal difference that the function value is allowed to change over \gls{dt} generations, without resetting the counter for \gls{dt}. 
 
 The new paJADE is wrapped into the memetic framework, already used in the chapters before. A flowchart of the process in shown in figure \ref{fig:uml_flow_adaptive_scheme}. The corresponding pseudocode \ref{algo: memeticpJADEadaptive} in the appendix describes the implementation.
 
@@ -35,18 +35,18 @@ This adaptive scheme operates under 3 strong assumptions. To reduce their possib
 	In this algorithm, the first kernels are allowed to change. When introducing a new random kernel, it is simply appended to the ever evolving $\mathbf{p_{apx}}$ vector. Thus, the search for the 4\textsuperscript{th} kernel starts where the best approximation for 3 kernels was found, but since the earlier kernels are allowed to readapt, other solutions can be retrieved.
 \end{itemize} 
 
-This chapter tries to answer the question if this strategy is an effective method to increase the quality of obtained solutions. Also, the time and memory aspects are investigated. 
+This chapter discusses the question if this strategy is an effective method to increase the quality of obtained solutions. Also, the time and memory aspects are investigated. 
 
 \section{Experiment Setup}
 
 Again, as in the experiments before, machine 1 runs at $10^4$ \gls{nfe} and machine 2 performs $10^6$ \gls{nfe}. The time- and memory-comparison are done on machine 1. The number of kernels is adapted, but the algorithm starts with 1 \gls{gak}. Thus, the dimension is 4 and the population size is 8. The population size gets corrected if the number of kernels changes. The Wilcoxon test from appendix \ref{chap:apendix_post_proc} investigates the statistical significance. 
 
-The two new parameters \gls{dt} and minError must be set. The minError is again set to 0. The delay time \gls{dt} is set to 100. When the function value could not be improved over the course of 100 generations, a new kernel is introduced. This choice is rather arbitrary and depending on the \gls{pde}, different values might be more successful. However, this property is not analysed in the current experiment.
+The two new parameters \gls{dt} and minError must be set. The minError is again set to 0. The delay time \gls{dt} is set to 100. When the function value could not be improved over the course of 100 consecutive generations, a new kernel is introduced. This choice is rather arbitrary and depending on the \gls{pde}, different values might be more successful. However, this property is not analysed in the current experiment.
 
 \section{Result}
 \label{chap:results_ex2}
 
-Similar to the experiments before, the two images \ref{fig:pajade_time_boxplot} and \ref{fig:pajade_memory_boxplot} illustrate the time and memory consumption of the described kernel adaptive JADE. The data to both plots is obtained on machine 1 at $10^4$ \gls{nfe}. \gls{pde} 7 takes the longest to solve, about 8.5 times longer than the \gls{fem} solver. Contrary, \gls{pde} 3 is solved the fastest, where the \gls{ci} solver only needs about a quarter of the time used by \gls{fem} solver. The memory effort of the \gls{ci} solver over all testbed problems is between 0.5 and 2.5 percent of the memory needed by the \gls{fem} solver. 
+Similar to the experiments before, the two images \ref{fig:pajade_time_boxplot} and \ref{fig:pajade_memory_boxplot} illustrate the time and memory usage of the described kernel adaptive JADE. The data to both plots is obtained on machine 1 at $10^4$ \gls{nfe}. \gls{pde} 7 takes the longest to solve, about 8.5 times longer than the \gls{fem} solver. Contrary, \gls{pde} 3 is solved the fastest, where the \gls{ci} solver only needs about a quarter of the time used by \gls{fem} solver. The memory effort of the \gls{ci} solver over all testbed problems is between 0.5 and 2.5 percent of the memory needed by the \gls{fem} solver. 
 
 \begin{figure}[H]
 	\centering
@@ -111,14 +111,14 @@ Since the number of kernels is not predefined, the resulting solution may have a
 
 \section{Discussion}
 
-This chapter analyses the presented results from section \ref{chap:results_ex2}. The time and memory the consumption are discussed. The significantly better results on \gls{pde} 0A are investigated. The adaptive kernel scheme performs significantly worse on the testbed problems \gls{pde} 2, 3, 4, and 7. Therefore the $minError$ parameter is adapted and the results are critically examined. 
+This chapter analyses the presented results from section \ref{chap:results_ex2}. The time and memory usage is discussed. The significantly better results on \gls{pde} 0A are investigated. The adaptive kernel scheme performs significantly worse on the testbed problems \gls{pde} 2, 3, 4, and 7. Therefore the $minError$ parameter is adapted and the results are critically examined. 
 
 \subsection{Solving Time}
 
 This new adaptive strategy can significantly decrease the time that is necessary to solve any \gls{pde} of the testbed. This follows from the solving time box plot in figure \ref{fig:pajade_time_boxplot}. This effect can be explained by the reduction of the dimension and the adaptive population size. Depending on the number of kernels, the population can grow. It always starts with 1 kernel and therefore the size of the population is 8. The boxplot shows that this breaks the pattern of simpler and more complex \gls{pde}s that is exhibited in the previous experiments.
 
 \subsection{Memory Usage}
-The adaptive approach also leads to a reduction in the memory usage, as described by the memory boxplot in figure \ref{fig:pajade_memory_boxplot}. The same explanation that describes the solving time reduction can applied here: smaller populations need less memory to be stored. Since not all \gls{pde}s result in the same dimension, the memory consumption over all testbed problems is not the same. Further, the adaptive scheme dismantles the linear scaling of memory usage with increasing \gls{nfe}. 
+The adaptive approach also leads to a reduction in the memory usage, as described by the memory boxplot in figure \ref{fig:pajade_memory_boxplot}. The same explanation that describes the solving time reduction can be applied here: smaller populations need less memory to be stored. Since not all \gls{pde}s result in the same dimension, the memory consumption over all testbed problems is not the same. Further, the adaptive scheme dismantles the linear scaling of memory usage with increasing \gls{nfe}. 
 
 \subsection{PDE 0A}
 \label{chap:ex2_discussion_pde0a}
@@ -172,7 +172,7 @@ It seems that JADE exploits some areas long enough so that it does not terminate
 
 \textbf{\underline{Parameter Adaption: $minError$}} 
 
-In this ``sub-experiment'' the effect of increasing the $minError$ parameter is examined. Therefore, the same algorithm is rerun on the \gls{pde}s 2, 3, 4 and 7 at four different $minError$ levels. Again, 20 replications are done. It is expected that the average number of kernels is increased. Simultaneously, the approximation quality should get better. 
+In this ``sub-experiment'' the effect of increasing the $minError$ parameter is examined. Therefore, the same algorithm is rerun on the \gls{pde}s 2, 3, 4 and 7 at four different $minError$ levels. Again, 20 replications are done. It is expected that the average number of kernels is increased. Simultaneously, the approximation quality should become better. 
 
 As expected, the average number of kernels in the solution gets increased. This is confirmed by the plot in figure \ref{fig:subexperiment_pde2347_minerror_kernelNR}. Figure \ref{fig:subexperiment_pde2347_minerror_l2norm} shows the connection between the median L2 norm and the $minError$. The distance to the analytical solution decreases on \gls{pde} 2 and 3. However, this does not improve the results of \gls{pde} 4 and 7, where the quality stays roughly on the same level. This is supported statistically by the Wilcoxon test in table \ref{tab:statistical_test_minError}.
 
@@ -228,7 +228,7 @@ Although the results on \gls{pde} 2 and 3 do get significantly better, the adapt
 	\label{fig:subexperiment_pde2347_kernels_l2norm}
 \end{figure}
 
-Because JADE is terminated earlier, the exploitation is not as progressed. This trade-off needs to be managed by setting the ``state-detector''-parameters. A small $minError$ ensures, that the exploitation is progressed sufficiently but it exceeds the \gls{nfe} budget before the number of kernels is increased. Contrary, larger $minError$-values terminate faster and increase the number of kernels, but the solution is not fully exploited. 
+Because JADE is terminated earlier, the exploitation is not as progressed. This trade-off needs to be managed by setting the ``state-detector''-parameters. A small $minError$ ensures that the exploitation is progressed sufficiently, but it exceeds the \gls{nfe} budget before the number of kernels is increased. Contrary, larger $minError$-values terminate faster and increase the number of kernels, but the solution is not fully exploited. 
 
 \subsection{PDE 5}
 
@@ -254,7 +254,7 @@ The results presented in table \ref{tab:compare_mpj_mpja_10^6} shows an interest
 	\label{fig:paJADE_pde5_l2norm_boxplot_comparison}
 \end{figure}
 
-The approximate solution of the outlier is shown in the two 3D plots in figure \ref{fig:paJADE_pde5_3D_plot_outlier} below. It is clearly seen that both results have nothing in common with the actual solution from figure \ref{fig:pde5_analytical_solution_2}. In general, it can be said that the adaptive scheme exhibits a greater spread in the quality of the solution. 
+The approximate solution of the outlier is shown in the two 3D plots in figure \ref{fig:paJADE_pde5_3D_plot_outlier} below. Evidently, both results have nothing in common with the actual solution from figure \ref{fig:pde5_analytical_solution_2}. In general, it can be said that the adaptive scheme exhibits a greater spread in the quality of the solution. 
 
 \begin{figure}[H]
 	\centering
@@ -282,12 +282,12 @@ The approximate solution of the outlier is shown in the two 3D plots in figure \
 	\label{fig:paJADE_pde5_3D_plot_outlier}
 \end{figure}
 
-Both outliers have a very similar structure. This might indicate, that JADE diverges to areas where the fitness function does not give a proper signal towards the optimum. The adaptive strategy can not improve the results on \gls{pde} 5. A second possibility would be to use a different kernel type. 
+Both outliers have a very similar structure. This might indicate that JADE diverges to areas where the fitness function does not give a proper signal towards the optimum. The adaptive strategy can not improve the results on \gls{pde} 5. A second possibility would be to use a different kernel type. 
 
 
 \subsection{PDE 6}
 
-The testbed \gls{pde} 6 could theoretically be solved exactly by a single \gls{gak}. As the Wilcoxon test shows, the adaptive kernel method does not improve the results significantly. This is confirmed in the subsequent boxplot of figure \ref{fig:paJADE_pde6_l2norm_boxplot_comparison}. Even good solutions are made of more than one kernel, as the boxplot in \ref{fig:pajade_kernels_boxplot} indicates. This means that the adaptive kernel strategy is not successful on \gls{pde} 6. JADE terminates to early and introduces more kernels. The influence of these unnecessary kernels must be minimised by the same strategies as with the \gls{pde} 0A as presented in chapter \ref{chap:ex2_discussion_pde0a}.
+The testbed \gls{pde} 6 could theoretically be solved exactly by a single \gls{gak}. As the Wilcoxon test shows, the adaptive kernel method does not improve the results significantly. This is confirmed in the subsequent boxplot of figure \ref{fig:paJADE_pde6_l2norm_boxplot_comparison}. Even good solutions are made of more than one kernel, as the boxplot in \ref{fig:pajade_kernels_boxplot} indicates. This means that the adaptive kernel strategy is not successful on \gls{pde} 6. JADE terminates to early and introduces more kernels. The influence of these unnecessary kernels must be minimised by the same strategies as with \gls{pde} 0A as presented in chapter \ref{chap:ex2_discussion_pde0a}.
 
 \begin{figure}[H]
 	\centering

@@ -1,0 +1,52 @@
+\documentclass[./\jobname.tex]{subfiles}
+\begin{document}
+
+\section{Universal Approximation Theorem for \gls{gsk}}
+\label{chap:gsin_approximation_theorem}
+
+The Gauss kernel is able to approximate all functions that are part of the Lebesgue space $f(\mathbf{x}) \in L^1(\mathbb{R}^n)$ arbitrarily close. This has been proven by various works (\cite{park_universal_1991}, \cite{hangelbroek_nonlinear_2010}). In particular, \cite{park_universal_1991} extends the universal approximation theorem to other kernels. The following paragraphs show that the \gls{gsk} fulfils the posed conditions and thus can benefit from the approximation theorem. 
+
+The Gauss-Sine kernel, as defined in equation \eqref{eq:gsin_kernel_theoretical_notes}, is a multiplication of the Gauss kernel with a sine function. Its main purpose is described in the experiment \mbox{chapter \ref{chap:experimet_3}}. 
+
+\begin{equation}
+\label{eq:gsin_kernel_theoretical_notes}
+gsk(\mathbf{x}) = \omega e^{-\gamma ||\mathbf{x} - \mathbf{c}||^2} sin(f ||\mathbf{x} - \mathbf{c}||^2 - \varphi)
+\end{equation}
+
+To prove that the universal approximation theorem is also applicable to the \gls{gsk}, it must comply with the conditions placed by \cite{park_universal_1991}. At first, a kernel, in this case the $gsk(\mathbf{x})$, must be continuous and bounded. This already restricts $\gamma > 0$. Secondly, the integral over the whole domain of the kernel $K(\mathbf{x})$ must not be $0$. Thus, it needs to be shown that 
+
+\begin{equation}
+\lim_{t \to \infty} \int_{\mathbf{x} = \mathbf{0}}^{t} gsk(\mathbf{x}) \text{ } d\mathbf{x} \neq 0
+\end{equation} 
+
+To simplify the following calculations, the \gls{gsk} is rewritten into polar coordinates. Further, the offsets by $c_0$ and $c_1$ are accounted for by an appropriate substitution. This results in 
+
+\begin{equation}
+\lim_{t \to \infty} \int_{r=0}^{t} \int_{\theta = 0}^{2 \pi} e^{-\gamma(r^2)} sin(f r^2 - \varphi) r \text{ } dr \text{ } d\theta
+\end{equation}
+
+Since the kernel is radial symmetric and thus has no dependency on $\theta$, the respective integral can be solved immediately which results in a multiplicative factor of $2 \pi$. 
+Substituting $r^2 = u$ gets rid of the multiplicative r. 
+
+\begin{equation}
+= \pi \lim_{t \to \infty} \int_{u=0}^{t} e^{-\gamma u } sin(f u - \varphi) \text{ } du.
+\end{equation}
+
+This integral can be solved with ``integration by part'' $\int f(u) \frac{g(u)}{du} = f(u) g(u) - \int g(u) \frac{f(u)}{du}$, which has to be applied twice until the original integral is obtained. 
+
+\begin{equation}
+= \lim_{t \to \infty} \frac{\pi e^{-\gamma r^2}(- \gamma sin(f r^2 - \varphi) - f cos(f r^2 - \varphi))}{ \gamma^2 + f^2} + C \text{ } \Bigg|_{r=0}^{t}.
+\end{equation}
+
+To resolve the limit of the function towards $\infty$, the function value must be bounded. Therefore, $\gamma$ must be positive, which is already required. Finally, this results in 
+
+\begin{equation}
+	\frac{-\pi (\gamma sin(\varphi) + f cos(\varphi))}{\gamma^2 + f^2} \neq 0.
+\end{equation}
+
+This places more constraints on the parameter of the \gls{gsk}. These restrictions on the parameters could be enforced during the optimisation process. However, \cite{chaquet_using_2019} found that not placing any limits to the parameters results in a better performance. Thus, these constraints are also not applied during the experiments in the chapters before. 
+
+
+
+
+\end{document}

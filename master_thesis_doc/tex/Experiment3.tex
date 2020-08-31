@@ -3,7 +3,7 @@
 \chapter {Experiment 3: Gauss-Sinus Kernel}
 \label{chap:experimet_3}
 
-Up until now, the results on \gls{pde} 5 were always considerably worse than on all other testbed functions. The idea discussed in this chapter is the usage of a new kernel. The Gauss-Sinus Kernel, also abbreviated with \gls{gsk}, was introduced in chapter \ref{chap:gsin_kernel}. Theoretically, the kernel should be able to solve the testbed \gls{pde}s 0A and 0B exactly.  
+Up until now, the results on \gls{pde} 5 were always considerably worse than on all other testbed functions. The idea discussed in this chapter is the usage of a new kernel. The Gauss-Sinus Kernel, also abbreviated with \gls{gsk}, is introduced in chapter \ref{chap:gsin_kernel}. Theoretically, the kernel should be able to solve the testbed \gls{pde}s 0A and 0B exactly.  
 
 \section{Hypotheses}
 As stated in chapter \ref{chap:ex0_pde5} attempting to solve \gls{pde} 5 with more \gls{nfe} results in a worse solution quality. The adaptive kernel scheme could not improve the results. This means that the fitness function must be reconsidered. A simple approach to change the fitness function is by introducing a new kernel type. The \gls{gsk} has the features of a Gauss kernel and a sine function and is potentially able to approximate more \gls{pde} solutions. The idea of the sine function is to help with the circular features of the wave front. 
@@ -12,13 +12,13 @@ This experiment tries to answer the question if the new \gls{gsk} kernel type ca
 
 \section{Experiment Setup}
 
-As stated in the experiments chapters before, machine 1 performs the time and memory experiments at $10^4$ \gls{nfe}. Similar, machine 2 runs the experiment at the full computational budget of $10^6$ \gls{nfe}. The Wilcoxon test from appendix \ref{chap:apendix_post_proc} is used to show statistical significance. Because the last experiment was not entirely conclusive, only a memetic pJADE without kernel-adaption is tested. Since the new kernel has 6 parameters, the dimension and the population size changes. To ensure that the algorithm is able to solve \gls{pde} 0A, 5 \gls{gsk} are used. This results in a dimension of 30 parameters and a population size of 60. All other parameters for the experiments are taken from the table \ref{tab:ci_parameter}. 
+As stated in the experiments chapters before, machine 1 performs the time and memory experiments at $10^4$ \gls{nfe}. Similar, machine 2 runs the experiment at the full computational budget of $10^6$ \gls{nfe}. The Wilcoxon test from appendix \ref{chap:apendix_post_proc} is used to show statistical significance. Because the last experiment was not entirely conclusive, only a memetic pJADE without kernel-adaption is tested. Since the new kernel has 6 parameters, the dimension and the population size change. To ensure that the algorithm is able to solve \gls{pde} 0A, 5 \gls{gsk} are used. This results in a dimension of 30 parameters and a population size of 60. All other parameters for the experiments are taken from table \ref{tab:ci_parameter}. 
 
-\section{Result}
+\section{Results}
 
 The box plots in figure \ref{fig:pJADEgsk_time_boxplot} compares the relative execution time of the memetic pJADE with the \gls{fem} solver. The results seen in this graph are obtained after $10^4$ \gls{nfe} on machine 1. Similar, the data in figure \ref{fig:pJADEgsk_memory_boxplot} compares the memory usage of both algorithms. 
 
-The memory usage boxplot exhibits many outliers, where some even indicate a memory usage of 0 Mbyte. This is not expected and might result from technical difficulties. Thus, when comparing the results, only the median should be considered. 
+The memory usage boxplot exhibits many outliers, where some even indicate a memory usage of 0 Mbyte. This is not expected and might result from technical difficulties. Thus, when comparing these specific results, only the median should be considered. 
 
 The following table shows the statistical test. The comparison between the \gls{gsk} and the \gls{gak} on the memetic parallel JADE is shown in table \ref{tab:compare_mpj_mpjgsk_10^6}. The comparison is done with a budget of $10^6$ \gls{nfe}. 
 
@@ -77,7 +77,7 @@ The following table shows the statistical test. The comparison between the \gls{
 This chapter discusses the results obtained above with the \gls{gsk} kernel. It is compared to the memetic parallel JADE using a \gls{gak} from experiment 1 in chapter \ref{chap:experimet_1}. At first, the time and memory consumption comparison is done. The performance on the \gls{pde}s 0A and 6 are discussed. The \gls{pde} 0B can be perfectly modelled with 3 \gls{gsk}, thus the performance on this \gls{pde} is interesting. Finally, the behaviour of the \gls{gsk} on \gls{pde} 5 is observed. 
 
 \subsection{Solving Time}
-The solving time for the memetic pJADE with \gls{gsk} forms the same pattern as the time consumption by the \gls{gak} from figure \ref{fig:pajade_time_boxplot}. The solving time is depending on the testbed problem. On \gls{pde} 7 the \gls{ci} solver takes 20 times as long as the \gls{fem} solver. This is longer than for the \gls{gak}, which can be explained by the larger dimension and the greater population size.  
+The solving time for the memetic pJADE with \gls{gsk} forms the same pattern as the time consumption by the \gls{gak} from figure \ref{fig:pajade_time_boxplot}. The solving time depends on the testbed problem. On \gls{pde} 7 the \gls{ci} solver takes 20 times as long as the \gls{fem} solver. This is longer than for the \gls{gak}, which can be explained by the larger dimension and the greater population size.  
 
 \subsection{Memory Usage}
 
@@ -87,12 +87,12 @@ As mentioned above, the memory measurement includes many outliers. However, the 
 
 Theoretically, \gls{pde}s 0A and 6 could be approximated perfectly by the \gls{gak} and the \gls{gsk}. To that extend, the parameters of the \gls{gsk} must evaluate to $f=0$ and $\varphi=-\frac{\pi}{2}$. Since the optimisation algorithm will always produce numerical inaccuracies and never actually result in these values, the solution quality is expected to be worse. As table \ref{tab:compare_mpj_mpjgsk_10^6} shows, the \gls{gsk} results are not significantly different on \gls{pde} 0A. 
 
-However, the approximation quality for \gls{pde} 6 degrades by a lot. The mean as well as the median of the L2 norm is beyond 3.5. When looking at the 3D plots, a common theme is observed: one kernel is adapted quite well, but JADE fails to minimise the influence of the other 4 kernels. Thus, artefacts introduced by these kernels distort the function. A possible solution could be the adaptive kernel scheme. 
+However, the approximation quality for \gls{pde} 6 degrades by a lot. The mean as well as the median of the L2 norm is beyond 3.5. When looking at the data, a common theme is observed: one kernel is adapted quite well, but JADE fails to minimise the influence of the other 4 kernels. Thus, artefacts introduced by these kernels distort the function. A possible solution could be the adaptive kernel scheme. 
 
 
 \subsection{PDE 0B}
 
-Using a \gls{gsk} produces significantly better solution qualities on \gls{pde} 0B. This is expected, since the variation generated by the sinus in the actual analytical solution can not be portrayed by the \gls{gak}. 
+Using a \gls{gsk} produces significantly better solution qualities on \gls{pde} 0B. This is expected, since the variation generated by the sine in the actual analytical solution can not be portrayed by the \gls{gak}. 
 
 The following comparison from figure \ref{fig:compare_abs_error_non_adaptive} confirms this assumption. The left plot shows the absolute error to the analytical solution of the best result with a \gls{gak}. In contrast, the right figure shows the absolute error of best solution with a \gls{gsk}. Remarkable is the structure of the error with the \gls{gak}: the error is clearly dominated by a domain-centred oscillation. This oscillation can not be portrayed by the \gls{gak}.  
 
@@ -150,7 +150,7 @@ As table \ref{tab:compare_mpj_mpjgsk_10^6} shows, the results are indeed signifi
 
 The following histograms in figure \ref{fig:pde5_L2norm_histogram_gsk} compare the experimental distribution of the L2 norm with the \gls{gak} and the \gls{gsk}. As inferred from the Wilcoxon test, the distributions are significantly different. Further, the mean and the median of the ``\gls{gsk}-data'' are smaller than the same statistical indicators of the ``\gls{gak}-data''. 
 
-The histogram of the fitness values is shown in figure \ref{fig:pde5_fitness_histogram_gsk}. Contrary to the exception, the fitness values of the \gls{gak} are smaller than the fitness values of the \gls{gsk}. Because the fitness function changed with the usage of the \gls{gsk}, the numerical values can not be compared directly. 
+The histogram of the fitness values is shown in figure \ref{fig:pde5_fitness_histogram_gsk}. Contrary, the fitness values of the \gls{gak} are smaller than the fitness values of the \gls{gsk}. Because the fitness function changes with the usage of the \gls{gsk}, the numerical values can not be compared directly. 
 
 \begin{figure}[H]
 	\centering

@@ -1,0 +1,1020 @@
+\documentclass[.\jobname.tex]{subfiles}
+\begin{document}
+
+\chapter{Differential Evolution Pseudocodes}
+
+\section{JADE Pseudocode}
+\label{chap:pscode_jade}
+
+\begin{algorithm}[H]
+	\SetAlgoNoLine
+	\DontPrintSemicolon
+	\SetKwFunction{FJADE}{JADE}
+	\SetKwProg{Fn}{Function}{:}{}
+	\Fn{\FJADE{$\mathbf{X}_{g=0}$, $p$, $c$, $function$, $minError$, $maxFE$}}{
+		$fValue_{g=0} \gets function(\mathbf{x}_{g=0})$\;
+		$\mu_{CR} \gets 0.5$\;
+		$\mu_{F}  \gets 0.5$\;
+		$A        \gets \emptyset$\;
+		\While {$fe \leq maxFE$}{
+			$g \gets g + 1$\;
+			$S_F \gets \emptyset$\;
+			$S_{CR} \gets \emptyset$\; 
+			\For {$i = 1$ to $NP$} {
+				$F_i  \gets randc_i(\mu_{F},0.1)$\;
+				$v_i \gets mutationCurrentToPBest1(\mathbf{x}_{i,g}, A, fValue_g, F_i, p)$\;
+				
+				$CR_i \gets randn_i(\mu_{CR},0.1)$\;
+				$u_i  \gets crossoverBIN(\mathbf{x}_{i,g}, v_i, CR_i)$\;
+				
+				\If {$function(\mathbf{x}_{i,g}) \geq function(\mathbf{u}_{i,g})$} {
+					$\mathbf{x}_{i,g+1} \gets \mathbf{x}_{i,g}$\;
+				}
+				\Else
+				{
+					$\mathbf{x}_{i,g+1} \gets \mathbf{u}_{i,g}$\;
+					$fValue_{i,g+1} \gets function(\mathbf{u}_{i,g})$\;
+					$\mathbf{x}_{i,g} \rightarrow \mathbf{A}$\;
+					$CR_i \rightarrow S_{CR}$\;
+					$F_i \rightarrow S_F$\;
+				}
+			}
+			\tcp{resize $A$ to size of $\mathbf{x}_g$}
+			\If{$|A| > NP$} {
+				$A \gets A \setminus A_{rand_i}$
+			}
+			$fe \gets fe + size(\mathbf{X})$\;
+			$\mu_{CR} \gets (1-c) \cdot \mu_{CR} + c \cdot arithmeticMean(S_{CR})$\;
+			$\mu_{F} \gets (1-c) \cdot \mu_{F} + c \cdot lehmerMean(S_{F})$\;
+		}	
+	}
+	\unterschrift{JADE Pseudocode}{}{}
+	\label{algo: jade}
+\end{algorithm}
+
+\section{SHADE Pseudocode}
+\label{chap:pscode_shade}
+
+\begin{algorithm}[H]
+	\SetAlgoNoLine
+	\DontPrintSemicolon
+	\SetKwFunction{FSHADE}{SHADE}
+	\SetKwProg{Fn}{Function}{:}{}
+	\Fn{\FSHADE{$\mathbf{x}_{G=0}$, $p$, $H$, $function$, $minError$, $maxFE$}}{
+		$M_{CR} \gets 0.5 \text{; } M_{F} \gets 0.5 \text{; } A \gets \emptyset \text{; } G \gets 0 \text{; }k \gets 1$\;
+		$fValue_{G=0} \gets function(\mathbf{x}_{G=0})$\;
+		\While{termination condition not met}
+		{
+			$S_{CR} \gets \emptyset \text{; } S_F \gets \emptyset$\;   
+			\For{$i = 1$ to $N$}{
+				$r_i \gets rand_{int}(1,H)$\;
+				$CR_{i,G} \gets randn_i(M_{CR,r_i},0.1) \text{; }F_{i,G}  \gets randc_i(M_{F,r_i},0.1)$\;
+				$v_i \gets mutationCurrentToPBest1(\mathbf{x}_{i,G}, A, fValue_G, F_i, p)$\;
+				$u_i  \gets crossoverBIN(pop, v_i, CR)$\;
+			}
+			\For{$i = 1$ to $N$}{
+				\If{$function(u_{i,G}) \leq function(x_{i,G})$} {
+					$x_{i,G+1} \gets u_{i,G} \text{; } fValue_{i,G+1} \gets function(\mathbf{u}_{i,G})$\;
+				}
+				\Else{
+					$x_{i,G+1} \gets x_{i,G}$\;
+				}
+				\If{$function(u_{i,G}) < function(x_{i,G})$} {
+					$x_{i,G} \rightarrow A \text{; } CR_{i,G} \rightarrow S_{CR} \text{; } F_{i,G} \rightarrow S_{F}$\;
+				}
+			}
+			\If{$|A| > N$} {
+				$A \gets A \setminus A_{rand_i}$
+			}
+			\If{$S_{CR} \neq \emptyset \land S_F \neq \emptyset$} {
+				
+				$M_{CR,k,G+1} = \begin{cases}
+				arithmeticMean(S_{CR}) & \text{if $S_{CR} \neq \emptyset$}\\
+				M_{CR,k,G}             & otherwise
+				\end{cases}$\;
+				
+				$M_{F,k,G+1} = \text{ } \begin{cases}
+				lehmerMean(S_{F}) & \text{if $S_{F} \neq \emptyset$}\\
+				M_{F,k,G}             & otherwise
+				\end{cases}$\;
+				
+				$k \gets k + 1$\;
+				\If{$k > H$} {$k \gets 1$\;}
+			}
+			$G \gets G + 1$\;
+		}
+	}
+	\unterschrift{SHADE Pseudocode}{}{}
+	\label{algo: shade}
+\end{algorithm}
+
+\section{L-SHADE Pseudocode}
+\label{chap:pscode_lshade}
+
+\begin{algorithm}[H]
+	\SetAlgoNoLine
+	\DontPrintSemicolon
+	\SetKwFunction{FLSHADE}{LSHADE}
+	\SetKwProg{Fn}{Function}{:}{}
+	\Fn{\FLSHADE{$\mathbf{x}_{G=0}$, $p$, $H$, $function$, $minError$, $maxFE$}}{
+		$M_{CR} \gets 0.5 \text{; } M_{F} \gets 0.5 \text{; } A \gets \emptyset \text{; } G \gets 0 \text{; }k \gets 1$\;
+		$fValue_{G=0} \gets function(\mathbf{x}_{G=0}) \text{; } NG_{init} \gets size(\mathbf{x}_{G=0}) \text{; }NG_{min} = \lceil 1/p \rceil$\;
+		\While{termination condition not met}
+		{
+			$S_{CR} \gets \emptyset \text{; } S_F \gets \emptyset$\;   
+			\For{$i = 1$ to $N$}{
+				$r_i \gets rand_{int}(1,H)$\;
+				$CR_{i,G} \gets randn_i(M_{CR,r_i},0.1) \text{; }F_{i,G}  \gets randc_i(M_{F,r_i},0.1)$\;
+				$v_i \gets mutationCurrentToPBest1(\mathbf{x}_{i,G}, A, fValue_G, F_i, p)$\;
+				$u_i  \gets crossoverBIN(pop, v_i, CR)$\;
+			}
+			\For{$i = 1$ to $N$}{
+				\If{$function(u_{i,G}) \leq function(x_{i,G})$} {
+					$x_{i,G+1} \gets u_{i,G} \text{; } fValue_{i,G+1} \gets function(\mathbf{u}_{i,G})$\;
+				}
+				\Else{
+					$x_{i,G+1} \gets x_{i,G}$\;
+				}
+				\If{$function(u_{i,G}) < function(x_{i,G})$} {
+					$x_{i,G} \rightarrow A \text{; } CR_{i,G} \rightarrow S_{CR} \text{; } F_{i,G} \rightarrow S_{F}$\;
+				}
+			}
+			\If{$|A| > N$} {
+				$A \gets A \setminus A_{rand_i}$
+			}
+			\If{$S_{CR} \neq \emptyset \land S_F \neq \emptyset$} {
+				
+				$M_{CR,k,G+1} = \begin{cases}
+				arithmeticMean(S_{CR}) & \text{if $S_{CR} \neq \emptyset$}\\
+				M_{CR,k,G}             & otherwise
+				\end{cases}$\;
+				
+				$M_{F,k,G+1} = \text{ } \begin{cases}
+				lehmerMean(S_{F}) & \text{if $S_{F} \neq \emptyset$}\\
+				M_{F,k,G}             & otherwise
+				\end{cases}$\;
+				
+				$k \gets k + 1$\;
+				\If{$k > H$} {$k \gets 1$\;}
+			}
+			$\mathbf{x}_{G+1} \gets popSizeRed(\mathbf{x}_{G+1}, fValue, G, maxGen, NG_{init}, NGmin)$\;
+			$G \gets G + 1$\;
+		}
+	}
+	\unterschrift{L-SHADE Pseudocode}{}{}
+	\label{algo: lshade}
+\end{algorithm}
+
+
+
+\chapter{Testbed}
+\label{chap:testbed}
+
+The following pages describe the testbed that is used for all experiments. The problems are structured in these major points: 
+\begin{itemize}
+	\item differential equation
+	\begin{itemize}
+		\item differential equation
+		\item domain $\Omega$
+		\item Dirichlet bounday condition obtained by evaluating the solution on the boundary
+	\end{itemize}
+	\item solution
+	\item plot of the solution over the domain
+\end{itemize}
+
+\newpage
+
+\underline{\textbf{PDE 0A: Gauss Kernel}}
+
+\underline{Problem PDE: }
+\begin{equation}
+\label{eq:pde0a}
+\begin{split}
+\frac{\partial^2 u}{\partial x^2} + \frac{\partial^2 u}{\partial y^2} = (18x^2-6)e^{-1.5(x^2 + y^2)} + (18y^2-6)e^{-1.5(x^2 + y^2)} \\
++6(6x^2+12x+5)e^{-3((x+1)^2+(y+1)^2)} + 6(6y^2+12y+5)e^{-3((x+1)^2+(y+1)^2)} \\
++6(6x^2-12x+5)e^{-3((x-1)^2+(y+1)^2)} + 6(6y^2+12y+5)e^{-3((x-1)^2+(y+1)^2)} \\
++6(6x^2+12x+5)e^{-3((x+1)^2+(y-1)^2)} + 6(6y^2-12y+5)e^{-3((x+1)^2+(y-1)^2)} \\
++6(6x^2-12x+5)e^{-3((x-1)^2+(y-1)^2)} + 6(6y^2-12y+5)e^{-3((x-1)^2+(y-1)^2)} \\
+\text{on the domain } \Omega : x, y \in [-2,2] \\
+\text{subjected to: } \\
+u(x,2) = 2e^{-1.5(x^2 + 4)} + e^{-3((x+1)^2 + 9)} + e^{-3((x+1)^2 + 1)} + e^{-3((x-1)^2 + 9)} + e^{-3((x-1)^2 + 1)} \\
+u(x,-2)= 2e^{-1.5(x^2 + 4)} + e^{-3((x+1)^2 + 1)} + e^{-3((x+1)^2 + 9)} + e^{-3((x-1)^2 + 1)} + e^{-3((x-1)^2 + 9)} \\
+u(2,y) = 2e^{-1.5(4 + y^2)} + e^{-3(9 + (y+1)^2)} + e^{-3(9 + (y-1)^2)} + e^{-3(1 + (y+1)^2)} + e^{-3(1 + (y-1)^2)} \\
+u(-2,y)= 2e^{-1.5(4 + y^2)} + e^{-3(1 + (y+1)^2)} + e^{-3(1 + (y-1)^2)} + e^{-3(9 + (y+1)^2)} + e^{-3(9 + (y-1)^2)} \\
+\end{split}
+\end{equation}
+
+\underline{Solution: }
+\begin{equation}
+\label{eq:sol0A}
+\begin{split}
+u_{ext}(x,y) = 2e^{-1.5(x^2 + y^2)} & + e^{-3((x+1)^2 + (y+1)^2)} + e^{-3((x+1)^2 + (y-1)^2)} \\
+                              & + e^{-3((x-1)^2 + (y+1)^2)} + e^{-3((x-1)^2 + (y-1)^2)} \\
+\end{split}
+\end{equation}
+
+
+\begin{figure}[H]
+	\centering
+	\noindent\adjustbox{max width=\linewidth}{
+		\includegraphics[width=0.5\textwidth]{../../code/testbed/pde0A/sol_pde_0a.pdf}
+	}
+	\unterschrift{PDE 0A Gauss Kernel solution plot}{}{}
+	\label{fig:sol_plot_0A}
+\end{figure}
+
+
+
+
+
+\underline{\textbf{PDE 0B: Gauss Sine Kernel}}
+
+\underline{Problem PDE:} 
+\begin{equation}
+\label{eq:pde0b}
+\begin{split}
+\frac{\partial^2 u}{\partial x^2} + \frac{\partial^2 u}{\partial y^2} = \\
+2 e^{-2   (x^2 + y^2)} (2   sin(-2   (x^2 + y^2)) + 2   (1-8   x^2) cos(-2   (x^2 + y^2))) + \\
+2 e^{-2   (x^2 + y^2)} (2   sin(-2   (x^2 + y^2)) + 2   (1-8   y^2) cos(-2   (x^2 + y^2))) + \\
+2 e^{-1   (x^2 + y^2)} (1   sin(-1   (x^2 + y^2)) + 1   (1-4   x^2) cos(-1   (x^2 + y^2))) + \\
+2 e^{-1   (x^2 + y^2)} (1   sin(-1   (x^2 + y^2)) + 1   (1-4   y^2) cos(-1   (x^2 + y^2))) + \\
+2 e^{-0.1 (x^2 + y^2)} (0.1 sin(-0.1 (x^2 + y^2)) + 0.1 (1-0.4 x^2) cos(-0.1 (x^2 + y^2))) + \\
+2 e^{-0.1 (x^2 + y^2)} (0.1 sin(-0.1 (x^2 + y^2)) + 0.1 (1-0.4 y^2) cos(-0.1 (x^2 + y^2))) \\
+\text{on the domain } \Omega : x, y \in [-2,2] \\
+\text{subjected to: } \\
+u(x,2) =	 e^{-2  (x^2 + 4  )}  sin(2  ((x^2 + 4  ))) + e^{-1  (x^2 + 4  )}  sin(1  ((x^2 + 4  ))) + e^{-0.1(x^2 + 4  )}  sin(0.1((x^2 + 4  ))) \\				u(x,-2)= 	 e^{-2  (x^2 + 4  )}  sin(2  ((x^2 + 4  ))) + e^{-1  (x^2 + 4  )}  sin(1  ((x^2 + 4  ))) + e^{-0.1(x^2 + 4  )}  sin(0.1((x^2 + 4  ))) \\				u(2,y) = 	 e^{-2  (4   + y^2)}  sin(2  ((4   + y^2))) + e^{-1  (4   + y^2)}  sin(1  ((4   + y^2))) + e^{-0.1(4   + y^2)}  sin(0.1((4   + y^2))) \\
+u(-2,y)= 	 e^{-2  (4   + y^2)}  sin(2  ((4   + y^2))) + e^{-1  (4   + y^2)}  sin(1  ((4   + y^2))) + e^{-0.1(4   + y^2)}  sin(0.1((4   + y^2))) \\
+\end{split}
+\end{equation}
+
+\underline{Solution:}
+\begin{equation}
+\label{eq:sol0B}
+\begin{split}
+u_{ext}(x,y) = & e^{-2  (x^2 + y^2)}  sin(2  ((x^2 + y^2))) + e^{-1  (x^2 + y^2)}  sin(1  ((x^2 + y^2))) \\ + & e^{-0.1(x^2 + y^2)}  sin(0.1((x^2 + y^2))) \\
+\end{split}
+\end{equation}
+
+
+\begin{figure}[H]
+	\centering
+	\noindent\adjustbox{max width=\linewidth}{
+		\includegraphics[width=0.46\textwidth]{../../code/testbed/pde0B/sol_pde_0b.pdf}
+	}
+	\unterschrift{PDE 0B Gauss Sine Kernel solution plot}{}{}
+	\label{fig:sol_plot_0B}
+\end{figure}
+
+
+
+\newpage
+
+
+\underline{\textbf{PDE 1: Polynomial 2D}} 
+
+\underline{Problem PDE:} 
+\begin{equation}
+\label{eq:pde1}
+\begin{split}
+-\frac{\partial^2 u}{\partial x^2} - \frac{\partial^2 u}{\partial y^2} = \\
+-2^{40}y^{10}(1-y)^{10}[90x^8(1-x)^{10} -200x^9(1-x)^9 + 90x^{10}(1-x)^8] \\
+-2^{40}x^{10}(1-x)^{10}[90y^8(1-y)^{10} -200y^9(1-y)^9 + 90y^{10}(1-y)^8] \\
+\text{on the domain } \Omega: x,y \in [0,1] \\
+\text{subjected to: } \\
+u(x,1) = 0 \\
+u(x,0) = 0 \\
+u(1,y) = 0 \\
+u(0,y) = 0 \\
+\end{split}
+\end{equation}
+
+
+\underline{Solution:} 
+\begin{equation}
+\label{eq:sol1}
+u_{ext}(x,y) = 2^{40}x^{10}(1-x)^{10}y^{10}(1-y)^{10}
+\end{equation}
+
+
+\begin{figure}[H]
+	\centering
+	\noindent\adjustbox{max width=\linewidth}{
+		\includegraphics[width=0.6\textwidth]{../../code/testbed/pde1/sol_pde_1.pdf}
+	}
+	\unterschrift{PDE 1 Polynomial 2D solution plot}{}{}
+	\label{fig:sol_plot_1}
+\end{figure}
+
+
+
+\newpage
+
+
+\underline{\textbf{PDE 2: Chaquet PDE 1}}
+
+\underline{Problem PDE:} 
+\begin{equation}
+\label{eq:pde2}
+\begin{split}
+\frac{\partial^2 u}{\partial x^2} + \frac{\partial^2 u}{\partial y^2} = e^{-x} (x-2 + y^3 + 6y) \\
+\text{on the domain } \Omega: \mathbf{x} \in [0,1] \\
+\text{subjected to: } \\
+u(x,0) = xe^{-x}
+u(x,1) = (x + 1)e^{-x}
+u(0,y) = y^3 \\
+u(1,y) = (1 + y^3) e^{-1}
+\end{split}
+\end{equation}
+
+
+\underline{Solution:}
+\begin{equation}
+\label{eq:sol2}
+u_{ext}(x,y) = (x + y^3) e^{-x}
+\end{equation}
+
+
+
+\begin{figure}[H]
+	\centering
+	\noindent\adjustbox{max width=\linewidth}{
+		\includegraphics[width=0.6\textwidth]{../../code/testbed/pde2/sol_pde_2.pdf}
+	}
+	\unterschrift{PDE 2 Chaquet PDE 1 solution plot}{}{}
+	\label{fig:sol_plot_2}
+\end{figure}
+
+
+
+
+\newpage
+
+
+
+\underline{\textbf{PDE 3: Chaquet PDE 3}}
+
+\underline{Problem PDE:} 
+\begin{equation}
+\label{eq:pde3}
+\begin{split}
+\frac{\partial^2 u}{\partial x^2} + \frac{\partial^2 u}{\partial y^2} = 4 \\
+\text{on the domain } \Omega: \mathbf{x} \in [0,1] \\
+\text{subjected to: } \\
+u(x,0) = x^2 + x + 1 \\
+u(x,1) = x^2 + x + 3 \\
+u(1,y) = y^2 + y + 3 \\
+u(0,y) = y^2 + y + 1 \\
+\end{split}
+\end{equation}
+
+
+\underline{Solution}
+\begin{equation}
+\label{eq:sol3}
+u_{ext}(x,y) = x^2 + y^2 + x + y + 1
+\end{equation}
+
+
+\begin{figure}[H]
+	\centering
+	\noindent\adjustbox{max width=\linewidth}{
+		\includegraphics[width=0.6\textwidth]{../../code/testbed/pde3/sol_pde_3.pdf}
+	}
+	\unterschrift{PDE 3 Chaquet PDE 3 solution plot}{}{}
+	\label{fig:sol_plot_3}
+\end{figure}
+
+
+
+\newpage
+
+
+
+
+\underline{\textbf{PDE 4: Sine Bump 2D}} 
+
+\underline{Problem PDE:}
+\begin{equation}
+\label{eq:pde4}
+\begin{split}
+-\frac{\partial^2 u}{\partial x^2} - \frac{\partial^2 u}{\partial y^2} = 2\pi^2 sin(\pi x) sin(\pi y) \\
+\text{on the domain } \Omega: \mathbf{x} \in [0,1] \\
+\text{subjected to: } \\
+u(x,0) = 0 \\
+u(x,1) = 0 \\
+u(0,y) = 0 \\
+u(1,y) = 0 \\
+\end{split}
+\end{equation}
+
+
+\underline{Solution:}
+\begin{equation}
+\label{eq:sol4}
+u_{ext}(x,y) = sin(\pi x)sin(\pi y)
+\end{equation}
+
+
+
+\begin{figure}[H]
+	\centering
+	\noindent\adjustbox{max width=\linewidth}{
+		\includegraphics[width=0.6\textwidth]{../../code/testbed/pde4/sol_pde_4.pdf}
+	}
+	\unterschrift{PDE 4 Sine Bump 2D solution plot}{}{}
+	\label{fig:sol_plot_4}
+\end{figure}
+
+
+
+
+\newpage
+
+
+
+
+
+
+
+\underline{\textbf{PDE 5: Arctan Circular Wave Front}} 
+
+\underline{Problem PDE:}
+\begin{equation}
+\label{eq:pde5}
+\begin{split}
+-\frac{\partial^2 u}{\partial x^2} - \frac{\partial^2 u}{\partial y^2} = \frac{16000(\sqrt{(x - 0.05)^2 + (y - 0.05)^2} -0.7)}{(1 + 400 (-0.7 + \sqrt{(x - 0.05)^2 + (y - 0.05)^2})^2)^2} \\
++ \frac{20 (x - 0.05)^2 + 20 (y - 0.05)^2}{(1 + 400 (\sqrt{(x - 0.05)^2 + (y - 0.05)^2} -0.7)^2) ((x - 0.05)^2 + (y - 0.05)^2)^{3/2}} \\
+- \frac{40}{(1 + 400 (\sqrt{(y - 0.05)^2 + (x - 0.05)^2} -0.7)^2) \sqrt{(y - 0.05)^2 + (x - 0.05)^2}} \\
+\text{on the domain } \Omega: \mathbf{x} \in [0,1] \\
+\text{subjected to: } \\
+u(x,0) = tan^{-1}\left(20 \left(\sqrt{(x-0.05)^2 + 0.0025} -0.7\right)\right) \\
+u(x,1) = tan^{-1}\left(20 \left(\sqrt{(x-0.05)^2 + 0.9025} -0.7\right)\right) \\
+u(0,y) = tan^{-1}\left(20 \left(\sqrt{0.0025 + (y-0.05)^2} -0.7\right)\right) \\
+u(1,y) = tan^{-1}\left(20 \left(\sqrt{0.9025 + (y-0.05)^2} -0.7\right)\right) \\
+\end{split}
+\end{equation}
+
+\underline{Solution:}
+\begin{equation}
+\label{eq:sol5}
+u_{ext}(x,y) = tan^{-1}\left(20 \left(\sqrt{(x-0.05)^2 + (y-0.05)^2} -0.7\right)\right)
+\end{equation}
+
+
+
+\begin{figure}[H]
+	\centering
+	\noindent\adjustbox{max width=\linewidth}{
+		\includegraphics[width=0.58\textwidth]{../../code/testbed/pde5/sol_pde_5.pdf}
+	}
+	\unterschrift{PDE 5 Arctan Circular Wave Front solution plot}{}{}
+	\label{fig:sol_plot_5}
+\end{figure}
+
+
+
+
+\newpage
+
+
+
+
+\underline{\textbf{PDE 6: Peak 2D}} 
+
+\underline{Problem PDE:}
+\begin{equation}
+\label{eq:pde6}
+\begin{split}
+-\frac{\partial^2 u}{\partial x^2} - \frac{\partial^2 u}{\partial y^2} = \\
+-(4 \cdot 10^6 x^2 -4 \cdot 10^6 x + 998 \cdot 10^3)e^{-1000((x-0.5)^2 + (y-0.5)^2)} \\
+-(4 \cdot 10^6 y^2 -4 \cdot 10^6 y + 998 \cdot 10^3)e^{-1000((x-0.5)^2 + (y-0.5)^2)} \\
+\text{on the domain } \Omega: \mathbf{x} \in [0,1] \\
+\text{subjected to: } \\
+u(x,0) = e^{-1000((x-0.5)^{2} + 0.25)} \\
+u(x,1) = e^{-1000((x-0.5)^{2} + 0.25)} \\
+u(0,y) = e^{-1000(0.25 + (y-0.5)^{2})} \\
+u(1,y) = e^{-1000(0.25 + (y-0.5)^{2})} \\
+\end{split}
+\end{equation}
+
+\underline{Solution:}
+\begin{equation}
+\label{eq:sol6}
+u_{ext}(x,y) = e^{-1000((x-0.5)^{2} + (y-0.5)^{2})}
+\end{equation}
+
+
+
+
+\begin{figure}[H]
+	\centering
+	\noindent\adjustbox{max width=\linewidth}{
+		\includegraphics[width=0.6\textwidth]{../../code/testbed/pde6/sol_pde_6.pdf}
+	}
+	\unterschrift{PDE 6 Peak 2D solution plot}{}{}
+	\label{fig:sol_plot_6}
+\end{figure}
+
+
+
+
+\newpage
+
+
+
+
+
+\underline{\textbf{PDE 7: Boundary Line Singularity}} 
+
+\underline{Problem PDE:} 
+\begin{equation}
+\label{eq:pde7}
+\begin{split}
+-\frac{\partial^2 u}{\partial x^2} - \frac{\partial^2 u}{\partial y^2} = 0.24 x^{-1.4}\\
+\text{on the domain } \Omega: \mathbf{x} \in [0,1] \\
+\text{subjected to: } \\
+u(x,0) = x^{0.6} \\
+u(x,1) = x^{0.6} \\
+u(0,y) = 0 \\
+u(1,y) = 1^{0.6} \\
+\end{split}
+\end{equation}
+
+
+\underline{Solution:} 
+\begin{equation}
+\label{eq:sol7}
+u_{ext}(x,y) = x^{0.6}
+\end{equation}
+
+
+
+\begin{figure}[H]
+	\centering
+	\noindent\adjustbox{max width=\linewidth}{
+		\includegraphics[width=0.6\textwidth]{../../code/testbed/pde7/sol_pde_7.pdf}
+	}
+	\unterschrift{PDE 7 Boundary Line Singularity solution plot}{}{}
+	\label{fig:sol_plot_7}
+\end{figure}
+
+
+
+
+\newpage
+
+
+
+
+
+\underline{\textbf{PDE 8: Interior Point Singularity}} 
+
+\underline{Problem PDE:} 
+\begin{equation}
+\label{eq:pde8}
+\begin{split}
+\frac{\partial^2 u}{\partial x^2} + \frac{\partial^2 u}{\partial y^2} = \frac{1}{\sqrt{x^2 - x + y^2 - y + 0.5}} \\
+\Omega: \mathbf{x} \in [0,1] \\
+\text{on the domain } \text{subjected to: } \\
+u(x,0) = \sqrt{(x-0.5)^2 + 0.25} \\
+u(x,1) =  \sqrt{(x-0.5)^2 + 0.25} \\
+u(0,y) = \sqrt{0.25 + (y-0.5)^2} \\
+u(1,y) =  \sqrt{0.25 + (y-0.5)^2} \\
+\end{split}
+\end{equation}
+
+\underline{Solution:}
+\begin{equation}
+\label{eq:sol8}
+u_{ext}(x,y) = \sqrt{(x-0.5)^2 + (y-0.5)^2}
+\end{equation}
+
+
+\begin{figure}[H]
+	\centering
+	\noindent\adjustbox{max width=\linewidth}{
+		\includegraphics[width=0.6\textwidth]{../../code/testbed/pde8/sol_pde_8.pdf}
+	}
+	\unterschrift{PDE 8 Interior Point Singularity solution plot}{}{}
+	\label{fig:sol_plot_8}
+\end{figure}
+
+
+
+
+
+\newpage
+
+
+
+
+\underline{\textbf{PDE 9: Arctan Wave Front Homogeneous Boundary Conditions 2D}} 
+
+\underline{Problem PDE:}
+\begin{equation}
+\label{eq:pde9}
+\begin{split}
+-\frac{\partial^2 u}{\partial x^2} - \frac{\partial^2 u}{\partial y^2} = \\
+\frac{20\sqrt{2}(x^2 + y^2 -2x^2y - 2xy^2 + 4xy - x - y)}{400(\frac{x+y}{\sqrt{2}}-0.8)^2+1} \\
++\frac{16000(1-x)x(1-y)y(\frac{x+y}{\sqrt{2}}-0.8)}{(400(\frac{x+y}{\sqrt{2}}-0.8)^2+1)^2} \\
++ tan^{-1}\left(20\left(\frac{x+y}{\sqrt{2}}-0.8\right)\right)(2(1-y)y + 2(1-x)x)  \\
+\text{on the domain } \Omega: \mathbf{x} \in [0,1] \\
+\text{subjected to: } \\
+u(x,0) = 0 \\
+u(x,1) = 0 \\
+u(0,y) = 0 \\
+u(1,y) = 0 \\
+\end{split}
+\end{equation}
+
+
+\underline{Solution:}
+\begin{equation}
+\label{eq:sol9}
+u_{ext}(x,y) = tan^{-1}\left(20\left(\frac{(x + y)}{\sqrt{2}} -0.8\right)\right)x(1-x)y(1-y)
+\end{equation}
+
+
+
+\begin{figure}[H]
+	\centering
+	\noindent\adjustbox{max width=\linewidth}{
+		\includegraphics[width=0.54\textwidth]{../../code/testbed/pde9/sol_pde_9.pdf}
+	}
+	\unterschrift{PDE 9 Arctan Wave Front Homogeneous Boundary Conditions 2D solution plot}{}{}
+	\label{fig:sol_plot_9}
+\end{figure}
+
+
+
+
+
+\chapter{Software Architecture}
+\label{chap:appendix_software_architecture}
+
+\begin{figure}[H]
+	\centering
+	\noindent\adjustbox{max width=\linewidth}{\includegraphics[width=0.9\textwidth]{../../code/uml_diag/testbench_uml_class.pdf}
+	}
+	\unterschrift{This \gls{uml} class diagram describes the software architecture defined to prepare, run and evaluate the experiments. }{}{}
+	\label{fig:software_architecture}
+\end{figure}
+
+
+\chapter{Post-Processing Module Description}
+\label{chap:apendix_post_proc}
+The post-processing module includes these functions. Their implementation is described in the following list. These functions are used to interpret the results in the experiments chapters.  
+
+\begin{itemize}
+	\item 
+	\inlinecode{bool saveExpObj(obj, filename)} \\
+	Save an \inlinecode{CiPdeN} object as a \gls{json} file. The filename parameter can include a path, but it must end with .json. The results execution time, memory usage, solution quality and all intergenerational data of the optimisation algorithm are stored in the file. 
+	\item \inlinecode{dict loadExpObject(filename)} \\
+	Loads the \gls{json} file located at the specified filename, which again can include a path. A dictionary with the saved \inlinecode{CiPdeN} parameters is returned. 
+	\item 
+	\inlinecode{dict loadExpObjectFast(filename)} \\
+	When solving a \gls{pde} with more function evaluation, the result file can become very large (>400Mb @ $10^6$ \#FE). For evaluating such large files, this function can be used. It does not load the generation data (meaning population, function value, F and CR). Since the standard \gls{json} interpreter in Python loads files in a serial manner, a new interpreter is needed. To that extent, \textit{bigjson} from \cite{heino_henubigjson_2020} is used. This package accesses only the parts of a \gls{json} file that are actually needed.
+	\item \inlinecode{bool drawGaussKernel(parameter, ggb)} \\
+	Draws a solution approximated by Gauss kernels and with the specified parameters to a GeoGebra file. If the filename provided in the \textit{ggb} argument does not exist, the function searches for a template and prints to a copy of that file. 
+	\item \inlinecode{bool drawGSinKernel(parameter, ggb)} \\
+	This is similar to the \inlinecode{drawGaussKernel} method - but it takes parameters for a Gauss Sine kernel. 
+	\item 
+	\inlinecode{float calcRSME(solve_dict)} \\
+	To compare the obtained results with previous works, the \gls{rmse} quality metric (as described in the chapter \ref{chap:metric_quality}) must be computed. This is done from a single dictionary, as obtained by the functions \inlinecode{loadExpObject} or \inlinecode{loadExpObjectFast}.
+	\item 
+	\inlinecode{None plotApprox3D(kernel, parameter, lD, uD, name=None)} \\
+	The approximate solution of a \gls{pde} can be plotted over the domain with this function. Only square sized domains are accepted, as specified by the lower and the upper domain parameters \inlinecode{lD} and \inlinecode{uD}. If \textit{name} is of type string, the plot is saved as this file.
+	\item 
+	\inlinecode{string statsWilcoxon(a, b, alpha=0.05)} \\
+	This function is a wrapper for the \inlinecode{scipy.stats.wilcoxon} (\cite{scipy_scipystatswilcoxon_2020}). The default significance level is set to 0.05. A string is returned that describes if the mean and median of \inlinecode{a} is significantly smaller than the mean and median of \inlinecode{b}. The result is one of these strings: 
+	\begin{itemize}
+		\item sig. worse: the distributions are different; the mean and the median of \inlinecode{a} are larger than the mean and the median of \inlinecode{b}
+		\item sig. better: the distributions are different; the mean and the median of \inlinecode{a} are smaller than the mean and the median of \inlinecode{b}
+		\item unsig. worse: the distributions are similar; the mean and the median of \inlinecode{a} are larger than the mean and the median of \inlinecode{b} 
+		\item unsig. better: the distributions are similar; the mean and the median of \inlinecode{a} are smaller than the mean and the median of \inlinecode{b}
+		\item unsig. undecided: the distributions are similar; the mean is larger, the median is smaller or vice versa
+	\end{itemize} 
+	Example distributions with the corresponding results are shown in figure \ref{fig:stats_wilcoxon_examples} below.
+	\item \inlinecode{None plotFEDynamic(FEDynamic, name=None)} \\
+	This method plots the function value dynamic of the population on a y-axis logarithmic plot. It can also cope with a varying population size. The plot can be saved with an optional argument. 
+	\item \inlinecode{None plotError3D(kernel, parameter, pdeName, lD, uD, name=None)} \\
+	Similar to the 	\inlinecode{plotApprox3D} method, a 3D graph of the solution is plotted. Instead of the function value, the error is shown. The error is calculated by $E  = u_{apx}(x,y) - u_{ext}(x,y) \forall x,y \in \Omega$. 
+	\item \inlinecode{None plotABSError3D(kernel, parameter, pdeName, lD, uD, name=None)} \\
+	Similar to the 	\inlinecode{plotError3D} method, a 3D graph of the solution is plotted. The absolute error is shown. The error is calculated by $E_{abs}  = \left| u_{apx}(x,y) - u_{ext}(x,y) \right| \forall x,y \in \Omega$. 
+	\item \inlinecode{None plotKernelAdaption(obj_dict, title, 'green', 'red', name=None)} \\
+	This function plot the fitness difference over all generations. Additionally, it marks if the number of kernels (and thus the search dimension) is increased or reduced. 
+	\item \inlinecode{(float, float) calcSingleERT(rundata, target)} \\
+	Calculates the expected running time and the success probability for a single target value. The expected running time is corrected by the success probability. 
+\end{itemize}
+
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}[b]{0.5\linewidth}
+		\centering
+		\includegraphics[width=1\textwidth]{../img/pdf/sig_better.pdf}
+		\caption{A is significantly better than B}
+		\label{fig:stats_wilcoxon_examples_sigificantly_better}
+	\end{subfigure}% 
+	%
+	\begin{subfigure}[b]{0.5\linewidth}
+		\centering
+		\includegraphics[width=1\textwidth]{../img/pdf/sig_worse.pdf}
+		\caption{A is sigificantly worse than B}
+		\label{fig:stats_wilcoxon_examples_sigificantly_worse}
+	\end{subfigure}% 
+	\\
+	\begin{subfigure}[b]{0.5\linewidth}
+		\centering
+		\includegraphics[width=1\textwidth]{../img/pdf/unsig_better.pdf}
+		\caption{A is unsignificantly better than B}
+		\label{fig:stats_wilcoxon_examples_insigificantly_better}
+	\end{subfigure}% 
+	%
+	\begin{subfigure}[b]{0.5\linewidth}
+		\centering
+		\includegraphics[width=1\textwidth]{../img/pdf/unsig_worse.pdf}
+		\caption{A is unsignificatnly worse than B}
+		\label{fig:stats_wilcoxon_examples_insigificantly_worse}
+	\end{subfigure}% 
+	\unterschrift{Example distributions for different results of the statsWilcoxon method.}{}{}%
+	\label{fig:stats_wilcoxon_examples}
+\end{figure}
+
+
+\chapter{Solve Method}
+\label{chap:solve_function}
+
+\begin{algorithm}[H]
+	\SetAlgoNoLine
+	\DontPrintSemicolon
+	\SetKwFunction{Fsolve}{solve}
+	\SetKwProg{Fn}{Function}{:}{}
+	\Fn{\Fsolve{}}{
+		$gc.disable()$\;
+		\While{$gc.isenabled()$} {
+			$time.sleep(0.1)$\;
+		}	
+		$process = psutil.Process()$\;
+		$memstart = process.memory\text{\textunderscore}info().vms$\;
+		$t\text{\textunderscore}start = time.time()$\;
+		\tcp{perform solver steps}
+		\tcp{that are particular}
+		\tcp{to FEM or CI solver}
+		$self.\text{\textunderscore}exec\text{\textunderscore}time = time.time() - t\text{\textunderscore}{start}$\;
+		$memstop = process.memory\text{\textunderscore}info().vms - memstart$\;
+		$gc.enable()$\;
+		$gc.collect()$\;
+	}
+	\unterschrift{Solve Method Pseudocode}{}{}
+	\label{algo: solve}
+\end{algorithm}
+
+
+
+\chapter{pJADE}
+\label{chap:pseudocode_pjade}
+
+\begin{algorithm}[H]
+	\SetAlgoNoLine
+	\DontPrintSemicolon
+	\SetKwFunction{FpJADE}{pJADE}
+	\SetKwFor{PFor}{for}{do parallel}{end}
+	\SetKwProg{Fn}{Function}{:}{}
+	\Fn{\FpJADE{$\mathbf{X}_{g=0}$, $p$, $c$, $function$, $minError$, $maxFE$}}{
+		$fValue_{g=0} \gets function(\mathbf{x}_{g=0})$\;
+		$\mu_{CR} \gets 0.5$\;
+		$\mu_{F}  \gets 0.5$\;
+		$A        \gets \emptyset$\;
+		\While {$fe \leq maxFE$}{
+			$g \gets g+1$\;
+			$S_F \gets \emptyset$\;
+			$S_{CR} \gets \emptyset$\; 
+			$pResults \gets \emptyset$\;
+			\PFor {$i = 1$ to $NP$} {
+				$F_i  \gets randc_i(\mu_{F},0.1)$\;
+				$v_i \gets mutationCurrentToPBest1(\mathbf{x}_{i,g}, A, fValue_g, F_i, p)$\;
+				
+				$CR_i \gets randn_i(\mu_{CR},0.1)$\;
+				$u_i  \gets crossoverBIN(\mathbf{x}_{i,g}, v_i, CR_i)$\;
+				$(u_i, function(u_i)) \rightarrow pResults$
+			}
+			\For {$i = 1$ to $NP$} {	
+				\If {$function(\mathbf{x}_{i,g}) \geq pResults_{i,f,g}$} {
+					$\mathbf{x}_{i,g+1} \gets \mathbf{x}_{i,g}$\;
+				}
+				\Else
+				{
+					$\mathbf{x}_{i,g+1} \gets pResults_{i,u,g}$\;
+					$fValue_{i,g+1} \gets pResults_{i,f,g}$\;
+					$\mathbf{x}_{i,g} \rightarrow \mathbf{A}$\;
+					$CR_i \rightarrow S_{CR}$\;
+					$F_i \rightarrow S_F$\;
+				}
+			}
+			\tcp{resize $A$ to size of $\mathbf{x}_g$}
+			\If{$|A| > NP$} {
+				$A \gets A \setminus A_{rand_i}$
+			}
+			$fe \gets fe + size(\mathbf{X})$\;
+			$\mu_{CR} \gets (1-c) \cdot \mu_{CR} + c \cdot arithmeticMean(S_{CR})$\;
+			$\mu_{F} \gets (1-c) \cdot \mu_{F} + c \cdot lehmerMean(S_{F})$\;
+		}	
+	}
+	\unterschrift{Pseudocode of pJADE}{}{}
+	\label{algo: pjade}
+\end{algorithm}
+
+
+
+
+
+
+\chapter{paJADE}
+\label{chap:pseudocode_pajade}
+
+\begin{algorithm}[H]
+	\SetAlgoNoLine
+	\DontPrintSemicolon
+	\SetKwFunction{FpaJADE}{paJADE}
+	\SetKwFor{PFor}{for}{do parallel}{end}
+	\SetKwProg{Fn}{Function}{:}{}
+	\Fn{\FpaJADE{$\mathbf{X}_{g=0}$, $p$, $c$, $dT$, $function$, $minError$, $maxFE$}}{
+		$fValue_{g=0} \gets function(\mathbf{x}_{g=0})$\;
+		$\mu_{CR} \gets 0.5$\;
+		$\mu_{F}  \gets 0.5$\;
+		$A        \gets \emptyset$\;
+		\While {$fe \leq maxFE$}{
+			$g \gets g+1$\;
+			$S_F \gets \emptyset$\;
+			$S_{CR} \gets \emptyset$\; 
+			$pResults \gets \emptyset$\;
+			\PFor {$i = 1$ to $NP$} {
+				$F_i  \gets randc_i(\mu_{F},0.1)$\;
+				$v_i \gets mutationCurrentToPBest1(\mathbf{x}_{i,g}, A, fValue_g, F_i, p)$\;
+				
+				$CR_i \gets randn_i(\mu_{CR},0.1)$\;
+				$u_i  \gets crossoverBIN(\mathbf{x}_{i,g}, v_i, CR_i)$\;
+				$(u_i, function(u_i)) \rightarrow pResults$
+			}
+			\For {$i = 1$ to $NP$} {	
+				\If {$function(\mathbf{x}_{i,g}) \geq pResults_{i,f,g}$} {
+					$\mathbf{x}_{i,g+1} \gets \mathbf{x}_{i,g}$\;
+				}
+				\Else
+				{
+					$\mathbf{x}_{i,g+1} \gets pResults_{i,u,g}$\;
+					$fValue_{i,g+1} \gets pResults_{i,f,g}$\;
+					$\mathbf{x}_{i,g} \rightarrow \mathbf{A}$\;
+					$CR_i \rightarrow S_{CR}$\;
+					$F_i \rightarrow S_F$\;
+				}
+			}
+			\tcp{resize $A$ to size of $\mathbf{x}_g$}
+			\If{$|A| > NP$} {
+				$A \gets A \setminus A_{rand_i}$
+			}
+			$fe \gets fe + size(\mathbf{X})$\;
+			$\mu_{CR} \gets (1-c) \cdot \mu_{CR} + c \cdot arithmeticMean(S_{CR})$\;
+			$\mu_{F} \gets (1-c) \cdot \mu_{F} + c \cdot lehmerMean(S_{F})$\;
+			
+			\tcp{state detector}
+			\If {$min(function(\mathbf{X}_{g-dT}) - function(\mathbf{X}_g)) < minError$} {
+				break\;
+			}
+		}	
+	}
+	\unterschrift{Pseudocode of paJADE}{}{}
+	\label{algo: pajade}
+\end{algorithm}
+
+\chapter{Adaptive Kernel Scheme}
+\label{chap:appendix_adaptive_scheme}
+
+\begin{algorithm}[H]
+	\SetAlgoNoLine
+	\DontPrintSemicolon
+	\SetKwFunction{FmpaJADE}{memeticpJADEadaptive}
+	\SetKwProg{Fn}{Function}{:}{}
+	\Fn{\FmpaJADE{$\mathbf{X}$, $func$, $kSize$, $minErr$, $maxFE$}}{
+		$dim$, $popsize$ $\gets size(\mathbf{X})$\;
+		\tcp{number of kernels}
+		$\kappa$ $\gets$ $dim/kSize$ \;
+		$p \gets 0.3$\;
+		$c \gets 0.5$\;
+		$dT$ $\gets 100$\;
+		$fecounter \gets 0$\;
+		$bestFE \gets \infty$\;
+		$\mathbf{\mathbf{bestPop}} \gets \emptyset$\;
+		$popFactor$ $\gets$ $popsize/dim$\;
+		\While{$fecounter < maxFE$}{
+			$\mathbf{pop}$, $\mathbf{FE}$, $F$, $CR$ $\gets paJADE($$\mathbf{X}$, $p$, $c$, $dT$, $func$, $minErr$, $maxFE - 2 \cdot dim$ $)$\;
+			$fecounter \gets fecounter + len(F)\cdot popsize$\;
+			$bestIndex \gets argmin(\mathbf{FE})$\;
+			$bestSol \gets \mathbf{pop}[bestIndex]$\;
+			$\mathbf{pop}$, $\mathbf{FE}$ $ \gets ds$($func$, $bestSol$, $minErr$, $2 \cdot dim)$\;
+			$fecounter \gets fecounter + 2 \cdot dim$\;
+			\If{$min(\mathbf{FE}) < bestFE$}{
+				\tcp{increase dimension}
+				$\mathbf{X} \gets appendRndKernel(\mathbf{pop}, popsize, kSize)$\;
+				$\kappa \gets \kappa+1$ \;
+				\tcp{adapt population size to dimension}
+				$\mathbf{X} \gets appendRndPop(\mathbf{X}, popFactor, kSize)$\;
+				$bestFE \gets min(\mathbf{FE})$\;
+				$\mathbf{bestPop} \gets \mathbf{pop}$\;
+				$dim$, $popsize$ $\gets size(\mathbf{X})$\;
+			}
+			\Else {
+				\tcp{reduce dimension}
+				\tcp{restart around previous best}
+				$\mathbf{X} \gets \mathbf{bestPop} + \mathbf{\mathcal{N}}(size(\mathbf{bestPop}))$\;
+				$\kappa \gets \kappa - 1$ \;
+				$dim$, $popsize$ $\gets size(\mathbf{X})$ \;
+			}
+		}
+		\Return $\mathbf{pop}$, $\mathbf{FE}$, $F$, $CR$
+	}
+	\unterschrift{Pseudocode of memetic parallel JADE with adaptive kernels}{}{}
+	\label{algo: memeticpJADEadaptive}
+\end{algorithm}
+
+\chapter{PDE 2 3 4 and 7 Kernel Adaption}
+\label{chap: appendix kernel bar plot}
+
+The following plots show the fitness difference in relation to the kernel adaption. Darker grey and black areas represent a strong decline of the fitness value over multiple generations, while lighter areas mean that the fitness value is stagnating. Following lighter areas, often comes a green bar, which means that a new kernel is introduced. Similarly, red lines represent the reduction by one kernel. The plots compare the best and the worst replications with $minError = 0$ produced in the experiment chapter \ref{chap:experimet_2}. 
+
+
+\begin{figure}[H]
+	\centering
+	\noindent\adjustbox{max width=1\linewidth}{
+		\includegraphics[width=\textwidth]{../../code/experiments/experiment_2/pde2_worst_result_kernelbars.pdf}
+	}
+	\unterschrift{Kernel Bars Plot on the worst result of \gls{pde}2 in experiment 2.}{}{}
+	\label{fig:pajade_pde2_worst_kernelbars}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\noindent\adjustbox{max width=1\linewidth}{
+		\includegraphics[width=\textwidth]{../../code/experiments/experiment_2/pde2_best_result_kernelbars.pdf}
+	}
+	\unterschrift{Kernel Bars Plot on the best result of \gls{pde}2 in experiment 2.}{}{}
+	\label{fig:pajade_pde2_best_kernelbars}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\noindent\adjustbox{max width=1\linewidth}{
+		\includegraphics[width=\textwidth]{../../code/experiments/experiment_2/pde3_worst_result_kernelbars.pdf}
+	}
+	\unterschrift{Kernel Bars Plot on the worst result of \gls{pde}3 in experiment 2.}{}{}
+	\label{fig:pajade_pde3_worst_kernelbars}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\noindent\adjustbox{max width=1\linewidth}{
+		\includegraphics[width=\textwidth]{../../code/experiments/experiment_2/pde3_best_result_kernelbars.pdf}
+	}
+	\unterschrift{Kernel Bars Plot on the best result of \gls{pde}3 in experiment 2.}{}{}
+	\label{fig:pajade_pde3_best_kernelbars}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\noindent\adjustbox{max width=1\linewidth}{
+		\includegraphics[width=\textwidth]{../../code/experiments/experiment_2/pde4_worst_result_kernelbars.pdf}
+	}
+	\unterschrift{Kernel Bars Plot on the worst result of \gls{pde}4 in experiment 2.}{}{}
+	\label{fig:pajade_pde4_worst_kernelbars}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\noindent\adjustbox{max width=1\linewidth}{
+		\includegraphics[width=\textwidth]{../../code/experiments/experiment_2/pde4_best_result_kernelbars.pdf}
+	}
+	\unterschrift{Kernel Bars Plot on the best result of \gls{pde}4 in experiment 2.}{}{}
+	\label{fig:pajade_pde4_best_kernelbars}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\noindent\adjustbox{max width=1\linewidth}{
+		\includegraphics[width=\textwidth]{../../code/experiments/experiment_2/pde7_worst_result_kernelbars.pdf}
+	}
+	\unterschrift{Kernel Bars Plot on the worst result of \gls{pde}7 in experiment 2.}{}{}
+	\label{fig:pajade_pde7_worst_kernelbars}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\noindent\adjustbox{max width=1\linewidth}{
+		\includegraphics[width=\textwidth]{../../code/experiments/experiment_2/pde7_best_result_kernelbars.pdf}
+	}
+	\unterschrift{Kernel Bars Plot on the best result of \gls{pde}7 in experiment 2.}{}{}
+	\label{fig:pajade_pde7_best_kernelbars}
+\end{figure} 
+
+
+
+\end{document}

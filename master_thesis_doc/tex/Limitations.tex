@@ -9,13 +9,15 @@ Contrary to the testbed used by other authors, the test-equations used here are 
 
 
 \section{Fulfilment of Boundary Condition}
-Contrary to the \gls{fem} solver, the described \gls{ci} solver does not guarantee the boundary-condition fulfilment. There are ways to counteract the deviance on the boundary. 
+Contrary to the \gls{fem} solver, the described \gls{ci} solver does not guarantee the boundary-condition fulfilment. There are ways to counteract the deviation on the boundary. 
 
-A simple possibility is to increase the penalty factor $\varphi$ on the boundary collocation points $n_B$. This sets an emphasis on the boundary, however it still does not assure the fulfilment of the boundary condition.
+A simple possibility is to increase the penalty factor $\varphi$ on the boundary collocation points $n_B$. This sets an emphasis on the boundary, however it still does not assure the fulfilment of the boundary condition. 
 
-As described in the literature overview, \cite{kirstukas_hybrid_2005} propose a strategy that repairs the boundary condition after the solver supposed an approximation to the interior domain. Introducing this strategy benefit the performance of the present solver. 
+Similarly, the number of collocation points on the boundary $n_B$ could be increased. This would shift the relative importance of the fitness function to the boundary, however it would also increase the computational effort. More experiments must be done to evaluate the performance of these ideas. 
 
-As discussed in chapter \ref{chap:testbed_description}, \gls{pde} 0A is used in the testbed by \cite{chaquet_using_2019} and \cite{mitchell_nist_2018}. Since preliminary experiments have shown that the \gls{ci} solver produced worse results on the \cite{mitchell_nist_2018} implementation, this version is adopted for the current testbed. The main difference between these variants of \gls{pde} 4 is the definition of the boundary condition: 
+As described in the literature overview, \cite{kirstukas_hybrid_2005} propose a strategy that repairs the boundary condition after the solver supposed an approximation to the interior domain. The same strategy could also be applied to the present solver, which could potentially increase the quality of the approximation. 
+
+As discussed in chapter \ref{chap:testbed_description}, \gls{pde} 4 is used in the testbed by \cite{chaquet_using_2019} and \cite{mitchell_nist_2018}. Since preliminary experiments have shown that the \gls{ci} solver produced worse results on the \cite{mitchell_nist_2018} implementation, this version is adopted for the current testbed. The main difference between these variants of \gls{pde} 4 is the definition of the boundary condition: 
 
 \begin{itemize}
 	\item \underline{\textbf{\cite{mitchell_nist_2018}}}: 
@@ -40,15 +42,16 @@ As discussed in chapter \ref{chap:testbed_description}, \gls{pde} 0A is used in 
 	\end{equation*}
 \end{itemize}
 
-Experiment 1 investigates the error behaviour of \gls{pde} 0A. As seen in figure \ref{fig:serial_parallel_pde4_error_comparison}, the error is large on the boundary of the domain $\partial \Omega$, while the interior suffers of a relatively small error. Thus, improvements on the boundary can be achieved more easily. Therefore, it makes sense that the solver is sensitive to the implementation of the boundary condition. However, in the typical application the boundary condition can not be rewritten. Thus, better methods for ensuring the boundary condition are needed. 
+Experiment 1 investigates the error behaviour of \gls{pde} 4. As seen in figure \ref{fig:serial_parallel_pde4_error_comparison}, the error is large on the boundary of the domain $\partial \Omega$, while the interior suffers of a relatively small error. Thus, improvements on the boundary can be achieved more easily. Therefore, it makes sense that the solver is sensitive to the implementation of the boundary condition. However, in the typical application the boundary condition can not be rewritten. Thus, better methods for ensuring the boundary condition are needed. 
+
 
 
 \section{Computational Effort}
 \label{chap:computational_effort}
 
-The greatest limiting factor for the solver is the extensive computational effort. This is best measured by the \gls{erd}. The \gls{erd} calculates the performance of heuristic optimisation algorithms and makes them comparable. \gls{erd} plots are often used in \gls{bbob} contests, such as the annual \gls{coco} workshop (\cite{nikolaus_hansen_2019_2594848}). A similar plot is shown in figure \ref{fig:ert_plot} below. 
+The greatest limiting factor for the solver is the extensive computational effort. This is best measured by the \gls{erd}. The \gls{erd} calculates the performance of heuristic optimisation algorithms and makes them comparable. \gls{erd} plots are often used in \gls{bbob} contests, such as the annual \gls{coco} workshop (\cite{nikolaus_hansen_2019_2594848}).
 
-The \gls{erd} plot shows the correlation between the \gls{nfe} and the percentage of the solved functions in the testbed. Therefore, the \gls{nfe} is increased from $10^3$ to $10^6$. The testbed consists of 11 \gls{pde}s. Further, different target values in the L2 norm are inspected: $5\cdot 10^{-2}$, $1\cdot 10^{-2}$, $5\cdot 10^{-3}$ and $1\cdot 10^{-3}$. Thus, the vertical axis indicates how often a algorithm reaches these $4 \cdot 11 = 44$ target values. 
+The \gls{erd} plot from figure \ref{fig:ert_plot} shows the correlation between the \gls{nfe} and the percentage of the solved functions in the testbed. Therefore, the \gls{nfe} is increased from $10^3$ to $10^6$. The testbed consists of 11 \gls{pde}s. Further, different target values in the L2 norm are inspected: $5\cdot 10^{-2}$, $1\cdot 10^{-2}$, $5\cdot 10^{-3}$ and $1\cdot 10^{-3}$. Thus, the vertical axis indicates how often an algorithm reaches these $4 \cdot 11 = 44$ target values. 
 
 \begin{figure}[H]
 	\centering
@@ -63,7 +66,9 @@ Remarkable is the virtually non-existing performance difference between the seri
 
 The adaptive JADE scores continuously best and solves up to a quarter of the target values. This is largely thanks to the good performance on \gls{pde} 0A, which contributes 9 percent $\left( \frac{1}{11} \right)$ to the whole testbed.  
 
-Extrapolating the \gls{erd} plots indicates a further performance increase with more \gls{nfe}. Due to the already expensive algorithm, this is not tested. Substituting JADE for a faster converging algorithm might provide more clues to that matter. 
+Extrapolating the \gls{erd} plots indicates a further performance increase with more \gls{nfe}. Due to the already expensive algorithm, this is not tested. 
+
+In further experiments the same \gls{erd} plot should be calculated for other algorithms, like the \gls{cma_es}. Thus, the performance could be directly compared and better converging algorithms can be identified.  
 
 
 \end{document}

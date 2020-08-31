@@ -6,9 +6,9 @@
 With the serial algorithm from the chapter above, evaluating a \gls{pde} takes way to long to be practically relevant (beyond $14.5 \cdot 10^3$ seconds at $10^6$ \gls{nfe}). To reduce the solving time and speed up all further experiments, a parallel JADE is implemented. This chapter describes the benefits and drawbacks of the new algorithm.  
 
 \section{Hypotheses}
-The actual parallel JADE algorithm is shown in appendix \ref{chap:pseudocode_pjade}. The pseudocode \ref{algo: pjade} is very similar to the JADE algorithm \ref{algo: jade}. The main differences are laid out in the code-lines 11 to 17. The mutation, the crossover, the parameter adaption and the fitness evaluation are done in parallel for each individual in the population. The parallelism is based on the python module multiprocessing (\cite{python_standard_library_multiprocessing_2020}), in particular the \inlinecode{multiprocessing.Pool.apply\_async(func, *args)} method. This method takes a function, in this case an adapted version of the for-loop from code-line 11 to 17, and automatically maps it to a number of preallocated processes. After this is done for every individual in the population, the processes are synchronised and the results get returned to the main process. Therein lies the actual difference to the serial JADE. In the parallel algorithm new individuals are only available after each generation, whereas with the serial algorithm, the individuals are constantly updated before the next generation starts. This means that in the parallel algorithm information is withheld until the next generation - the same information can spread faster in the serial algorithm.  
+The actual parallel JADE algorithm is shown in appendix \ref{chap:pseudocode_pjade}. The pseudocode \ref{algo: pjade} is very similar to the JADE algorithm \ref{algo: jade}. The main differences are laid out in the code-lines 11 to 17. The mutation, the crossover, the parameter adaption and the fitness evaluation are done in parallel for each individual in the population. The parallelism is based on the Python module multiprocessing (\cite{python_standard_library_multiprocessing_2020}), in particular the \inlinecode{multiprocessing.Pool.apply\_async(func, *args)} method. This method takes a function, in this case an adapted version of the for-loop from code-line 11 to 17, and automatically maps it to a number of preallocated processes. After this is done for every individual in the population, the processes are synchronised and the results get returned to the main process. Therein lies the actual difference to the serial JADE. In the parallel algorithm new individuals are only available after each generation, whereas with the serial algorithm, the individuals are constantly updated before the next generation starts. This means that in the parallel algorithm information is withheld until the next generation - the same information can spread faster in the serial algorithm.  
 
-For the sake of completeness, the memetic parallel JADE pseudocode is shown in the algorithm \ref{algo: memeticpJADE} below. The only difference compared to the simple memetic JADE \ref{algo: memeticJADE} is the usage of the pJADE in code-line 5. 
+For the sake of completeness, the memetic parallel JADE pseudocode is shown in the algorithm \ref{algo: memeticpJADE} below. The only difference compared to the serial memetic JADE \ref{algo: memeticJADE} is the usage of the pJADE in code-line 5. 
 
 \begin{algorithm}[h]
 	\SetAlgoNoLine
@@ -42,7 +42,7 @@ The two images \ref{fig:parallel_jade_time_boxplot} and \ref{fig:parallel_jade_m
 
 \begin{figure}[H]
 	\centering
-	\noindent\adjustbox{max width=0.66\linewidth}{
+	\noindent\adjustbox{max width=0.7\linewidth}{
 		\includegraphics[width=\textwidth]{../../code/experiments/experiment_1/time_boxplot_ci_exp1.pdf}
 	}
 	\unterschrift{Relative solving time results of parallel memetic JADE after $10^4$ \gls{nfe}.}{}{}
@@ -52,7 +52,7 @@ The two images \ref{fig:parallel_jade_time_boxplot} and \ref{fig:parallel_jade_m
 
 \begin{figure}[H]
 	\centering
-	\noindent\adjustbox{max width=0.66\linewidth}{
+	\noindent\adjustbox{max width=0.7\linewidth}{
 		\includegraphics[width=\textwidth]{../../code/experiments/experiment_1/mem_boxplot_ci_exp1.pdf}
 	}
 	\unterschrift{Relative memory usage results of parallel memetic JADE after $10^4$ \gls{nfe}.}{}{}
@@ -103,7 +103,7 @@ As the boxplot \ref{fig:parallel_jade_memory_boxplot} shows, the memory usage is
 \subsection{Solving Time}
 The main purpose of the parallelisation is to cut down the solving time and accelerate all further experiments. To that extent, the population is evaluated in parallel. As the solving time boxplot in figure \ref{fig:parallel_jade_time_boxplot} shows, this goal was achieved. The execution time after $10^4$ \gls{nfe} now ranks between the 8 and 15-fold of the \gls{fem} solver. This is unquestionably faster than the solving time of the serial algorithm. Remarkable is that on \gls{pde} 3, the \gls{ci} solver is even faster than NGSolve and takes only about $0.56 \cdot 65.2 \text{ s} \approx 36.5 \text{ s}$. Of course, to compete with the solution quality, more \gls{nfe} are needed, which increases the execution time. 
 
-Image \ref{fig:serial_to_parallel_speedup} shows the calculated mean \gls{sp} over 20 replications, that is accomplished by substituting the serial JADE with the parallel version. The 95\% confidence interval is shown in yellow. 
+Image \ref{fig:serial_to_parallel_speedup} shows the calculated mean \gls{sp} over 20 replications that is accomplished by substituting the serial JADE with the parallel version. The \gls{sp} is calculated by dividing the serial solving time with the parallel solving time. The 95\% confidence interval is shown in yellow. 
 
 \begin{figure}[H]
 	\centering
@@ -114,7 +114,7 @@ Image \ref{fig:serial_to_parallel_speedup} shows the calculated mean \gls{sp} ov
 	\label{fig:serial_to_parallel_speedup}
 \end{figure}
 
-The plot \ref{fig:serial_to_parallel_speedup} shows that the speed-up varies by testbed function. This can be directly linked to the ``size'' of the fitness function, especially the \gls{rhs} of the \gls{pde}. The longer the fitness function takes to evaluate, the greater is the speed-up that can be achieved ($time(fit \text{ } evaln) \uparrow \rightarrow sp \uparrow$). One would expect the same correlation for the size of the population: the larger a population, the better is the speed-up ($pop \text{ } size \uparrow \rightarrow sp \uparrow$). Larger fitness functions are needed by the testbed \gls{pde}s 0A, 0B, 1, 5, and 9. Looking at the definition of these equations in appendix \ref{chap:testbed}, it is notable that the \gls{rhs} are constructed of more terms compared to the other equations. 
+Plot \ref{fig:serial_to_parallel_speedup} shows that the speed-up varies by testbed function. This can be directly linked to the number of operations needed to construct the fitness function, which is primarily determined by the \gls{rhs} of the \gls{pde}. The longer the fitness function takes to evaluate, the greater is the speed-up that can be achieved ($time(fit \text{ } evaln) \uparrow \rightarrow sp \uparrow$). One would expect the same correlation for the size of the population: the larger a population, the better is the speed-up ($pop \text{ } size \uparrow \rightarrow sp \uparrow$). However, this is not experientially verified. Larger fitness functions are needed by the testbed \gls{pde}s 0A, 0B, 1, 5, and 9. Looking at the definition of these equations in appendix \ref{chap:testbed}, it is notable that the \gls{rhs} are constructed of more terms compared to the other equations. 
 
 \subsection{PDE 4}
 

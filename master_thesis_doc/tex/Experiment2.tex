@@ -13,7 +13,7 @@ This new concept requires a convergence based halting criterion in the JADE algo
 
 The new paJADE is wrapped into the memetic framework, already used in the chapters before. A flowchart of the process in shown in figure \ref{fig:uml_flow_adaptive_scheme}. The corresponding pseudocode \ref{algo: memeticpJADEadaptive} in the appendix describes the implementation.
 
-The algorithm always starts with one kernel. From there on, the number of kernels is increased. After the ``state detector'' has stopped the paJADE, the \gls{ds} is employed on the best individual of the last population. If the last JADE/DS cycle was able to improve the function value, it is assumed that the best solution for that dimensionality is found. Thus, to further improve the results, the number of kernels must be increased. If the function value could not be decreased, a restart around the previous best population is performed. Since the number of kernels is always increased by one, the previous best population consists of one kernel less. 
+The algorithm always starts with one kernel. From there on, the number of kernels is increased. After the ``state detector'' has stopped the paJADE, the \gls{ds} is employed on the best individual of the last population. If the last JADE/DS cycle was able to improve the function value, it is assumed that the best solution for that dimensionality is found. Thus, to further improve the approximation quality, the number of kernels must be increased. If the function value could not be decreased, a restart around the previous best population is performed. Since the number of kernels is always increased by one, the previous best population must have one kernel less. 
 
 \begin{figure}[H]
 	\centering
@@ -26,13 +26,13 @@ The algorithm always starts with one kernel. From there on, the number of kernel
 
 This adaptive scheme operates under 3 strong assumptions. To reduce their possible negative impact, corresponding counter-strategies are implemented. 
 \begin{itemize}
-	\item \underline{\textbf{Assumption 1:}} The optimisation algorithm (JADE + \gls{ds}) finds (a close approximation to) the global optimum. This would be the best approximation of the solution by $N$ kernels. Obviously, this property is not necessarily true. Currently, only a very limited amount of research papers exist, that discuss global convergence properties of \gls{de} (\cite{hu_sufficient_2013}, \cite{opara_differential_2019}). To counteract this assumption, restarts are performed. 
+	\item \underline{\textbf{Assumption 1:}} The optimisation algorithm (JADE + \gls{ds}) finds (a close approximation to) the global optimum. This would be the best approximation of the solution by $N$ kernels. Obviously, this property is not necessarily true. Currently, only a very limited amount of research papers exist that discuss global convergence properties of \gls{de} (\cite{hu_sufficient_2013}, \cite{opara_differential_2019}). To counteract this assumption, restarts are performed. 
 	\item \underline{\textbf{Assumption 2:}} The theoretically best achievable solution quality increases with the number of kernels. After a maximum number of kernels is reached, the quality can not be surpassed. Based on this assumption, the algorithm starts with one kernel and the dimensionality increases by only one kernel at a time. To catch the point after which too many kernels are used, the dimensionality reduction step is introduced. Generally, the maximum number of kernels is not known except for \gls{pde} 0A and \gls{pde} 6. 
 	\item \underline{\textbf{Assumption 3:}} The best approximation of e.g. 3 kernels to a particular problem is independent of the best approximation by 4 kernels. This means that from 3 to 4 kernels simply a new kernel is introduced while not altering the other 3. Again, this is not true for every \gls{pde}. Preliminary experiments on \gls{pde} 0A have confirmed this assumption, while on other \gls{pde}s, like \gls{pde} 2, the solution can not simply be decomposed into independent kernels. 
 	
 	The concept is similar to the one explained in \cite{chaquet_solving_2012}. They start the approximation process by optimising the first harmonic. During the search for the second harmonic, the first one is fixed in place. 
 	
-	In this algorithm, the first kernels are allowed to change. When introducing a new random kernel, it is simply appended to the ever evolving $\mathbf{p_{apx}}$ vector. Thus, the search for the 4\textsuperscript{th} kernel starts where the best approximation for 3 kernels was found, but since the earlier kernels are allowed to readapt, other solutions can be retrieved.
+	In this algorithm, the first kernels are allowed to change. When introducing a new random kernel, it is simply appended to the ever evolving $\mathbf{p_{apx}}$ vector. Thus, the search for the 4th kernel starts where the best approximation for 3 kernels was found, but since the earlier kernels are allowed to readapt, other solutions can be retrieved.
 \end{itemize} 
 
 This chapter discusses the question if this strategy is an effective method to increase the quality of obtained solutions. Also, the time and memory aspects are investigated. 
@@ -43,7 +43,7 @@ Again, as in the experiments before, machine 1 runs at $10^4$ \gls{nfe} and mach
 
 The two new parameters \gls{dt} and minError must be set. The minError is again set to 0. The delay time \gls{dt} is set to 100. When the function value could not be improved over the course of 100 consecutive generations, a new kernel is introduced. This choice is rather arbitrary and depending on the \gls{pde}, different values might be more successful. However, this property is not analysed in the current experiment.
 
-\section{Result}
+\section{Results}
 \label{chap:results_ex2}
 
 Similar to the experiments before, the two images \ref{fig:pajade_time_boxplot} and \ref{fig:pajade_memory_boxplot} illustrate the time and memory usage of the described kernel adaptive JADE. The data to both plots is obtained on machine 1 at $10^4$ \gls{nfe}. \gls{pde} 7 takes the longest to solve, about 8.5 times longer than the \gls{fem} solver. Contrary, \gls{pde} 3 is solved the fastest, where the \gls{ci} solver only needs about a quarter of the time used by \gls{fem} solver. The memory effort of the \gls{ci} solver over all testbed problems is between 0.5 and 2.5 percent of the memory needed by the \gls{fem} solver. 
@@ -153,7 +153,7 @@ Figure \ref{fig:paJADE_pde0a_6kernel} shows the 3D plot of two separate unnecess
 \end{figure}
 
 
-\subsection{PDE 2 3 4 7}
+\subsection{Significantly Worse Quality}
 \label{chap:pde 2 3 4 7}
 The Wilcoxon significance test of table \ref{tab:compare_mpj_mpja_10^6} shows that the adaptive scheme is worse for the \gls{pde}s 2, 3, 4 and 7. The boxplot \ref{fig:pajade_kernels_boxplot} shows that on these test problems the solver frequently results in a smaller number of kernels, where the majority of runs even produce less than 5 \gls{gak}. This phenomenon points towards a shared problem where the solver does not increase the number of kernels consistently. 
 
@@ -217,7 +217,7 @@ As expected, the average number of kernels in the solution gets increased. This 
 \end{table}
 
 
-Although the results on \gls{pde} 2 and 3 do get significantly better, the adaptive process with greater $minError$ introduces a larger spread of the results - both in the number of kernels and in the reached L2 norm. This can be seen in figure \ref{fig:subexperiment_pde2347_kernels_l2norm}. Compared to the same plot at $minError = 0$ (figure \ref{fig:pajade_pde2347_kernels_l2norm}), the coefficient of determination $R^2$ is smaller, indicating a very poor correlation. 
+Although the results on \gls{pde} 2 and 3 do get significantly better, the adaptive process with greater $minError$ introduces a larger spread of the results - both in the number of kernels and in the reached L2 norm. This can be seen in figure \ref{fig:subexperiment_pde2347_kernels_l2norm}. Compared to the same plot at $minError = 0$ (figure \ref{fig:pajade_pde2347_kernels_l2norm}), the coefficient of determination $R^2$ is smaller, indicating a poor correlation. 
 
 \begin{figure}[H]
 	\centering
@@ -232,7 +232,7 @@ Because JADE is terminated earlier, the exploitation is not as progressed. This 
 
 \subsection{PDE 5}
 
-The results presented in table \ref{tab:compare_mpj_mpja_10^6} shows an interesting observation for the testbed problem 5. The mean L2 norm of the adaptive scheme is very large, but the median is slightly smaller than the median of the non-adaptive JADE. The Wilcoxon test reveals an insignificant difference, which hints that the adaptive scheme includes some very large outliers. This is demonstrated by comparing the box plots of both L2 norm distributions in figure \ref{fig:paJADE_pde5_l2norm_boxplot}. The same data is shown twice, with and without the outlier. 
+The results presented in table \ref{tab:compare_mpj_mpja_10^6} show an interesting observation for the testbed problem 5. The mean L2 norm of the adaptive scheme is very large, but the median is slightly smaller than the median of the non-adaptive JADE. The Wilcoxon test reveals an insignificant difference, which hints that the adaptive scheme includes some very large outliers. This is demonstrated by comparing the box plots of both L2 norm distributions in figure \ref{fig:paJADE_pde5_l2norm_boxplot}. The same data is shown twice, with and without the outlier. 
 
 \begin{figure}[H]
 	\centering

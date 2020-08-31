@@ -1,23 +1,19 @@
 \documentclass[./\jobname.tex]{subfiles}
 \begin{document}
+\textbf{Abstract} This master thesis investigates a Computational Intelligence-based method for solving PDEs. The proposed strategy formulates the residual of a PDE as a fitness function. The solution is approximated by a finite sum of Gauss kernels. An appropriate optimisation technique, in this case JADE, is deployed that searches for the best fitting parameters for these kernels. This field is fairly young, a comprehensive literature research reveals several past papers that investigate similar techniques. To evaluate the performance of the solver, a comprehensive testbed is defined. It consists of 11 different Poisson equations. The solving time, the memory consumption and the approximation quality are compared to the state of the art open-source Finite Element solver NGSolve. The first experiment tests a serial JADE. The results are not as good as comparable work in the literature. Further, a strange behaviour is observed, where the fitness and the quality do not match. The second experiment implements a parallel JADE, which allows to make use of parallel hardware. This significantly speeds up the solving time. The third experiment implements a parallel JADE with adaptive kernels. It starts with one kernel and introduce more kernels along the solving process. A significant improvement is observed on one PDE, that is purposely built to be solvable. On all other testbed PDEs the quality-difference is not conclusive. The last experiment investigates the discrepancy between the fitness and the quality. Therefore, a new kernel is defined. This kernel inherits all features of the Gauss kernel and extends it with a sine function. As a result, the observed inconsistency between fitness and quality is mitigated. The thesis closes with a proposal for further investigations. The concepts here should be reconsidered by using better performing optimisation algorithms from the literature, like CMA-ES. Beyond that, an adaptive scheme for the collocation points could be tested. Finally, the fitness function should be further examined.
+\\~\\~\\~\\~\\~\\~\\~\\~\\
 %
-\textbf{Abstract} This master-thesis describes and tests a differential equation solver that is based on the heuristic black-box optimisation algorithm JADE. The solver works by reformulating the residual of the differential equation into a fitness function. The underlying solution function of the differential equation is approximated by a finite sum of Radial Basis Functions. The performance of the solver is evaluated on a testbed that consists of 11 two-dimensional Poisson equations. The solving-time, the memory usage and the accuracy are compared to the open-source Finite Element Solver NGSolve as well as similar work in the current literature. To optimise the solving time and speed up the experiments, JADE is parallelised. This work introduces two new strategies: First, the number of kernels is adjusted to the differential equation during the solving process. Furthermore, a new kernel is formed and tested. These concepts are checked for significant improvements. The structure of the fitness function is investigated. A fundamental symmetry is observed that could be used to develop better suited optimisation algorithms. \\~\\
-%
 \noindent\rule{8.3cm}{0.4pt}
 
-~\\~\\
-\textbf{Keywords} Finite Element Methods; Weighted Residual Method; Partial Differential Equations; Numerical Methods; Differential Evolution; JADE; Downhill Simplex, Memetic Algorithm\\~\\
-
-\noindent\rule{8.3cm}{0.4pt}
-
-~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\
+~\\
+\textbf{Keywords} Finite Element Methods; Weighted Residual Method; Partial Differential Equations; Numerical Methods; Differential Evolution; JADE; Downhill Simplex, Memetic Algorithm\\
 
 \noindent\rule{8.3cm}{0.4pt}
 
-~\\~\\
+~\\
 Nicolai Schwartze, BSc. \\
 Vorarlberg University of Applied Science \\
-Master Mechatronics 2018 \\
+Master Mechatronics 2020 \\
 nicolai.schwartze@students.fhv.at \\
 
 \noindent\rule{8.3cm}{0.4pt}

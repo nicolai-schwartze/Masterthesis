@@ -654,7 +654,7 @@ u_{ext}(x,y) = tan^{-1}\left(20\left(\frac{(x + y)}{\sqrt{2}} -0.8\right)\right)
 
 \begin{figure}[H]
 	\centering
-	\noindent\adjustbox{max width=\linewidth}{\includegraphics[width=1\textwidth]{../../code/uml_diag/testbench_uml_class.pdf}
+	\noindent\adjustbox{max width=\linewidth}{\includegraphics[width=0.9\textwidth]{../../code/uml_diag/testbench_uml_class.pdf}
 	}
 	\unterschrift{This \gls{uml} class diagram describes the software architecture defined to prepare, run and evaluate the experiments. }{}{}
 	\label{fig:software_architecture}
@@ -664,7 +664,6 @@ u_{ext}(x,y) = tan^{-1}\left(20\left(\frac{(x + y)}{\sqrt{2}} -0.8\right)\right)
 \chapter{Post-Processing Module Description}
 \label{chap:apendix_post_proc}
 The post-processing module includes these functions. Their implementation is described in the following list. These functions are used to interpret the results in the experiments chapters.  
-\todo{update implemented function description and class diagram in appendix}
 
 \begin{itemize}
 	\item 
@@ -674,7 +673,7 @@ The post-processing module includes these functions. Their implementation is des
 	Loads the \gls{json} file located at the specified filename, which again can include a path. A dictionary with the saved \inlinecode{CiPdeN} parameters is returned. 
 	\item 
 	\inlinecode{dict loadExpObjectFast(filename)} \\
-	When solving a \gls{pde} with more function evaluation, the result file can become very large (>400Mb @ $10^6$ \#FE). For evaluating such large files, this function can be used. It does not load the generation data (meaning population, function value, F and CR). Since the standard json interpreter in python loads files to be serialized, a new interpreter is needed. To that extent, \textit{bigjson} from \cite{heino_henubigjson_2020} is used. This package accesses only those parts of a json file, that are actually needed.
+	When solving a \gls{pde} with more function evaluation, the result file can become very large (>400Mb @ $10^6$ \#FE). For evaluating such large files, this function can be used. It does not load the generation data (meaning population, function value, F and CR). Since the standard \gls{json} interpreter in Python loads files in a serial manner, a new interpreter is needed. To that extent, \textit{bigjson} from \cite{heino_henubigjson_2020} is used. This package accesses only the parts of a \gls{json} file that are actually needed.
 	\item \inlinecode{bool drawGaussKernel(parameter, ggb)} \\
 	Draws a solution approximated by Gauss kernels and with the specified parameters to a GeoGebra file. If the filename provided in the \textit{ggb} argument does not exist, the function searches for a template and prints to a copy of that file. 
 	\item \inlinecode{bool drawGSinKernel(parameter, ggb)} \\
@@ -687,14 +686,15 @@ The post-processing module includes these functions. Their implementation is des
 	The approximate solution of a \gls{pde} can be plotted over the domain with this function. Only square sized domains are accepted, as specified by the lower and the upper domain parameters \inlinecode{lD} and \inlinecode{uD}. If \textit{name} is of type string, the plot is saved as this file.
 	\item 
 	\inlinecode{string statsWilcoxon(a, b, alpha=0.05)} \\
-	This function is a wrapper for the \inlinecode{scipy.stats.wilcoxon} (\cite{scipy_scipystatswilcoxon_2020}). The default significance level is set to 0.05. A string is returned, that describes if the mean and median of \inlinecode{a} is significantly smaller than the mean and median of \inlinecode{b}. The result is one of these strings: 
+	This function is a wrapper for the \inlinecode{scipy.stats.wilcoxon} (\cite{scipy_scipystatswilcoxon_2020}). The default significance level is set to 0.05. A string is returned that describes if the mean and median of \inlinecode{a} is significantly smaller than the mean and median of \inlinecode{b}. The result is one of these strings: 
 	\begin{itemize}
-		\item sig. worse: the distributions are different; the mean and the median of \inlinecode{a} is larger than \inlinecode{b}
-		\item sig. better: the distributions are different; the mean and the median of \inlinecode{a} is smaller than \inlinecode{b}
-		\item unsig. worse: the distributions are similar; the mean and the median of \inlinecode{a} is larger than \inlinecode{b} 
-		\item unsig. better: the distributions are similar; the mean and the median of \inlinecode{a} is smaller than \inlinecode{b}
+		\item sig. worse: the distributions are different; the mean and the median of \inlinecode{a} are larger than the mean and the median of \inlinecode{b}
+		\item sig. better: the distributions are different; the mean and the median of \inlinecode{a} are smaller than the mean and the median of \inlinecode{b}
+		\item unsig. worse: the distributions are similar; the mean and the median of \inlinecode{a} are larger than the mean and the median of \inlinecode{b} 
+		\item unsig. better: the distributions are similar; the mean and the median of \inlinecode{a} are smaller than the mean and the median of \inlinecode{b}
 		\item unsig. undecided: the distributions are similar; the mean is larger, the median is smaller or vice versa
 	\end{itemize} 
+	Example distributions with the corresponding results are shown in figure \ref{fig:stats_wilcoxon_examples} below.
 	\item \inlinecode{None plotFEDynamic(FEDynamic, name=None)} \\
 	This method plots the function value dynamic of the population on a y-axis logarithmic plot. It can also cope with a varying population size. The plot can be saved with an optional argument. 
 	\item \inlinecode{None plotError3D(kernel, parameter, pdeName, lD, uD, name=None)} \\
@@ -707,6 +707,38 @@ The post-processing module includes these functions. Their implementation is des
 	Calculates the expected running time and the success probability for a single target value. The expected running time is corrected by the success probability. 
 \end{itemize}
 
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}[b]{0.5\linewidth}
+		\centering
+		\includegraphics[width=1\textwidth]{../img/pdf/sig_better.pdf}
+		\caption{A is significantly better than B}
+		\label{fig:stats_wilcoxon_examples_sigificantly_better}
+	\end{subfigure}% 
+	%
+	\begin{subfigure}[b]{0.5\linewidth}
+		\centering
+		\includegraphics[width=1\textwidth]{../img/pdf/sig_worse.pdf}
+		\caption{A is sigificantly worse than B}
+		\label{fig:stats_wilcoxon_examples_sigificantly_worse}
+	\end{subfigure}% 
+	\\
+	\begin{subfigure}[b]{0.5\linewidth}
+		\centering
+		\includegraphics[width=1\textwidth]{../img/pdf/unsig_better.pdf}
+		\caption{A is unsignificantly better than B}
+		\label{fig:stats_wilcoxon_examples_insigificantly_better}
+	\end{subfigure}% 
+	%
+	\begin{subfigure}[b]{0.5\linewidth}
+		\centering
+		\includegraphics[width=1\textwidth]{../img/pdf/unsig_worse.pdf}
+		\caption{A is unsignificatnly worse than B}
+		\label{fig:stats_wilcoxon_examples_insigificantly_worse}
+	\end{subfigure}% 
+	\unterschrift{Example distributions for different results of the statsWilcoxon method.}{}{}%
+	\label{fig:stats_wilcoxon_examples}
+\end{figure}
 
 
 \chapter{Solve Method}
@@ -908,7 +940,7 @@ The post-processing module includes these functions. Their implementation is des
 \chapter{PDE 2 3 4 and 7 Kernel Adaption}
 \label{chap: appendix kernel bar plot}
 
-The following plots show the fitness difference in relation to the kernel adaption. Darker grey and black areas represent a strong decline of the fitness value over multiple generations, while lighter areas mean that the fitness value is stagnating. Following lighter areas, often comes a green bar, which means that a new kernel is introduced. Similarly, red lines represent the reduction by one kernel. The plots compare the best and the worst replications produced in the experiment chapter \ref{chap:experimet_2}. 
+The following plots show the fitness difference in relation to the kernel adaption. Darker grey and black areas represent a strong decline of the fitness value over multiple generations, while lighter areas mean that the fitness value is stagnating. Following lighter areas, often comes a green bar, which means that a new kernel is introduced. Similarly, red lines represent the reduction by one kernel. The plots compare the best and the worst replications with $minError = 0$ produced in the experiment chapter \ref{chap:experimet_2}. 
 
 
 \begin{figure}[H]

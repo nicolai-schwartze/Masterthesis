@@ -2,7 +2,7 @@
 \begin{document}
 
 \chapter{Problem Definition}
-This chapter describes the broader idea of the \gls{wrm}, which is used to reformulate any differential equation into an optimisation problem and its application in the field of spectral methods (\cite{shen_spectral_2011}). The fitness function originates from these approaches. Further, the different approximation schemes and numerical solution representation are depicted. 
+This chapter describes the broader idea of the \gls{wrm}, which is used to reformulate any differential equation into an optimisation problem, and its application in the field of spectral methods (\cite{shen_spectral_2011}). The fitness function originates from these approaches. Further, the different approximation schemes and numerical solution representation are depicted. 
 
 \section{Theoretical Foundation}
 \label{chap:opt_problem}
@@ -57,16 +57,16 @@ These methods are often called ``spectral methods'' (\cite{shen_spectral_2011}).
 \section{Fitness Function}
 \label{chap:fit_func}
 
-As mentioned above, the basis of the fitness function used in \cite{chaquet_using_2019} is the squared weighted residual in equation \eqref{eq:sum_squared_residual}. They split the summation over the collocation points into two parts: the points on the boundary ($n_B$) and the points on the inner domain ($n_C$). Further, they divide the fitness value by the number of points used. This fitness function, as seen in equation \eqref{eq:fit_func_chaquet}, is adopted in this thesis. Because here, systems of differential equations are not considered, the denominator changes to $m=1$ resulting in the fitness function \eqref{eq:fit_func} below. The norm around the residual is not necessary for this thesis, since the fitness function does not have to work for system of \gls{pde}s.
+As mentioned above, the basis of the fitness function used in \cite{chaquet_using_2019} is the squared weighted residual in equation \eqref{eq:sum_squared_residual}. They split the summation over the collocation points into two parts: the points on the boundary ($n_B$) and the points on the inner domain ($n_C$). Further, they divide the fitness value by the number of points used. This fitness function, as seen in equation \eqref{eq:fit_func_chaquet}, is adopted in this thesis. Because here, systems of differential equations are not considered, the denominator changes to $m=1$ resulting in the fitness function \eqref{eq:fit_func} below. The norm of the residual is not necessary for this thesis, since the fitness function does not have to work for system of \gls{pde}s.
 
 \begin{equation}
 \label{eq:fit_func}
 F(u_{apx}(\mathbf{x})) = \frac{\sum_{i=1}^{n_C} \xi (\mathbf{x}_i) \left[ \mathbf{L}u_{apx}(\mathbf{x}_i) - f(\mathbf{x}_i) \right]^2 + \phi \sum_{j=1}^{n_B} \left[ \mathbf{B}u_{apx}(\mathbf{x}_j) - g(\mathbf{x}_j)\right]^2}{(n_C + n_B)}  
 \end{equation}
 
-A notable property of the fitness function is that it can not drop below 0. A solution, that satisfies the residual at every $n_C$ and $n_B$, results in a fitness of 0. This is true for the analytical solution $u_{apx}(\mathbf{x})$. It is also important to notice, that aliasing errors (as described in the chapter \ref{chap:metric_quality}) can occur with this fitness function. 
+A notable property of the fitness function is that it can not drop below 0. A solution, that satisfies the residual at every $n_C$ and $n_B$, results in a fitness of 0. This is true for the analytical solution $u_{ext}(\mathbf{x})$. It is also important to notice that aliasing errors (as described in the chapter \ref{chap:metric_quality}) can occur with this fitness function. 
 
-The weighting function is also split into two parts: $\xi$ for the inner collocation points and $\phi$ as penalty factor for the boundary points. The weighting function $\xi$ can be adapted by a parameter $\kappa$. For a $\kappa > 0$, $\xi$ assigns larger values for collocation points closer to the boundary, effectively shifting the relative importance towards the boundary. These weights can be calculated a priori, so no computational effort is added to the fitness function. Again, the weights are directly extracted from \cite{chaquet_using_2019}. 
+The weighting function is also split into two parts: $\xi$ for the inner collocation points and $\phi$ as penalty factor for the boundary points. The weighting function $\xi$ can be adapted by a parameter $\kappa$. For a $\kappa > 0$, $\xi$ assigns larger values for collocation points closer to the boundary, effectively shifting the relative importance towards the boundary. These weights can be calculated a priori, so no computational effort is added to the fitness function. Again, the weights and the fitness function are directly extracted from \cite{chaquet_using_2019}. 
 
 \begin{equation}
 \label{eq:nc_weight}
@@ -77,7 +77,7 @@ The weighting function is also split into two parts: $\xi$ for the inner colloca
 \section{Candidate Representation}
 \label{chap:candidate_rep}
 
-As \cite{chaquet_using_2019} suggest, an approximate solution should be represented as a summation of $N$ scaled and shifted radial basis functions $\phi$, as stated in equation \eqref{eq:u_apx} Gauss kernels have frequently been used for the approximation of functions. A solid foundation on the approximation theorem can be seen in \cite{park_universal_1991}. \gls{rbf} are functions that are point symmetric to a centre $c$ and their function value only depends on the radius $r$. 
+As \cite{chaquet_using_2019} suggest, an approximate solution should be represented as a summation of $N$ scaled and shifted radial basis functions $\phi$, as stated in equation \eqref{eq:u_apx}. Gauss kernels have frequently been used for the approximation of functions. A solid foundation on the approximation theorem can be seen in \cite{park_universal_1991}. \gls{rbf} are functions that are point symmetric to a centre $c$ and their function value only depends on the radius $r$. 
 
 \begin{equation}
 \label{eq: radius}

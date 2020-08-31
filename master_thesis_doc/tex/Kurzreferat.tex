@@ -5,6 +5,18 @@
 \chapter*{Kurzreferat}
 \section*{Computational Intelligence Methoden zum Lösen partieller Differentialgleichungen}
 %
-Diese Masterarbeit beschreibt und testet einen Differenzialgleichungs-Solver, der auf der heuristischen Black-Box Optimierungstechnik JADE basiert. Der Solver formuliert das Residuum der Differenzialgleichung in eine Fitness Funktion um. Die zugrundeliegende Lösung der Differenzialgleichung wird durch eine endliche Summe an radialen Basisfunktionen approximiert. Um die Performance des Solvers evaluieren zu können, wird ein Testbed von 11 zwei-dimensionalen Poisson-Gleichungen gebildet. Der Vergleich hinsichtlich Lösungszeit, Speicherbedarf und Genauigkeit erfolgt mit dem open-source Finite Elementen Solver NGSolve sowie anderen ähnlichen Solvern aus der Literatur. Um die Dauer des Verfahrens zu minimieren, wird JADE parallelisiert. Diese Arbeit behandelt zwei neue Lösungsstrategien: Zunächst wird die Anzahl der Kernel während des Lösungsprozesses an die Differenzialgleichung angepasst. Weiters wird ein neuer Kernel gebildet und getestet. Diese Konzepte werden anhand von entsprechenden Experimenten am Testbed auf signifikante Verbesserungen überprüft. Die Struktur der Fitness Funktion wird untersucht, wobei eine grundlegende Symmetrie zu beobachten ist. Dieses Wissen kann in weiteren Arbeiten verwendet werden, um bessere Optimierungsalgorithmen zu entwickeln. 
+Diese Masterarbeit untersucht eine Computational Intelligence Methode zum Lösen von PDEs. Diese Strategie formuliert das Residuum der PDE als Fitnessfunktion. Die Lösung wird durch eine endliche Summe von Gauß-Kernel approximiert. Ein geeigneter Optimierungsalgorithmus, in diesem Fall JADE, sucht die passenden Parameter für diese Kernel. Dieses Forschungsfeld ist relativ neu, eine umfassende Literaturrecherche zeigt mehrere Paper, die ähnliche Algorithmen behandeln.
+
+Um die Performance des Solvers zu bewerten, wird ein Testbed definiert. Es besteht aus 11 verschiedenen Poisson-Gleichungen. Die Lösungszeit, der Speicherbedarf und die Approximationsqualität werden mit dem open-source Finite Elemente Solver NGSolve verglichen. 
+
+Das erste Experiment testet eine serielle JADE. Die Ergebnisse sind nicht so gut wie vergleichbare Arbeiten in der Literatur. Weiterhin wird ein Verhalten beobachtet, bei dem Fitness und Qualität nicht übereinstimmen.
+ 
+Das zweite Experiment implementiert eine parallele JADE. Somit kann parallele Hardware genutzt werden. Dadurch wird die Lösungsdauer erheblich verkürzt. 
+
+Das dritte Experiment implementiert eine parallele JADE mit adaptiven Kernels. Der Solver beginnt mit einem Kernel und führt weitere Kernels während des Lösungsprozesses ein. Eine signifikante Verbesserung wird bei einer PDE beobachtet, die speziell dafür ausgelegt wurde. Bei allen anderen Testbed-PDEs ist der Qualitätsunterschied nicht aufschlussreich.
+
+Das letzte Experiment untersucht die Diskrepanz zwischen Fitness und Qualität. Dazu wird ein neuer Kernel definiert. Dieser Kernel hat alle Eigenschaften des Gauß-Kernels. Zusätzlich wird er mit einer Sinusfunktion erweitert. Dadurch werden die beobachteten Unterschiede zwischen Fitness und Qualität verringert. 
+
+In weiterführenden Arbeiten sollten die hier eingeführten Konzepte mit anderen Optimierungsalgorithmen, wie zum Beispiel einer CMA-ES, überprüft werden. Darüber hinaus könnte ein adaptiver Prozess für die Collocation Punkte getestet werden. Schließlich sollte die Fitnessfunktion weiter untersucht werden.
 %
 \end{document}
